@@ -77,16 +77,27 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     /// and then we can use the built in NN functionality (like PerceptronLayer
     /// and numLayer) to make these calculations easier!
     if (randNumber > perceptronMutationRate) {
+      late Entity<GENNPerceptron> newChild;
       if (random.nextBool()) {
         // TODO: Pick a layer more elegantly
 
         const targetLayer = 1;
 
-        perceptronLayerMutationService.addPerceptronToLayer(
+        newChild = await perceptronLayerMutationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
         );
+      } else {
+        // TODO: Implement removePerceptronFromLayer
+        // newChild =
+        //     await perceptronLayerMutationService.removePerceptronFromLayer(
+        //   entity: child,
+        //   perceptron: perceptron,
+        // );
+        newChild = child;
       }
+
+      return newChild;
     }
 
     // TODO: Consider doing the above adding/removing layer work from the

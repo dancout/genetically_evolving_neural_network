@@ -138,4 +138,11 @@ class PerceptronLayerMutationService {
       fitnessScore: fitnessScore,
     );
   }
+
+  Future<Entity<GENNPerceptron>> removePerceptronFromLayer({
+    required Entity<GENNPerceptron> entity,
+    required GENNPerceptron perceptron,
+  }) async {
+    return entity;
+  }
 }
