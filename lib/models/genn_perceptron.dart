@@ -13,6 +13,20 @@ class GENNPerceptron extends Perceptron {
   /// The [PerceptronLayer] this object is a part of within the [NeuralNetwork].
   final int layer;
 
+  GENNPerceptron copyWith({
+    int? layer,
+    double? bias,
+    double? threshold,
+    List<double>? weights,
+  }) {
+    return GENNPerceptron(
+      layer: layer ?? this.layer,
+      bias: bias ?? this.bias,
+      threshold: threshold ?? this.threshold,
+      weights: weights ?? this.weights,
+    );
+  }
+
   @override
   List<Object?> get props => [
         ...super.props,
