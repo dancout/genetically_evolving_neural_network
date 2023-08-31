@@ -87,7 +87,6 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
   GENNPerceptron mutateValue({GENNPerceptron? value}) {
     final gennPerceptron = value;
     if (gennPerceptron == null) {
-      // TODO: Investigate NN dependency - should value be able to be null ever?
       throw Exception('Cannot mutate null GENNPerceptron.');
     }
 
