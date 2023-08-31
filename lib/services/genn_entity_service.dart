@@ -1,7 +1,7 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
-import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
+import 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
 import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 
 class GENNEntityService extends EntityService<GENNPerceptron> {
@@ -10,18 +10,18 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required this.perceptronMutationRate,
     required super.dnaService,
     required GENNFitnessService fitnessService,
-    required super.geneMutationService,
+    required GENNGeneMutationService geneMutationService,
     required super.trackParents,
     super.random,
     PerceptronLayerMutationService? perceptronLayerMutationService,
   }) : super(
           fitnessService: fitnessService,
+          geneMutationService: geneMutationService,
         ) {
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
         PerceptronLayerMutationService(
           fitnessService: fitnessService,
-          // TODO: Make this cast prettier or fix it otherwise
-          geneService: geneMutationService.geneService as GENNGeneService,
+          geneService: geneMutationService.gennGeneService,
         );
   }
   final double layerMutationRate;

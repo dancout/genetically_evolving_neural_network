@@ -32,7 +32,7 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
     final geneMutationService = GENNGeneMutationService(
       trackMutatedWaves: config.trackMutatedWaves,
       mutationRate: config.mutationRate,
-      geneService: geneService,
+      gennGeneService: geneService,
       random: config.random,
     );
 
