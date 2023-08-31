@@ -21,7 +21,6 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
     super.entityService,
   });
 
-  // TODO: Figure out a good name for this factory method.
   factory GENNGeneticEvolution.create({
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
