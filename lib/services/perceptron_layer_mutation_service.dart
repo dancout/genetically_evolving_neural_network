@@ -1,9 +1,17 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
+import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
 class PerceptronLayerMutationService {
+  const PerceptronLayerMutationService({
+    required this.geneService,
+    required this.fitnessService,
+  });
+  final GENNFitnessService fitnessService;
+  final GENNGeneService geneService;
+
   /// Returns a [PerceptronLayer] that is duplicated from the input
   /// [perceptronLayer] with the weights adjusted so the [Perceptron] objects
   /// will only receive input from their adjacent, previous neighbor.
@@ -72,7 +80,6 @@ class PerceptronLayerMutationService {
   Entity<GENNPerceptron> removePerceptronLayer({
     required Entity<GENNPerceptron> entity,
     required int removalLayer,
-    required GENNFitnessService fitnessService,
   }) {
     return entity;
     // TODO: Figure out what to do with the weights when a lyaer is removed
@@ -89,5 +96,46 @@ class PerceptronLayerMutationService {
 
     // // Remove layer from genes
     // genes.removeWhere((gene) => gene.value.layer == removalLayer);
+  }
+
+  Future<Entity<GENNPerceptron>> addPerceptronToLayer({
+    required Entity<GENNPerceptron> entity,
+    required targetLayer,
+  }) async {
+    assert(
+        targetLayer > 0, 'Cannot add Perceptrons to the initial input layer');
+    // TODO: Does this need to be List.from so we're not editing the *actual*
+    /// list in place? OR, would that be a better idea for efficiency?
+    final genes = entity.dna.genes;
+
+    final numWeights =
+        genes.where((gene) => gene.value.layer == targetLayer - 1).length;
+
+    genes.add(
+      Gene(
+        value: geneService.randomPerceptron(
+          numWeights: numWeights,
+          layer: targetLayer,
+        ),
+      ),
+    );
+
+    for (int i = 0; i < genes.length; i++) {
+      if (genes[i].value.layer == targetLayer + 1) {
+        final perceptron = genes[i].value;
+
+        final weights = perceptron.weights;
+        weights.add(geneService.randomNegOneToPosOne());
+
+        genes[i] = Gene(value: perceptron.copyWith(weights: weights));
+      }
+    }
+
+    final dna = DNA(genes: genes);
+    final fitnessScore = await fitnessService.calculateScore(dna: dna);
+    return Entity(
+      dna: dna,
+      fitnessScore: fitnessScore,
+    );
   }
 }

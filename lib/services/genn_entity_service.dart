@@ -1,6 +1,7 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
+import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 
 class GENNEntityService extends EntityService<GENNPerceptron> {
@@ -13,18 +14,19 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required super.trackParents,
     super.random,
     PerceptronLayerMutationService? perceptronLayerMutationService,
-  })  : perceptronLayerMutationService =
-            perceptronLayerMutationService ?? PerceptronLayerMutationService(),
-        _fitnessService = fitnessService,
-        // TODO: If we no longer use removePerceptronLayer then move this super
-        /// call back up to the constructor.
-        super(
+  }) : super(
           fitnessService: fitnessService,
+        ) {
+    this.perceptronLayerMutationService = perceptronLayerMutationService ??
+        PerceptronLayerMutationService(
+          fitnessService: fitnessService,
+          // TODO: Make this cast prettier or fix it otherwise
+          geneService: geneMutationService.geneService as GENNGeneService,
         );
+  }
   final double layerMutationRate;
   final double perceptronMutationRate;
-  final PerceptronLayerMutationService perceptronLayerMutationService;
-  final GENNFitnessService _fitnessService;
+  late final PerceptronLayerMutationService perceptronLayerMutationService;
 
   @override
   Future<Entity<GENNPerceptron>> crossOver({
@@ -65,14 +67,26 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         newChild = perceptronLayerMutationService.removePerceptronLayer(
           entity: child,
           removalLayer: removalLayer,
-          fitnessService: _fitnessService,
         );
       }
       return newChild;
     }
 
+    // TODO: We should only get into this if block if there is more than 1 inputLayer!
+    /// We could consider creating a NeuralNetwork above from the list of genes,
+    /// and then we can use the built in NN functionality (like PerceptronLayer
+    /// and numLayer) to make these calculations easier!
     if (randNumber > perceptronMutationRate) {
-      // TODO: Implement duplicating or removing a perceptron to a particular layer
+      if (random.nextBool()) {
+        // TODO: Pick a layer more elegantly
+
+        const targetLayer = 1;
+
+        perceptronLayerMutationService.addPerceptronToLayer(
+          entity: child,
+          targetLayer: targetLayer,
+        );
+      }
     }
 
     // TODO: Consider doing the above adding/removing layer work from the
