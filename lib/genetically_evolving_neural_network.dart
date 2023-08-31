@@ -9,13 +9,14 @@ import 'package:genetically_evolving_neural_network/services/genn_gene_service.d
 class GeneticallyEvolvingNeuralNetwork {
   GeneticallyEvolvingNeuralNetwork({
     required this.fitnessService,
-    required this.geneService,
     required this.config,
-  });
+    GENNGeneService? geneService,
+  }) : geneService = geneService ??
+            GENNGeneService(initialNumWeights: config.initialNumWeights);
 
   final GENNFitnessService fitnessService;
-  final GENNGeneService geneService;
   final GENNGeneticEvolutionConfig config;
+  final GENNGeneService geneService;
 
   // TODO: Change from run
   Future<void> run() async {

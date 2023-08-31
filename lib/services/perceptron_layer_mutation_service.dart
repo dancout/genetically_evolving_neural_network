@@ -125,7 +125,7 @@ class PerceptronLayerMutationService {
         final perceptron = genes[i].value;
 
         final weights = perceptron.weights;
-        weights.add(geneService.randomNegOneToPosOne());
+        weights.add(geneService.randomNegOneToPosOne);
 
         genes[i] = Gene(value: perceptron.copyWith(weights: weights));
       }
