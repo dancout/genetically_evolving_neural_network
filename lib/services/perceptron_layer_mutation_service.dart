@@ -1,5 +1,6 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
 class PerceptronLayerMutationService {
@@ -71,6 +72,7 @@ class PerceptronLayerMutationService {
   Entity<GENNPerceptron> removePerceptronLayer({
     required Entity<GENNPerceptron> entity,
     required int removalLayer,
+    required GENNFitnessService fitnessService,
   }) {
     return entity;
     // TODO: Figure out what to do with the weights when a lyaer is removed

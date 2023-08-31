@@ -1,5 +1,6 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 
 class GENNEntityService extends EntityService<GENNPerceptron> {
@@ -7,16 +8,23 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required this.layerMutationRate,
     required this.perceptronMutationRate,
     required super.dnaService,
-    required super.fitnessService,
+    required GENNFitnessService fitnessService,
     required super.geneMutationService,
     required super.trackParents,
     super.random,
     PerceptronLayerMutationService? perceptronLayerMutationService,
-  }) : perceptronLayerMutationService =
-            perceptronLayerMutationService ?? PerceptronLayerMutationService();
+  })  : perceptronLayerMutationService =
+            perceptronLayerMutationService ?? PerceptronLayerMutationService(),
+        _fitnessService = fitnessService,
+        // TODO: If we no longer use removePerceptronLayer then move this super
+        /// call back up to the constructor.
+        super(
+          fitnessService: fitnessService,
+        );
   final double layerMutationRate;
   final double perceptronMutationRate;
   final PerceptronLayerMutationService perceptronLayerMutationService;
+  final GENNFitnessService _fitnessService;
 
   @override
   Future<Entity<GENNPerceptron>> crossOver({
@@ -55,7 +63,10 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
 
         // remove layer
         newChild = perceptronLayerMutationService.removePerceptronLayer(
-            entity: child, removalLayer: removalLayer);
+          entity: child,
+          removalLayer: removalLayer,
+          fitnessService: _fitnessService,
+        );
       }
       return newChild;
     }
