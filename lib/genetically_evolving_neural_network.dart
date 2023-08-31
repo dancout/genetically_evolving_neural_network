@@ -1,6 +1,7 @@
 library genetically_evolving_neural_network;
 
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 
@@ -18,12 +19,13 @@ class GeneticallyEvolvingNeuralNetwork {
 
   // TODO: Change from run
   Future<void> run() async {
-    final generation = GeneticEvolution(
+    final gennGeneticEvolution = GENNGeneticEvolution.create(
       geneticEvolutionConfig: config,
       fitnessService: fitnessService,
       geneService: geneService,
     );
 
-    final nextGen = await generation.nextGeneration();
+    final nextGen = await gennGeneticEvolution.nextGeneration();
+    print(nextGen.wave);
   }
 }
