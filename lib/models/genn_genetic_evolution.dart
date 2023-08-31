@@ -48,6 +48,9 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
           trackParents: geneticEvolutionConfig.trackParents,
+          // TODO: Put these in the config, probably
+          layerMutationRate: 0.1,
+          perceptronMutationRate: 0.1,
         );
 
     return GENNGeneticEvolution(

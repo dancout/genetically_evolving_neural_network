@@ -1,14 +1,22 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 
 class GENNEntityService extends EntityService<GENNPerceptron> {
   GENNEntityService({
+    required this.layerMutationRate,
+    required this.perceptronMutationRate,
     required super.dnaService,
     required super.fitnessService,
     required super.geneMutationService,
     required super.trackParents,
     super.random,
-  });
+    PerceptronLayerMutationService? perceptronLayerMutationService,
+  }) : perceptronLayerMutationService =
+            perceptronLayerMutationService ?? PerceptronLayerMutationService();
+  final double layerMutationRate;
+  final double perceptronMutationRate;
+  final PerceptronLayerMutationService perceptronLayerMutationService;
 
   @override
   Future<Entity<GENNPerceptron>> crossOver({
@@ -20,24 +28,37 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       wave: wave,
     );
 
-    // Potentially add a new PerceptronLayer here
-
     final randNumber = random.nextDouble();
 
-    // TODO: We probably shouldn't be using the mutationRate, but instead a
-    /// PerceptronLayerMutationRate specifically for adding or removing layers.
-    /// We should probably expect this to be lower than the mutationRate.
-    if (randNumber > geneMutationService.mutationRate) {
+    if (randNumber > layerMutationRate) {
       late Entity<GENNPerceptron> newChild;
       // Add or remove layer!
       if (random.nextBool()) {
+        // TODO: Pick which layer more elegantly!
+        const duplicationLayer = 0;
+
+        final duplicatedPerceptrons =
+            perceptronLayerMutationService.duplicatePerceptrons(
+          perceptrons: child.dna.genes
+              .where((gene) => gene.value.layer == duplicationLayer)
+              .map((gene) => gene.value)
+              .toList(),
+        );
         // add layer
-        newChild = child;
+        newChild = perceptronLayerMutationService.addPerceptronLayer(
+          entity: child,
+          duplicatedPerceptrons: duplicatedPerceptrons,
+        );
       } else {
         // remove layer
+        // TODO: Implement remove layer
         newChild = child;
       }
       return newChild;
+    }
+
+    if (randNumber > perceptronMutationRate) {
+      // TODO: Implement duplicating or removing a perceptron to a particular layer
     }
 
     // TODO: Consider doing the above adding/removing layer work from the
