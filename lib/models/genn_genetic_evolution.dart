@@ -9,10 +9,9 @@ import 'package:genetically_evolving_neural_network/services/genn_gene_mutation_
 import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 
 class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
-  // TODO: I think this should be visible for testing because of how we are
-  /// custom creating the entityService. We want to force the end user to use
-  /// the factory method.
-
+  /// This constructor is visibleForTesting because the [GENNDNAService] and
+  /// [GENNGeneMutationService] are not intended to be exposed unless absolutely
+  /// necessary.
   @visibleForTesting
   GENNGeneticEvolution({
     required super.geneticEvolutionConfig,
