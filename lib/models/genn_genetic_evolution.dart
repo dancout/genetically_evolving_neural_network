@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_genetic_evolution_config.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_dna_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_entity_service.dart';
@@ -23,7 +24,7 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
 
   // TODO: Figure out a good name for this factory method.
   factory GENNGeneticEvolution.create({
-    required GeneticEvolutionConfig geneticEvolutionConfig,
+    required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
     required GENNGeneService geneService,
     // TODO: Should this be visibleForTesting?
@@ -31,14 +32,14 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
     PopulationService<GENNPerceptron>? populationService,
   }) {
     final geneMutationService = GENNGeneMutationService(
-      trackMutatedWaves: geneticEvolutionConfig.trackMutatedWaves,
-      mutationRate: geneticEvolutionConfig.mutationRate,
+      trackMutatedWaves: config.trackMutatedWaves,
+      mutationRate: config.mutationRate,
       geneService: geneService,
-      random: geneticEvolutionConfig.random,
+      random: config.random,
     );
 
     final dnaService = GENNDNAService(
-      numGenes: geneticEvolutionConfig.numGenes,
+      numGenes: config.numGenes,
       geneMutationService: geneMutationService,
     );
 
@@ -47,14 +48,13 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
           dnaService: dnaService,
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
-          trackParents: geneticEvolutionConfig.trackParents,
-          // TODO: Put these in the config, probably
-          layerMutationRate: 0.1,
-          perceptronMutationRate: 0.1,
+          trackParents: config.trackParents,
+          layerMutationRate: config.layerMutationRate,
+          perceptronMutationRate: config.perceptronMutationRate,
         );
 
     return GENNGeneticEvolution(
-      geneticEvolutionConfig: geneticEvolutionConfig,
+      geneticEvolutionConfig: config,
       fitnessService: fitnessService,
       geneService: geneService,
       entityService: gennEntityService,
