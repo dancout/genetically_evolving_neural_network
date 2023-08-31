@@ -24,6 +24,7 @@ abstract class GENNGeneService extends GeneService<GENNPerceptron> {
     );
   }
 
+  /// Produces a random double between -1 and 1, exclusively.
   double randomNegOneToPosOne() => (random.nextDouble() * 2) - 1;
 
   GENNPerceptron randomPerceptron({
@@ -32,12 +33,11 @@ abstract class GENNGeneService extends GeneService<GENNPerceptron> {
   }) {
     assert(
       numWeights > 0,
-      'numWeights must be initialized before generating a random Perceptron.',
+      'numWeights must be greater than 0 when creating a random Perceptron.',
     );
 
     return GENNPerceptron(
-      // TODO: Should bias be allowed to be negative?
-      bias: random.nextDouble(),
+      bias: randomNegOneToPosOne(),
       threshold: random.nextDouble(),
       weights: List.generate(numWeights, (index) => randomNegOneToPosOne()),
       layer: layer,
