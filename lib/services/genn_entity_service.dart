@@ -50,9 +50,12 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
           duplicatedPerceptrons: duplicatedPerceptrons,
         );
       } else {
+        // TODO: Pick which layer more elegantly!
+        const removalLayer = 1; // Can't remove the first input layer!
+
         // remove layer
-        // TODO: Implement remove layer
-        newChild = child;
+        newChild = perceptronLayerMutationService.removePerceptronLayer(
+            entity: child, removalLayer: removalLayer);
       }
       return newChild;
     }
