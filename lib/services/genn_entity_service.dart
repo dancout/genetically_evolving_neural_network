@@ -1,4 +1,5 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
@@ -40,30 +41,34 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
 
     final randNumber = random.nextDouble();
 
-    if (randNumber > layerMutationRate) {
-      late Entity<GENNPerceptron> newChild;
-      // Add or remove layer!
-      if (random.nextBool()) {
-        // TODO: Pick which layer more elegantly!
-        const duplicationLayer = 0;
+    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);
 
-        final duplicatedPerceptrons =
-            perceptronLayerMutationService.duplicatePerceptrons(
-          perceptrons: child.dna.genes
-              .where((gene) => gene.value.layer == duplicationLayer)
-              .map((gene) => gene.value)
-              .toList(),
+    // Add or Remove PerceptronLayer from Entity if mutation condition met.
+    if (randNumber > layerMutationRate) {
+      // Declare the new Entity
+      late Entity<GENNPerceptron> newChild;
+      // NOTE: If there is only a single layer, then we cannot remove it, so we
+      // must add to it.
+      if (gennNN.numLayers == 1 || random.nextBool()) {
+        // Randomly pick a layer to duplicate
+        final duplicationLayer = random.nextInt(gennNN.numLayers);
+
+        // Duplicate PerceptronLayer
+        final duplicatedPerceptronLayer =
+            perceptronLayerMutationService.duplicatePerceptronLayer(
+          gennPerceptronLayer: gennNN.gennLayers[duplicationLayer],
         );
-        // add layer
+
+        // Add PerceptronLayer into Entity
         newChild = perceptronLayerMutationService.addPerceptronLayer(
           entity: child,
-          duplicatedPerceptrons: duplicatedPerceptrons,
+          perceptronLayer: duplicatedPerceptronLayer,
         );
       } else {
-        // TODO: Pick which layer more elegantly!
-        const removalLayer = 1; // Can't remove the first input layer!
+        // NOTE: Cannot remove last layer, hence the -1.
+        final removalLayer = random.nextInt(gennNN.numLayers - 1);
 
-        // remove layer
+        // Remove PerceptronLayer from Entity
         newChild = perceptronLayerMutationService.removePerceptronLayer(
           entity: child,
           removalLayer: removalLayer,
