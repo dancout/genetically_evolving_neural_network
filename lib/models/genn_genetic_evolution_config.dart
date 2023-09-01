@@ -2,10 +2,10 @@ import 'package:genetic_evolution/genetic_evolution.dart';
 
 class GENNGeneticEvolutionConfig extends GeneticEvolutionConfig {
   GENNGeneticEvolutionConfig({
-    required this.initialNumWeights,
+    required this.numInitialInputs,
+    required int numOutputs,
     required this.layerMutationRate,
     required this.perceptronMutationRate,
-    required super.numGenes,
     required super.mutationRate,
     super.canReproduceWithSelf,
     super.numParents,
@@ -13,9 +13,9 @@ class GENNGeneticEvolutionConfig extends GeneticEvolutionConfig {
     super.random,
     super.trackMutatedWaves,
     super.trackParents,
-  });
+  }) : super(numGenes: numOutputs);
 
-  final int initialNumWeights;
+  final int numInitialInputs;
   final double layerMutationRate;
   final double perceptronMutationRate;
 }

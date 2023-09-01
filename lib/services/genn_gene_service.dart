@@ -5,13 +5,13 @@ import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart'
 
 class GENNGeneService extends GeneService<GENNPerceptron> {
   GENNGeneService({
-    required this.initialNumWeights,
+    required this.numInitialInputs,
     Random? random,
   }) : random = random ?? Random();
 
   final Random random;
 
-  final int initialNumWeights;
+  final int numInitialInputs;
   int initialLayer = 0;
 
   /// Produces a random double between -1 and 1, exclusively.
@@ -78,7 +78,7 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
     return Gene(
       value: randomPerceptron(
         layer: initialLayer,
-        numWeights: initialNumWeights,
+        numWeights: numInitialInputs,
       ),
     );
   }

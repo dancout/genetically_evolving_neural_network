@@ -12,7 +12,7 @@ class GeneticallyEvolvingNeuralNetwork {
     required this.config,
     GENNGeneService? geneService,
   }) : geneService = geneService ??
-            GENNGeneService(initialNumWeights: config.initialNumWeights);
+            GENNGeneService(numInitialInputs: config.numInitialInputs);
 
   final GENNFitnessService fitnessService;
   final GENNGeneticEvolutionConfig config;
