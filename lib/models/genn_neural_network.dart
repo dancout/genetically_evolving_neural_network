@@ -10,6 +10,8 @@ class GENNNeuralNetwork extends NeuralNetwork {
     super.guessService,
   });
 
+  int get numLayers => layers.length;
+
   factory GENNNeuralNetwork.fromGenes({
     required List<Gene<GENNPerceptron>> genes,
     GuessService? guessService,
