@@ -1,14 +1,17 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
 // TODO: Clean up this file
 
 class GENNNeuralNetwork extends NeuralNetwork {
   GENNNeuralNetwork({
-    required super.layers,
+    required this.gennLayers,
     super.guessService,
-  });
+  }) : super(layers: gennLayers);
+
+  final List<GENNPerceptronLayer> gennLayers;
 
   int get numLayers => layers.length;
 
@@ -19,7 +22,7 @@ class GENNNeuralNetwork extends NeuralNetwork {
     // Sort genes first.
     // Assert (here or somewhere) that the layer parameter is not null on ALL GENES
 
-    final layers = <PerceptronLayer>[];
+    final layers = <GENNPerceptronLayer>[];
 
     // Find out how many layers there are
     final expectedLayers = genes.last.value.layer;
@@ -30,14 +33,14 @@ class GENNNeuralNetwork extends NeuralNetwork {
           .map((e) => e.value)
           .toList();
       layers.add(
-        PerceptronLayer(
-          perceptrons: genesOfLayer,
+        GENNPerceptronLayer(
+          gennPerceptrons: genesOfLayer,
         ),
       );
     }
 
     return GENNNeuralNetwork(
-      layers: layers,
+      gennLayers: layers,
       guessService: guessService,
     );
   }
