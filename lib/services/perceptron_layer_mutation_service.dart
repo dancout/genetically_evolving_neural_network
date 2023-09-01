@@ -1,8 +1,8 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
-import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
 class PerceptronLayerMutationService {
   const PerceptronLayerMutationService({
@@ -12,12 +12,12 @@ class PerceptronLayerMutationService {
   final GENNFitnessService fitnessService;
   final GENNGeneService geneService;
 
-  /// Returns a [PerceptronLayer] that is duplicated from the input
-  /// [perceptronLayer] with the weights adjusted so the [Perceptron] objects
-  /// will only receive input from their adjacent, previous neighbor.
+  /// Returns a [GENNPerceptronLayer] that is duplicated from the input
+  /// [gennPerceptronLayer] with the weights adjusted so the [GENNPerceptron]
+  /// objects will only receive input from their adjacent, previous neighbor.
   /// TODO: Include example in this doc.
-  List<GENNPerceptron> duplicatePerceptrons({
-    required List<GENNPerceptron> perceptrons,
+  GENNPerceptronLayer duplicatePerceptronLayer({
+    required GENNPerceptronLayer gennPerceptronLayer,
   }) {
     final perceptrons = <GENNPerceptron>[];
 
@@ -41,14 +41,14 @@ class PerceptronLayerMutationService {
       );
     }
 
-    return perceptrons;
+    return GENNPerceptronLayer(gennPerceptrons: perceptrons);
   }
 
   Entity<GENNPerceptron> addPerceptronLayer({
     required Entity<GENNPerceptron> entity,
-    required List<GENNPerceptron> duplicatedPerceptrons,
+    required GENNPerceptronLayer perceptronLayer,
   }) {
-    final duplicationLayer = duplicatedPerceptrons.first.layer - 1;
+    final duplicationLayer = perceptronLayer.gennPerceptrons.first.layer - 1;
 
     // Increment all layers after duplicationLayer
     final genes = entity.dna.genes.map((gene) {
@@ -62,13 +62,8 @@ class PerceptronLayerMutationService {
 
     // Add duplicated layer to genes
     genes.addAll(
-      duplicatedPerceptrons.map((perceptron) {
-        assert(
-          perceptron.layer == duplicationLayer,
-          'All duplicatedPerceptrons must have the same layer.',
-        );
-        return Gene(value: perceptron);
-      }).toList(),
+      perceptronLayer.gennPerceptrons
+          .map((perceptron) => Gene(value: perceptron)),
     );
 
     return Entity(
@@ -82,8 +77,9 @@ class PerceptronLayerMutationService {
     required int removalLayer,
   }) {
     return entity;
-    // TODO: Figure out what to do with the weights when a lyaer is removed
-    /// Should we even be removing layers, or always adding on?
+    // TODO: Implement removePerceptronLayer. We will need to randomize the
+    /// weights for the layer being moved to the left (becuase the number of
+    /// inputs might not match up).
     // // Decrement all layers after removalLayer
     // final genes = entity.dna.genes.map((gene) {
     //   if (gene.value.layer > removalLayer) {
