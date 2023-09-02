@@ -68,12 +68,13 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         // NOTE:  Cannot remove last layer, hence the -1. This is because the
         //        last layer represents the expected outputs, and that cannot
         //        change.
-        final removalLayer = random.nextInt(numLayers - 1);
+        final targetLayer = random.nextInt(numLayers - 1);
 
         // Remove PerceptronLayer from Entity
-        child = perceptronLayerMutationService.removePerceptronLayer(
+        child = await perceptronLayerMutationService
+            .removePerceptronLayerFromEntity(
           entity: child,
-          removalLayer: removalLayer,
+          targetLayer: targetLayer,
         );
         // Decrement the number of Perceptron Layers
         numLayers--;
@@ -94,7 +95,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
           targetLayer: targetLayer,
         );
       } else {
-        child = await perceptronLayerMutationService.removePerceptronFromEntity(
+        child = await perceptronLayerMutationService.removePerceptronFromLayer(
           entity: child,
           targetLayer: targetLayer,
         );

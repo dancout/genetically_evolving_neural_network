@@ -29,7 +29,7 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
     return GENNPerceptron(
       bias: randomNegOneToPosOne,
       threshold: random.nextDouble(),
-      weights: List.generate(numWeights, (index) => randomNegOneToPosOne),
+      weights: List.generate(numWeights, (_) => randomNegOneToPosOne),
       layer: layer,
     );
   }

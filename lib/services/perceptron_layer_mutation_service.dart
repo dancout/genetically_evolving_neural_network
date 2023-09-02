@@ -74,30 +74,66 @@ class PerceptronLayerMutationService {
     return Entity(
       dna: DNA(genes: genes),
       fitnessScore: entity.fitnessScore,
+      parents: entity.parents,
     );
   }
 
-  Entity<GENNPerceptron> removePerceptronLayer({
+  Future<Entity<GENNPerceptron>> removePerceptronLayerFromEntity({
     required Entity<GENNPerceptron> entity,
-    required int removalLayer,
-  }) {
-    return entity;
-    // TODO: Implement removePerceptronLayer. We will need to randomize the
-    /// weights for the layer being moved to the left (becuase the number of
-    /// inputs might not match up).
-    // // Decrement all layers after removalLayer
-    // final genes = entity.dna.genes.map((gene) {
-    //   if (gene.value.layer > removalLayer) {
-    //     return Gene(
-    //       value: gene.value.copyWith(layer: gene.value.layer - 1),
-    // mutuatedLayers:
-    //     );
-    //   }
-    //   return gene;
-    // }).toList();
+    required int targetLayer,
+  }) async {
+    // Grab the genes from the given Entity
+    final genes = entity.dna.genes;
 
-    // // Remove layer from genes
-    // genes.removeWhere((gene) => gene.value.layer == removalLayer);
+    // Remove all genes from targetLayer
+    genes.removeWhere((gene) => gene.value.layer == targetLayer);
+
+    // Decrement all layers after targetLayer
+    final genesAfterRemoval = genes.map((gene) {
+      if (gene.value.layer > targetLayer) {
+        return Gene(
+          value: gene.value.copyWith(layer: gene.value.layer - 1),
+          mutatedWaves: gene.mutatedWaves,
+        );
+      }
+      return gene;
+    }).toList();
+
+    final numWeightsUpdatedTargetLayer = genesAfterRemoval
+        .where((gene) => gene.value.layer == targetLayer - 1)
+        .toList()
+        .length;
+
+    // Update the weights for the genes now currently in the targetLayer
+    // position. This is necessary because the number of perceptrons may not
+    // have remained consistent from the previous layer to the target layer
+    // after the removal.
+    final genesWithUpdatedWeights = genesAfterRemoval.map((gene) {
+      if (gene.value.layer == targetLayer) {
+        final newWeights = List.generate(
+          numWeightsUpdatedTargetLayer,
+          (_) => geneService.randomNegOneToPosOne,
+        );
+
+        // Return the updated Gene within the targetLayer
+        return Gene(
+          value: gene.value.copyWith(weights: newWeights),
+          mutatedWaves: gene.mutatedWaves,
+        );
+      }
+      // Return the unchanged Gene
+      return gene;
+    }).toList();
+
+    final dna = DNA(genes: genesWithUpdatedWeights);
+    final fitnessScore = await fitnessService.calculateScore(dna: dna);
+
+    return Entity(
+      dna: dna,
+      fitnessScore: fitnessScore,
+      // TODO: Create a copyWith for Entity so we don't forget fields like parents
+      parents: entity.parents,
+    );
   }
 
   Future<Entity<GENNPerceptron>> addPerceptronToLayer({
@@ -141,10 +177,11 @@ class PerceptronLayerMutationService {
     return Entity(
       dna: dna,
       fitnessScore: fitnessScore,
+      parents: entity.parents,
     );
   }
 
-  Future<Entity<GENNPerceptron>> removePerceptronFromEntity({
+  Future<Entity<GENNPerceptron>> removePerceptronFromLayer({
     required Entity<GENNPerceptron> entity,
     required int targetLayer,
   }) async {
@@ -177,6 +214,10 @@ class PerceptronLayerMutationService {
     final dna = DNA(genes: updatedGenes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
-    return Entity(dna: dna, fitnessScore: fitnessScore);
+    return Entity(
+      dna: dna,
+      fitnessScore: fitnessScore,
+      parents: entity.parents,
+    );
   }
 }
