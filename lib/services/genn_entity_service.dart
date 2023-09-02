@@ -65,7 +65,9 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
           perceptronLayer: duplicatedPerceptronLayer,
         );
       } else {
-        // NOTE: Cannot remove last layer, hence the -1.
+        // NOTE:  Cannot remove last layer, hence the -1. This is because the
+        //        last layer represents the expected outputs, and that cannot
+        //        change.
         final removalLayer = random.nextInt(gennNN.numLayers - 1);
 
         // Remove PerceptronLayer from Entity
@@ -77,28 +79,27 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       return newChild;
     }
 
-    // TODO: We should only get into this if block if there is more than 1 inputLayer!
-    /// We could consider creating a NeuralNetwork above from the list of genes,
-    /// and then we can use the built in NN functionality (like PerceptronLayer
-    /// and numLayer) to make these calculations easier!
-    if (randNumber > perceptronMutationRate) {
+    // Add or Remove a Perceptron from a PerceptronLayer if there is more than
+    // one layer.
+    if (gennNN.numLayers > 1 && randNumber > perceptronMutationRate) {
       late Entity<GENNPerceptron> newChild;
+
+      // NOTE:  Cannot update the last layer, hence the -1. This is because the
+      //        last layer represents the expected outputs, and that cannot
+      //        change.
+      final targetLayer = random.nextInt(gennNN.numLayers - 1);
+
       if (random.nextBool()) {
-        // TODO: Pick a layer more elegantly
-
-        const targetLayer = 1;
-
         newChild = await perceptronLayerMutationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
         );
       } else {
-        // TODO: Implement removePerceptronFromLayer
-        // newChild =
-        //     await perceptronLayerMutationService.removePerceptronFromLayer(
-        //   entity: child,
-        //   perceptron: perceptron,
-        // );
+        newChild =
+            await perceptronLayerMutationService.removePerceptronFromEntity(
+          entity: child,
+          targetLayer: targetLayer,
+        );
         newChild = child;
       }
 

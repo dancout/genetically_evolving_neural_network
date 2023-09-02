@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
@@ -5,12 +7,14 @@ import 'package:genetically_evolving_neural_network/services/genn_fitness_servic
 import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 
 class PerceptronLayerMutationService {
-  const PerceptronLayerMutationService({
+  PerceptronLayerMutationService({
     required this.geneService,
     required this.fitnessService,
-  });
+    Random? random,
+  }) : random = random ?? Random();
   final GENNFitnessService fitnessService;
   final GENNGeneService geneService;
+  final Random random;
 
   /// Returns a [GENNPerceptronLayer] that is duplicated from the input
   /// [gennPerceptronLayer] with the weights adjusted so the [GENNPerceptron]
@@ -55,6 +59,7 @@ class PerceptronLayerMutationService {
       if (gene.value.layer > duplicationLayer) {
         return Gene(
           value: gene.value.copyWith(layer: gene.value.layer + 1),
+          mutatedWaves: gene.mutatedWaves,
         );
       }
       return gene;
@@ -85,6 +90,7 @@ class PerceptronLayerMutationService {
     //   if (gene.value.layer > removalLayer) {
     //     return Gene(
     //       value: gene.value.copyWith(layer: gene.value.layer - 1),
+    // mutuatedLayers:
     //     );
     //   }
     //   return gene;
@@ -96,7 +102,7 @@ class PerceptronLayerMutationService {
 
   Future<Entity<GENNPerceptron>> addPerceptronToLayer({
     required Entity<GENNPerceptron> entity,
-    required targetLayer,
+    required int targetLayer,
   }) async {
     assert(
         targetLayer > 0, 'Cannot add Perceptrons to the initial input layer');
@@ -123,7 +129,10 @@ class PerceptronLayerMutationService {
         final weights = perceptron.weights;
         weights.add(geneService.randomNegOneToPosOne);
 
-        genes[i] = Gene(value: perceptron.copyWith(weights: weights));
+        genes[i] = Gene(
+          value: perceptron.copyWith(weights: weights),
+          mutatedWaves: genes[i].mutatedWaves,
+        );
       }
     }
 
@@ -135,10 +144,39 @@ class PerceptronLayerMutationService {
     );
   }
 
-  Future<Entity<GENNPerceptron>> removePerceptronFromLayer({
+  Future<Entity<GENNPerceptron>> removePerceptronFromEntity({
     required Entity<GENNPerceptron> entity,
-    required GENNPerceptron perceptron,
+    required int targetLayer,
   }) async {
-    return entity;
+    final genes = List<Gene<GENNPerceptron>>.from(entity.dna.genes);
+
+    final targetLayerGenes = List.from(
+        genes.where((gene) => gene.value.layer == targetLayer).toList());
+
+    final randIndex = random.nextInt(targetLayerGenes.length);
+
+    final targetPerceptron = targetLayerGenes[randIndex];
+
+    genes.remove(targetPerceptron);
+
+    final updatedGenes = genes.map((gene) {
+      if (gene.value.layer > targetLayer) {
+        final weights = List<double>.from(gene.value.weights);
+        // Remove the weight connected to the removed perceptron
+        weights.removeAt(randIndex);
+
+        // TODO: A Gene.copyWith would be safer than passing mutatedWaves in every time.
+        return Gene(
+          value: gene.value.copyWith(weights: weights),
+          mutatedWaves: gene.mutatedWaves,
+        );
+      }
+      return gene;
+    }).toList();
+
+    final dna = DNA(genes: updatedGenes);
+    final fitnessScore = await fitnessService.calculateScore(dna: dna);
+
+    return Entity(dna: dna, fitnessScore: fitnessScore);
   }
 }
