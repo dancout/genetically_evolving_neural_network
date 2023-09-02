@@ -1,5 +1,4 @@
-import 'package:genetic_evolution/genetic_evolution.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/models/genn_gene.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
@@ -18,7 +17,7 @@ class GENNNeuralNetwork extends NeuralNetwork {
   factory GENNNeuralNetwork.fromGenes({
     // NOTE:  This is of type Gene<GENNPerceptron> instead of GENNGene so that
     //        it is backwards compatible with the GENNFitnessService.
-    required List<Gene<GENNPerceptron>> genes,
+    required List<GENNGene> genes,
     GuessService? guessService,
   }) {
     // Sort genes first.
