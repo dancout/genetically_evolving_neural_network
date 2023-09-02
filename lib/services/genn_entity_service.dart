@@ -1,4 +1,5 @@
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 import 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
@@ -34,10 +35,12 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required List<Entity<GENNPerceptron>> parents,
     required int wave,
   }) async {
-    Entity<GENNPerceptron> child = await super.crossOver(
+    // TODO: Fix this cast (potentially when updating crossOver to account for
+    /// crossing Perceptron layers that do not have the same number of perceptrons)
+    GENNEntity child = await super.crossOver(
       parents: parents,
       wave: wave,
-    );
+    ) as GENNEntity;
     // Declare the new Entity
     final randNumber = random.nextDouble();
     final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);

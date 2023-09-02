@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
@@ -48,8 +49,8 @@ class PerceptronLayerMutationService {
     return GENNPerceptronLayer(gennPerceptrons: perceptrons);
   }
 
-  Entity<GENNPerceptron> addPerceptronLayer({
-    required Entity<GENNPerceptron> entity,
+  GENNEntity addPerceptronLayer({
+    required GENNEntity entity,
     required GENNPerceptronLayer perceptronLayer,
   }) {
     final duplicationLayer = perceptronLayer.gennPerceptrons.first.layer - 1;
@@ -71,15 +72,13 @@ class PerceptronLayerMutationService {
           .map((perceptron) => Gene(value: perceptron)),
     );
 
-    return Entity(
+    return entity.copyWith(
       dna: DNA(genes: genes),
-      fitnessScore: entity.fitnessScore,
-      parents: entity.parents,
     );
   }
 
-  Future<Entity<GENNPerceptron>> removePerceptronLayerFromEntity({
-    required Entity<GENNPerceptron> entity,
+  Future<GENNEntity> removePerceptronLayerFromEntity({
+    required GENNEntity entity,
     required int targetLayer,
   }) async {
     // Grab the genes from the given Entity
@@ -128,16 +127,14 @@ class PerceptronLayerMutationService {
     final dna = DNA(genes: genesWithUpdatedWeights);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
-    return Entity(
+    return entity.copyWith(
       dna: dna,
       fitnessScore: fitnessScore,
-      // TODO: Create a copyWith for Entity so we don't forget fields like parents
-      parents: entity.parents,
     );
   }
 
-  Future<Entity<GENNPerceptron>> addPerceptronToLayer({
-    required Entity<GENNPerceptron> entity,
+  Future<GENNEntity> addPerceptronToLayer({
+    required GENNEntity entity,
     required int targetLayer,
   }) async {
     assert(
@@ -174,15 +171,14 @@ class PerceptronLayerMutationService {
 
     final dna = DNA(genes: genes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
-    return Entity(
+    return entity.copyWith(
       dna: dna,
       fitnessScore: fitnessScore,
-      parents: entity.parents,
     );
   }
 
-  Future<Entity<GENNPerceptron>> removePerceptronFromLayer({
-    required Entity<GENNPerceptron> entity,
+  Future<GENNEntity> removePerceptronFromLayer({
+    required GENNEntity entity,
     required int targetLayer,
   }) async {
     final genes = List<Gene<GENNPerceptron>>.from(entity.dna.genes);
@@ -214,10 +210,9 @@ class PerceptronLayerMutationService {
     final dna = DNA(genes: updatedGenes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
-    return Entity(
+    return entity.copyWith(
       dna: dna,
       fitnessScore: fitnessScore,
-      parents: entity.parents,
     );
   }
 }
