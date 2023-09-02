@@ -34,24 +34,22 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required List<Entity<GENNPerceptron>> parents,
     required int wave,
   }) async {
-    final child = await super.crossOver(
+    Entity<GENNPerceptron> child = await super.crossOver(
       parents: parents,
       wave: wave,
     );
-
+    // Declare the new Entity
     final randNumber = random.nextDouble();
-
     final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);
+    var numLayers = gennNN.numLayers;
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.
     if (randNumber > layerMutationRate) {
-      // Declare the new Entity
-      late Entity<GENNPerceptron> newChild;
       // NOTE: If there is only a single layer, then we cannot remove it, so we
       // must add to it.
-      if (gennNN.numLayers == 1 || random.nextBool()) {
+      if (numLayers == 1 || random.nextBool()) {
         // Randomly pick a layer to duplicate
-        final duplicationLayer = random.nextInt(gennNN.numLayers);
+        final duplicationLayer = random.nextInt(numLayers);
 
         // Duplicate PerceptronLayer
         final duplicatedPerceptronLayer =
@@ -60,50 +58,47 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         );
 
         // Add PerceptronLayer into Entity
-        newChild = perceptronLayerMutationService.addPerceptronLayer(
+        child = perceptronLayerMutationService.addPerceptronLayer(
           entity: child,
           perceptronLayer: duplicatedPerceptronLayer,
         );
+        // Increment the number of Perceptron Layers
+        numLayers++;
       } else {
         // NOTE:  Cannot remove last layer, hence the -1. This is because the
         //        last layer represents the expected outputs, and that cannot
         //        change.
-        final removalLayer = random.nextInt(gennNN.numLayers - 1);
+        final removalLayer = random.nextInt(numLayers - 1);
 
         // Remove PerceptronLayer from Entity
-        newChild = perceptronLayerMutationService.removePerceptronLayer(
+        child = perceptronLayerMutationService.removePerceptronLayer(
           entity: child,
           removalLayer: removalLayer,
         );
+        // Decrement the number of Perceptron Layers
+        numLayers--;
       }
-      return newChild;
     }
 
     // Add or Remove a Perceptron from a PerceptronLayer if there is more than
     // one layer.
-    if (gennNN.numLayers > 1 && randNumber > perceptronMutationRate) {
-      late Entity<GENNPerceptron> newChild;
-
+    if (numLayers > 1 && randNumber > perceptronMutationRate) {
       // NOTE:  Cannot update the last layer, hence the -1. This is because the
       //        last layer represents the expected outputs, and that cannot
       //        change.
-      final targetLayer = random.nextInt(gennNN.numLayers - 1);
+      final targetLayer = random.nextInt(numLayers - 1);
 
       if (random.nextBool()) {
-        newChild = await perceptronLayerMutationService.addPerceptronToLayer(
+        child = await perceptronLayerMutationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
         );
       } else {
-        newChild =
-            await perceptronLayerMutationService.removePerceptronFromEntity(
+        child = await perceptronLayerMutationService.removePerceptronFromEntity(
           entity: child,
           targetLayer: targetLayer,
         );
-        newChild = child;
       }
-
-      return newChild;
     }
 
     // TODO: Consider doing the above adding/removing layer work from the
