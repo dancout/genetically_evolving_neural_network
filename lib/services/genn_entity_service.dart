@@ -43,7 +43,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     ) as GENNEntity;
     // Declare the new Entity
     final randNumber = random.nextDouble();
-    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);
+    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.gennDna.gennGenes);
     var numLayers = gennNN.numLayers;
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.

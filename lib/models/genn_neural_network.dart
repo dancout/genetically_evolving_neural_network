@@ -16,6 +16,8 @@ class GENNNeuralNetwork extends NeuralNetwork {
   int get numLayers => layers.length;
 
   factory GENNNeuralNetwork.fromGenes({
+    // NOTE:  This is of type Gene<GENNPerceptron> instead of GENNGene so that
+    //        it is backwards compatible with the GENNFitnessService.
     required List<Gene<GENNPerceptron>> genes,
     GuessService? guessService,
   }) {

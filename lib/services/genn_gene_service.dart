@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/models/genn_gene.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 
 class GENNGeneService extends GeneService<GENNPerceptron> {
@@ -75,7 +76,7 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
 
   @override
   Gene<GENNPerceptron> randomGene() {
-    return Gene(
+    return GENNGene(
       value: randomPerceptron(
         layer: initialLayer,
         numWeights: numInitialInputs,
