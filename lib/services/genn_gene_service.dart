@@ -13,6 +13,8 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
   final Random random;
 
   final int numInitialInputs;
+  // TODO: Investigate this being const or in-lined below OR should we be able
+  /// to pass the value into randomGene() ?
   int initialLayer = 0;
 
   /// Produces a random double between -1 and 1, exclusively.

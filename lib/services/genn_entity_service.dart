@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 import 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
@@ -14,12 +16,13 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required GENNFitnessService fitnessService,
     required GENNGeneMutationService geneMutationService,
     required super.trackParents,
-    super.random,
+    Random? random,
     PerceptronLayerMutationService? perceptronLayerMutationService,
   }) : super(
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
         ) {
+    this.random = random ?? Random();
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
         PerceptronLayerMutationService(
           fitnessService: fitnessService,
@@ -29,6 +32,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
   final double layerMutationRate;
   final double perceptronMutationRate;
   late final PerceptronLayerMutationService perceptronLayerMutationService;
+  late final Random random;
 
   @override
   Future<Entity<GENNPerceptron>> crossOver({
