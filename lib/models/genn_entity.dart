@@ -15,6 +15,14 @@ class GENNEntity extends Entity<GENNPerceptron> {
   final List<GENNEntity>? gennParents;
   final GENNDNA gennDna;
 
+  /// The highest Layer value present within the [gennDna]'s [gennGene] objects.
+  int get maxLayerNum => gennDna.gennGenes.fold(
+        0,
+        (previousValue, gennGene) => (previousValue > gennGene.value.layer)
+            ? previousValue
+            : gennGene.value.layer,
+      );
+
   GENNEntity copyWith({
     GENNDNA? gennDna,
     double? fitnessScore,
