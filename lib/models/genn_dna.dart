@@ -8,4 +8,14 @@ class GENNDNA extends DNA<GENNPerceptron> {
   }) : super(genes: gennGenes);
 
   final List<GENNGene> gennGenes;
+
+  factory GENNDNA.fromDNA({required DNA<GENNPerceptron> dna}) {
+    final gennGenes = <GENNGene>[];
+
+    for (var gene in dna.genes) {
+      gennGenes.add(GENNGene.fromGene(gene: gene));
+    }
+
+    return GENNDNA(gennGenes: gennGenes);
+  }
 }

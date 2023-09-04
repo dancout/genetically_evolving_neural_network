@@ -7,6 +7,13 @@ class GENNGene extends Gene<GENNPerceptron> {
     super.mutatedWaves,
   });
 
+  factory GENNGene.fromGene({required Gene gene}) {
+    return GENNGene(
+      value: gene.value,
+      mutatedWaves: gene.mutatedWaves,
+    );
+  }
+
   GENNGene copyWith({
     GENNPerceptron? value,
     List<int>? mutatedWaves,

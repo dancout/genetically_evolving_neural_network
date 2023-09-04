@@ -11,6 +11,6 @@ abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
     //        method used within the GeneticEvolution library. It is used so we
     //        can be stricter about using GENNDNA instead of
     //        DNA<GENNPerceptron>.
-    return gennScoringFunction(gennDna: dna as GENNDNA);
+    return gennScoringFunction(gennDna: GENNDNA.fromDNA(dna: dna));
   }
 }
