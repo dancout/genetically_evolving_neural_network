@@ -39,12 +39,16 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required List<Entity<GENNPerceptron>> parents,
     required int wave,
   }) async {
-    // TODO: Fix this cast (potentially when updating crossOver to account for
-    /// crossing Perceptron layers that do not have the same number of perceptrons)
-    GENNEntity child = await super.crossOver(
+    // Generate an Entity from the super class.
+    final superCrossover = await super.crossOver(
       parents: parents,
       wave: wave,
-    ) as GENNEntity;
+    );
+    // Convert the Entity into a GENNEntity
+    GENNEntity child = GENNEntity.fromEntity(
+      entity: superCrossover,
+    );
+
     // Declare the new Entity
     final randNumber = random.nextDouble();
     final gennNN = GENNNeuralNetwork.fromGenes(genes: child.gennDna.gennGenes);

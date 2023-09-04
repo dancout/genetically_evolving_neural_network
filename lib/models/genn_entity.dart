@@ -23,6 +23,24 @@ class GENNEntity extends Entity<GENNPerceptron> {
             : gennGene.value.layer,
       );
 
+  // TODO: This recursion feels super innefficient, but what can you do?
+  factory GENNEntity.fromEntity({required Entity<GENNPerceptron> entity}) {
+    final gennParents = <GENNEntity>[];
+
+    final parents = entity.parents;
+    if (parents != null) {
+      for (var parent in parents) {
+        gennParents.add(GENNEntity.fromEntity(entity: parent));
+      }
+    }
+
+    return GENNEntity(
+      gennDna: GENNDNA.fromDNA(dna: entity.dna),
+      fitnessScore: entity.fitnessScore,
+      gennParents: gennParents,
+    );
+  }
+
   GENNEntity copyWith({
     GENNDNA? gennDna,
     double? fitnessScore,
