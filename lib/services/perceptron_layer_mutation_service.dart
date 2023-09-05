@@ -25,8 +25,9 @@ class PerceptronLayerMutationService {
   GENNPerceptronLayer duplicatePerceptronLayer({
     required GENNPerceptronLayer gennPerceptronLayer,
   }) {
-    final perceptrons = <GENNPerceptron>[];
+    final duplicatedPerceptrons = <GENNPerceptron>[];
 
+    final perceptrons = gennPerceptronLayer.gennPerceptrons;
     for (int i = 0; i < perceptrons.length; i++) {
       // Set all weights to 0 so they ignore input
       final weights =
@@ -37,7 +38,7 @@ class PerceptronLayerMutationService {
       // forward.
       weights[i] = perceptrons[i].weights[i];
 
-      perceptrons.add(
+      duplicatedPerceptrons.add(
         GENNPerceptron(
           bias: perceptrons[i].bias,
           threshold: perceptrons[i].threshold,
@@ -47,7 +48,7 @@ class PerceptronLayerMutationService {
       );
     }
 
-    return GENNPerceptronLayer(gennPerceptrons: perceptrons);
+    return GENNPerceptronLayer(gennPerceptrons: duplicatedPerceptrons);
   }
 
   GENNEntity addPerceptronLayer({
