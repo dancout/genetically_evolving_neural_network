@@ -10,7 +10,8 @@ class GENNNeuralNetwork extends NeuralNetwork {
 
   final List<GENNPerceptronLayer> gennLayers;
 
-  int get numLayers => layers.length;
+  /// The number of [GennperceptronsLayer]s within this [GENNNeuralNetwork].
+  int get numLayers => gennLayers.length;
 
   factory GENNNeuralNetwork.fromGenes({
     required List<GENNGene> genes,
@@ -29,14 +30,14 @@ class GENNNeuralNetwork extends NeuralNetwork {
     // Iterate through each expected layer
     for (int i = 0; i <= expectedLayers; i++) {
       // Grab all genes of this layer
-      var genesOfLayer = genes
+      final perceptronsOfLayer = genes
           .where((gene) => gene.value.layer == i)
           .map((e) => e.value)
           .toList();
       // Then add the genes into a PerceptronLayer within the layers list.
       layers.add(
         GENNPerceptronLayer(
-          gennPerceptrons: genesOfLayer,
+          gennPerceptrons: perceptronsOfLayer,
         ),
       );
     }
