@@ -49,6 +49,7 @@ class GENNGeneticEvolution extends GeneticEvolution<GENNPerceptron> {
           trackParents: config.trackParents,
           layerMutationRate: config.layerMutationRate,
           perceptronMutationRate: config.perceptronMutationRate,
+          numOutputs: config.numGenes,
         );
 
     return GENNGeneticEvolution(

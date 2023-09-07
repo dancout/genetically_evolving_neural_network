@@ -4,6 +4,7 @@ import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 import 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
 import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+import 'package:genetically_evolving_neural_network/services/genn_crossover_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
 import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
@@ -16,14 +17,34 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required GENNFitnessService fitnessService,
     required GENNGeneMutationService geneMutationService,
     required super.trackParents,
+
+    /// The number of expected outputs for this NeuralNetwork
+    required int numOutputs,
+    // TODO: Should this be visibleForTesting?
+    CrossoverService<GENNPerceptron>? crossoverService,
     Random? random,
+    // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
   }) : super(
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
+          crossoverService: crossoverService ??
+              GENNCrossoverService(
+                perceptronLayerMutationService:
+                    perceptronLayerMutationService ??
+                        PerceptronLayerMutationService(
+                          fitnessService: fitnessService,
+                          geneService: geneMutationService.gennGeneService,
+                        ),
+                dnaService: dnaService,
+                geneMutationService: geneMutationService,
+                numOutputs: numOutputs,
+              ),
         ) {
     this.random = random ?? Random();
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
+        // TODO: This is really messy and PerceptronLayerMutationService
+        /// constructor is duplicated above.
         PerceptronLayerMutationService(
           fitnessService: fitnessService,
           geneService: geneMutationService.gennGeneService,
@@ -49,7 +70,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       entity: superCrossover,
     );
 
-    // Declare the new Entity
     final randNumber = random.nextDouble();
     final gennNN = GENNNeuralNetwork.fromGenes(genes: child.gennDna.gennGenes);
     var numLayers = gennNN.numLayers;
@@ -100,7 +120,15 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       //        change.
       final targetLayer = random.nextInt(numLayers - 1);
 
-      if (random.nextBool()) {
+      // TODO: Could this be optimized? Looking at the GENNPerceptronLayer we
+      /// could have access to the layer value immediately. But we'd have to
+      /// build that object, which might also be inefficient.
+      final numGenesInTargetLayer = child.gennDna.gennGenes
+          .where((gene) => gene.value.layer == targetLayer)
+          .length;
+
+      // Cannot remove from a layer that only has 1 perceptron
+      if ((numGenesInTargetLayer == 1) || random.nextBool()) {
         child = await perceptronLayerMutationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
