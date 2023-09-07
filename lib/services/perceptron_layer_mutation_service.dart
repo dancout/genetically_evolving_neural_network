@@ -30,13 +30,12 @@ class PerceptronLayerMutationService {
     final perceptrons = gennPerceptronLayer.gennPerceptrons;
     for (int i = 0; i < perceptrons.length; i++) {
       // Set all weights to 0 so they ignore input
-      final weights =
-          List<double>.generate(perceptrons[i].weights.length, (index) => 0.0);
+      final weights = List<double>.generate(perceptrons.length, (index) => 0.0);
 
-      // Set this perceptron's adjacent, previous weight to its existing value.
-      // This will effectively pass through the previous perceptron's value
-      // forward.
-      weights[i] = perceptrons[i].weights[i];
+      // Set this perceptron's adjacent, previous weight to 1.0. This will
+      // effectively pass through the previous perceptron's value forward.
+      // weights[i] = perceptrons[i].weights[i];
+      weights[i] = 1.0;
 
       duplicatedPerceptrons.add(
         GENNPerceptron(
@@ -86,25 +85,28 @@ class PerceptronLayerMutationService {
     required int targetLayer,
   }) async {
     // Grab the genes from the given Entity
-    final genes = entity.gennDna.gennGenes;
+    final gennGenes = entity.gennDna.gennGenes;
+
+    final numWeightsOfTargetLayer = entity.gennDna.gennGenes
+        .firstWhere((gennGene) => gennGene.value.layer == targetLayer)
+        .value
+        .weights
+        .length;
 
     // Remove all genes from targetLayer
-    genes.removeWhere((gene) => gene.value.layer == targetLayer);
+    gennGenes.removeWhere((gene) => gene.value.layer == targetLayer);
 
     // Decrement all layers after targetLayer
-    final genesAfterRemoval = genes.map((gene) {
-      if (gene.value.layer > targetLayer) {
-        return gene.copyWith(
-          value: gene.value.copyWith(layer: gene.value.layer - 1),
-        );
-      }
-      return gene;
-    }).toList();
-
-    final numWeightsUpdatedTargetLayer = genesAfterRemoval
-        .where((gene) => gene.value.layer == targetLayer - 1)
-        .toList()
-        .length;
+    final genesAfterRemoval = gennGenes.map(
+      (gennGene) {
+        if (gennGene.value.layer > targetLayer) {
+          return gennGene.copyWith(
+            value: gennGene.value.copyWith(layer: gennGene.value.layer - 1),
+          );
+        }
+        return gennGene;
+      },
+    );
 
     // Update the weights for the genes now currently in the targetLayer
     // position. This is necessary because the number of perceptrons may not
@@ -113,7 +115,7 @@ class PerceptronLayerMutationService {
     final genesWithUpdatedWeights = genesAfterRemoval.map((gene) {
       if (gene.value.layer == targetLayer) {
         final newWeights = List.generate(
-          numWeightsUpdatedTargetLayer,
+          numWeightsOfTargetLayer,
           (_) => geneService.randomNegOneToPosOne,
         );
 
@@ -139,14 +141,22 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
+    // TODO: Do we need this assert? Or is it overkill and inefficient?
     assert(
-        targetLayer > 0, 'Cannot add Perceptrons to the initial input layer');
-    // TODO: Does this need to be List.from so we're not editing the *actual*
-    /// list in place? OR, would that be a better idea for efficiency?
+      targetLayer < entity.maxLayerNum,
+      'Cannot add Perceptrons to the last perceptron layer. '
+      'This is the output layer and has a fixed number of perceptrons.',
+    );
+
     final genes = entity.gennDna.gennGenes;
 
-    final numWeights =
-        genes.where((gene) => gene.value.layer == targetLayer - 1).length;
+    // Grab the number of weights necessary from another gene from the
+    // targetLayer.
+    final numWeights = genes
+        .firstWhere((gene) => gene.value.layer == targetLayer)
+        .value
+        .weights
+        .length;
 
     genes.add(
       GENNGene(
@@ -162,7 +172,7 @@ class PerceptronLayerMutationService {
         final gene = genes[i];
         final perceptron = gene.value;
 
-        final weights = perceptron.weights;
+        final weights = List<double>.from(perceptron.weights);
         weights.add(geneService.randomNegOneToPosOne);
 
         genes[i] = gene.copyWith(
@@ -183,7 +193,16 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
-    final genes = List<GENNGene>.from(entity.gennDna.gennGenes);
+    // TODO: Do we need this assert, or should we remove for efficiency?
+    assert(
+      entity.gennDna.gennGenes
+              .where((gennGene) => gennGene.value.layer == targetLayer)
+              .length >
+          1,
+      'Cannot remove the only Perceptron from a given layer.',
+    );
+
+    var genes = entity.gennDna.gennGenes;
 
     final targetLayerGenes = List.from(
         genes.where((gene) => gene.value.layer == targetLayer).toList());
@@ -194,8 +213,8 @@ class PerceptronLayerMutationService {
 
     genes.remove(targetPerceptron);
 
-    final updatedGenes = genes.map((gene) {
-      if (gene.value.layer > targetLayer) {
+    genes = genes.map((gene) {
+      if (gene.value.layer == targetLayer + 1) {
         final weights = List<double>.from(gene.value.weights);
         // Remove the weight connected to the removed perceptron
         weights.removeAt(randIndex);
@@ -207,7 +226,7 @@ class PerceptronLayerMutationService {
       return gene;
     }).toList();
 
-    final dna = GENNDNA(gennGenes: updatedGenes);
+    final dna = GENNDNA(gennGenes: genes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
     return entity.copyWith(
