@@ -10,10 +10,14 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     required this.perceptronLayerMutationService,
     required super.dnaService,
     required super.geneMutationService,
+    required this.numOutputs,
     super.random,
   });
 
   final PerceptronLayerMutationService perceptronLayerMutationService;
+
+  /// The number of expected outputs for this NeuralNetwork
+  final int numOutputs;
 
   Future<List<GENNEntity>> alignNumLayersForParents({
     required List<GENNEntity> parents,
@@ -75,7 +79,7 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
       for (var copiedParent in copiedParents) {
         final perceptronLayerWithinParent = GENNPerceptronLayer(
           gennPerceptrons: copiedParent.gennDna.gennGenes
-              .where((gennGEne) => gennGEne.value.layer == currLayer)
+              .where((gennGene) => gennGene.value.layer == currLayer)
               .map((gene) => gene.value)
               .toList(),
         );
@@ -83,14 +87,18 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
         perceptronLayersForCurrLayer.add(perceptronLayerWithinParent);
       }
 
+      // Check if we are looking at the final layer in the NeuralNetwork.
+      final isLastLayer = currLayer == numLayers - 1;
+
       // Get the target number of perceptrons for this current layer
-      // TODO: Make sure that the final output layer always has the correct
-      /// number of perceptrons! I think it should work as is (because any
-      /// duplicated layers will have been duplicated from the final layer as it
-      /// is - with the correct number of output weights).
-      final targetNumPerceptrons = alignNumPerceptronsWithinLayer(
-        perceptronLayers: perceptronLayersForCurrLayer,
-      );
+      final targetNumPerceptrons = isLastLayer
+          // If we are on the last layer, then we should use the constant number
+          // of expected output values for this Neural Network.
+          ? numOutputs
+          // Otherwise, choose the number of outputs for this layer.
+          : alignNumPerceptronsWithinLayer(
+              perceptronLayers: perceptronLayersForCurrLayer,
+            );
 
       // Cycle through each Copied Parent
       for (int x = 0; x < copiedParents.length; x++) {
@@ -112,19 +120,23 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     required List<Entity<GENNPerceptron>> parents,
     required int wave,
   }) async {
+    // Convert the Entity<T> parents into GENNEntity objects.
+    var gennParents =
+        parents.map((parent) => GENNEntity.fromEntity(entity: parent)).toList();
+
     // Make the PerceptronLayers match up across all parents
-    var copiedParents = await alignNumLayersForParents(
-      parents: parents as List<GENNEntity>,
+    gennParents = await alignNumLayersForParents(
+      parents: gennParents,
     );
 
     // Make the Genes match up in each layer across all pernts
-    copiedParents = await alignGenesWithinLayersForParents(
-      parents: copiedParents,
+    gennParents = await alignGenesWithinLayersForParents(
+      parents: gennParents,
     );
 
     // Finally, return the super.crossover with the updated parents.
     return super.crossover(
-      parents: copiedParents,
+      parents: gennParents,
       wave: wave,
     );
   }
