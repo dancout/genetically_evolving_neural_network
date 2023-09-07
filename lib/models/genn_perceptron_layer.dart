@@ -5,9 +5,6 @@ class GENNPerceptronLayer extends PerceptronLayer {
   GENNPerceptronLayer({
     required this.gennPerceptrons,
   }) : super(perceptrons: gennPerceptrons) {
-    assert(
-      gennPerceptrons.isNotEmpty,
-    );
     final layer = gennPerceptrons.first.layer;
     for (var perceptron in gennPerceptrons) {
       assert(
@@ -19,6 +16,7 @@ class GENNPerceptronLayer extends PerceptronLayer {
 
   final List<GENNPerceptron> gennPerceptrons;
 
+  /// The number of the layer within the NeuralNetwork.
   int get layer => gennPerceptrons.first.layer;
 
   @override
