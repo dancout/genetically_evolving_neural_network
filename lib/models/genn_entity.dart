@@ -52,4 +52,11 @@ class GENNEntity extends Entity<GENNPerceptron> {
       gennParents: gennParents ?? this.gennParents,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        ...super.props,
+        gennParents,
+        gennDna,
+      ];
 }
