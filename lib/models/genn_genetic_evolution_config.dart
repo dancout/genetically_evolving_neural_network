@@ -4,8 +4,16 @@ class GENNGeneticEvolutionConfig extends GeneticEvolutionConfig {
   GENNGeneticEvolutionConfig({
     required this.numInitialInputs,
     required int numOutputs,
+
+    /// The rate at which a PerceptronLayer will be added or removed from an
+    /// Entity.
     required this.layerMutationRate,
+
+    /// The rate at which a Perceptron will be added or removed from a given
+    /// PerceptronLayer.
     required this.perceptronMutationRate,
+
+    /// The rate at which individual Perceptrons will mutate during crossover.
     required super.mutationRate,
     super.canReproduceWithSelf,
     super.numParents,
