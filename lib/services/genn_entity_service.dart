@@ -75,7 +75,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     var numLayers = gennNN.numLayers;
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.
-    if (randNumber > layerMutationRate) {
+    if (randNumber < layerMutationRate) {
       // NOTE: If there is only a single layer, then we cannot remove it, so we
       // must add to it.
       if (numLayers == 1 || random.nextBool()) {
@@ -114,7 +114,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
 
     // Add or Remove a Perceptron from a PerceptronLayer if there is more than
     // one layer.
-    if (numLayers > 1 && randNumber > perceptronMutationRate) {
+    if (numLayers > 1 && randNumber < perceptronMutationRate) {
       // NOTE:  Cannot update the last layer, hence the -1. This is because the
       //        last layer represents the expected outputs, and that cannot
       //        change.
