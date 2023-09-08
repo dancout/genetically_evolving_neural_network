@@ -37,6 +37,9 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
     );
   }
 
+  // TODO: Update this to have another internal call - one where it is
+  /// selecting what thing to mutate, and another to actually mutate the value.
+  /// That way the user could determine which of those they want to override.
   GENNPerceptron mutatePerceptron({
     required GENNPerceptron perceptron,
   }) {
