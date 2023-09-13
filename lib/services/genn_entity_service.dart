@@ -36,7 +36,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
                           fitnessService: fitnessService,
                           geneService: geneMutationService.gennGeneService,
                         ),
-                dnaService: dnaService,
                 geneMutationService: geneMutationService,
                 numOutputs: numOutputs,
               ),

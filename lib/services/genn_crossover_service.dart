@@ -8,7 +8,6 @@ import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
   GENNCrossoverService({
     required this.perceptronLayerMutationService,
-    required super.dnaService,
     required super.geneMutationService,
     required this.numOutputs,
     super.random,
