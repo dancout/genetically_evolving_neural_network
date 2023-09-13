@@ -1,5 +1,4 @@
-import 'package:genetic_evolution/genetic_evolution.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 class GENNDNAService extends DNAService<GENNPerceptron> {
   GENNDNAService({

@@ -1,4 +1,4 @@
-import 'package:neural_network_skeleton/neural_network_skeleton.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [NeuralNetwork.Perceptron] that additionally tracks which
 /// layer it is a part of.

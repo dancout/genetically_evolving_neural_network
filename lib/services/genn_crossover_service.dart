@@ -1,9 +1,4 @@
-import 'package:genetic_evolution/genetic_evolution.dart';
-import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
-import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
-import 'package:neural_network_skeleton/neural_network_skeleton.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
   GENNCrossoverService({

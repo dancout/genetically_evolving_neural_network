@@ -1,13 +1,4 @@
-import 'dart:math';
-
-import 'package:genetic_evolution/genetic_evolution.dart';
-import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
-import 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
-import 'package:genetically_evolving_neural_network/services/genn_crossover_service.dart';
-import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
-import 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
-import 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 class GENNEntityService extends EntityService<GENNPerceptron> {
   GENNEntityService({
@@ -17,33 +8,16 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required GENNFitnessService fitnessService,
     required GENNGeneMutationService geneMutationService,
     required super.trackParents,
-
-    /// The number of expected outputs for this NeuralNetwork
-    required int numOutputs,
-    // TODO: Should this be visibleForTesting?
-    CrossoverService<GENNPerceptron>? crossoverService,
+    @visibleForTesting required super.crossoverService,
     Random? random,
     // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
   }) : super(
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
-          crossoverService: crossoverService ??
-              GENNCrossoverService(
-                perceptronLayerMutationService:
-                    perceptronLayerMutationService ??
-                        PerceptronLayerMutationService(
-                          fitnessService: fitnessService,
-                          geneService: geneMutationService.gennGeneService,
-                        ),
-                geneMutationService: geneMutationService,
-                numOutputs: numOutputs,
-              ),
         ) {
     this.random = random ?? Random();
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
-        // TODO: This is really messy and PerceptronLayerMutationService
-        /// constructor is duplicated above.
         PerceptronLayerMutationService(
           fitnessService: fitnessService,
           geneService: geneMutationService.gennGeneService,

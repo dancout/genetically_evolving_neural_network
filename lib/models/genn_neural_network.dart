@@ -1,6 +1,4 @@
-import 'package:genetically_evolving_neural_network/models/genn_gene.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
-import 'package:neural_network_skeleton/neural_network_skeleton.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 class GENNNeuralNetwork extends NeuralNetwork {
   GENNNeuralNetwork({

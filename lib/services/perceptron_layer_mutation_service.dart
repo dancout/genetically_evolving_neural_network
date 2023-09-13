@@ -1,12 +1,4 @@
-import 'dart:math';
-
-import 'package:genetically_evolving_neural_network/models/genn_dna.dart';
-import 'package:genetically_evolving_neural_network/models/genn_entity.dart';
-import 'package:genetically_evolving_neural_network/models/genn_gene.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
-import 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
-import 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
-import 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
+part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 class PerceptronLayerMutationService {
   PerceptronLayerMutationService({
