@@ -23,10 +23,11 @@ class GENNEntity extends Entity<GENNPerceptron> {
 
   // TODO: This recursion feels super innefficient, but what can you do?
   factory GENNEntity.fromEntity({required Entity<GENNPerceptron> entity}) {
-    final gennParents = <GENNEntity>[];
+    List<GENNEntity>? gennParents;
 
     final parents = entity.parents;
     if (parents != null) {
+      gennParents = <GENNEntity>[];
       for (var parent in parents) {
         gennParents.add(GENNEntity.fromEntity(entity: parent));
       }
