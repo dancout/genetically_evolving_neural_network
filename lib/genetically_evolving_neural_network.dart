@@ -38,7 +38,6 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
   factory GENN.create({
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
-    // TODO: Should this be visibleForTesting?
     GENNGeneService? geneService,
     @visibleForTesting GENNEntityService? entityService,
     @visibleForTesting PopulationService<GENNPerceptron>? populationService,
