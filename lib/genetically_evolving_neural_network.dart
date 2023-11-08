@@ -35,6 +35,9 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     super.populationService,
   });
 
+  /// Creates a [GENN] object.
+  ///
+  /// This is the recommended constructor when using the [GENN] class.
   factory GENN.create({
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
@@ -42,7 +45,9 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     @visibleForTesting GENNEntityService? entityService,
     @visibleForTesting PopulationService<GENNPerceptron>? populationService,
   }) {
+    // Use the geneService passed in if any customizations are necessary.
     final gennGeneService = geneService ??
+        // Otherwise, generate one internally.
         GENNGeneService(numInitialInputs: config.numInitialInputs);
 
     final geneMutationService = GENNGeneMutationService(
@@ -66,7 +71,9 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       numOutputs: config.numGenes,
     );
 
+    // Use the gennEntityService passed in if any customizations are necessary.
     final gennEntityService = entityService ??
+        // Otherwise, generate one internally.
         GENNEntityService(
           dnaService: dnaService,
           fitnessService: fitnessService,
