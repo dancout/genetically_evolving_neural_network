@@ -21,15 +21,13 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_mutation_se
 part 'package:genetically_evolving_neural_network/services/genn_gene_service.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 
-/// A Calculator.
-// TODO: Would it be better to call this class "GENN"?
-class GeneticallyEvolvingNeuralNetwork
-    extends GeneticEvolution<GENNPerceptron> {
+/// Represents a Genetically Evolving Neural Network.
+class GENN extends GeneticEvolution<GENNPerceptron> {
   /// This constructor is visibleForTesting because the [GENNDNAService] and
   /// [GENNGeneMutationService] are not intended to be exposed unless absolutely
   /// necessary.
   @visibleForTesting
-  GeneticallyEvolvingNeuralNetwork({
+  GENN({
     required super.fitnessService,
     required super.geneticEvolutionConfig,
     required super.geneService,
@@ -37,9 +35,7 @@ class GeneticallyEvolvingNeuralNetwork
     super.populationService,
   });
 
-  // final GENNGeneticEvolutionConfig config;
-
-  factory GeneticallyEvolvingNeuralNetwork.create({
+  factory GENN.create({
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
     // TODO: Should this be visibleForTesting?
@@ -82,7 +78,7 @@ class GeneticallyEvolvingNeuralNetwork
           crossoverService: crossoverService,
         );
 
-    return GeneticallyEvolvingNeuralNetwork(
+    return GENN(
       fitnessService: fitnessService,
       geneticEvolutionConfig: config,
       geneService: gennGeneService,
