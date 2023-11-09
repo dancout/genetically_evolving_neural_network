@@ -7,12 +7,11 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
     Random? random,
   }) : random = random ?? Random();
 
+  /// Used for random number generation.
   final Random random;
 
+  /// Represents the number of initial inputs for creating a Random Gene.
   final int numInitialInputs;
-  // TODO: Investigate this being const or in-lined below OR should we be able
-  /// to pass the value into randomGene() ?
-  int initialLayer = 0;
 
   /// Produces a random double between -1 and 1, exclusively.
   double get randomNegOneToPosOne => (random.nextDouble() * 2) - 1;
@@ -81,6 +80,8 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
 
   @override
   Gene<GENNPerceptron> randomGene() {
+    const initialLayer = 0;
+
     return GENNGene(
       value: randomPerceptron(
         layer: initialLayer,
