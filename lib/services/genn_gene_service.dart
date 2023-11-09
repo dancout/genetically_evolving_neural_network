@@ -34,14 +34,51 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
     );
   }
 
-  // TODO: Update this to have another internal call - one where it is
-  /// selecting what thing to mutate, and another to actually mutate the value.
-  /// That way the user could determine which of those they want to override.
-
   /// Mutates the given [GENNPerceptron].
   GENNPerceptron mutatePerceptron({
     required GENNPerceptron perceptron,
   }) {
+    // Select an option to mutate
+    int selectedOption = selectMutationOption(perceptron);
+
+    // Return a new GENNPerceptron with its selected mutation
+    return mutateBasedOnSelectedOption(selectedOption, perceptron);
+  }
+
+  /// This function will mutate the given [perceptron] based on the input
+  /// [selectedOption].
+  ///
+  /// Option 0 is bias.
+  /// Option 1 is threshold.
+  /// Any other int is one of the weights between perceptrons.
+  @visibleForTesting
+  GENNPerceptron mutateBasedOnSelectedOption(
+    int selectedOption,
+    GENNPerceptron perceptron,
+  ) {
+    switch (selectedOption) {
+      case 0:
+        // update bias
+        return perceptron.copyWith(bias: randomNegOneToPosOne);
+      case 1:
+        // update threshold
+        return perceptron.copyWith(threshold: random.nextDouble());
+
+      default:
+        // update weights
+        final weights = List<double>.from(perceptron.weights);
+        // Subtracting 2 to account for the bias and threshold options
+        weights[selectedOption - 2] = randomNegOneToPosOne;
+        return perceptron.copyWith(weights: weights);
+    }
+  }
+
+  /// Returns an [int] that represents the selected option to mutate within the
+  /// given [perceptron].
+  ///
+  /// This number will be between 0 and (number of weights + 2)
+  @visibleForTesting
+  int selectMutationOption(GENNPerceptron perceptron) {
     var randValue = random.nextDouble();
 
     // Represents how many options there are to choose from. It is the number of
@@ -61,21 +98,7 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
         selectedOption = i;
       }
     }
-
-    switch (selectedOption) {
-      case 0:
-        // update bias
-        return perceptron.copyWith(bias: randomNegOneToPosOne);
-      case 1:
-        // update threshold
-        return perceptron.copyWith(threshold: random.nextDouble());
-
-      default:
-        // update weights
-        final weights = List<double>.from(perceptron.weights);
-        weights[selectedOption - 2] = randomNegOneToPosOne;
-        return perceptron.copyWith(weights: weights);
-    }
+    return selectedOption;
   }
 
   @override
