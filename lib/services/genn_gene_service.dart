@@ -1,5 +1,6 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// This class is responsible for mutating and creating random Genes.
 class GENNGeneService extends GeneService<GENNPerceptron> {
   GENNGeneService({
     required this.numInitialInputs,
@@ -16,6 +17,7 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
   /// Produces a random double between -1 and 1, exclusively.
   double get randomNegOneToPosOne => (random.nextDouble() * 2) - 1;
 
+  /// Creates a randomized [GENNPerceptron].
   GENNPerceptron randomPerceptron({
     required int numWeights,
     required int layer,
@@ -36,6 +38,8 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
   // TODO: Update this to have another internal call - one where it is
   /// selecting what thing to mutate, and another to actually mutate the value.
   /// That way the user could determine which of those they want to override.
+
+  /// Mutates the given [GENNPerceptron].
   GENNPerceptron mutatePerceptron({
     required GENNPerceptron perceptron,
   }) {
