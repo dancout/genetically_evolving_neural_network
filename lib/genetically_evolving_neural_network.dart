@@ -20,7 +20,9 @@ part 'package:genetically_evolving_neural_network/services/genn_fitness_service.
 part 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
+part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
+part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
 /// Represents a Genetically Evolving Neural Network.
 class GENN extends GeneticEvolution<GENNPerceptron> {
@@ -69,7 +71,9 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     final crossoverService = GENNCrossoverService(
       perceptronLayerMutationService: PerceptronLayerMutationService(
         fitnessService: fitnessService,
-        geneService: geneMutationService.gennGeneService,
+        gennGeneServiceHelper:
+            geneMutationService.gennGeneService.gennGeneServiceHelper,
+        random: config.random,
       ),
       geneMutationService: geneMutationService,
       numOutputs: config.numGenes,
