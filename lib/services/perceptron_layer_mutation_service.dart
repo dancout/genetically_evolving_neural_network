@@ -1,14 +1,25 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Mutates the Perceptron Layers within a Neural Network.
 class PerceptronLayerMutationService {
   PerceptronLayerMutationService({
-    required this.geneService,
+    required this.gennGeneServiceHelper,
     required this.fitnessService,
     Random? random,
-  }) : random = random ?? Random();
+    NumberGenerator? numberGenerator,
+  }) : numberGenerator = numberGenerator ??
+            NumberGenerator(
+              random: random ?? Random(),
+            );
+
+  /// Used to calculate the fitness score of an entity.
   final GENNFitnessService fitnessService;
-  final GENNGeneService geneService;
-  final Random random;
+
+  /// Used to generate a random [GENNPerceptron].
+  final GennGeneServiceHelper gennGeneServiceHelper;
+
+  /// Used to generate random numbers and bools.
+  final NumberGenerator numberGenerator;
 
   /// Returns a [GENNPerceptronLayer] that is duplicated from the input
   /// [gennPerceptronLayer] with the weights adjusted so the [GENNPerceptron]
@@ -108,7 +119,7 @@ class PerceptronLayerMutationService {
       if (gene.value.layer == targetLayer) {
         final newWeights = List.generate(
           numWeightsOfTargetLayer,
-          (_) => geneService.randomNegOneToPosOne,
+          (_) => numberGenerator.randomNegOneToPosOne,
         );
 
         // Return the updated Gene within the targetLayer
@@ -152,7 +163,7 @@ class PerceptronLayerMutationService {
 
     genes.add(
       GENNGene(
-        value: geneService.randomPerceptron(
+        value: gennGeneServiceHelper.randomPerceptron(
           numWeights: numWeights,
           layer: targetLayer,
         ),
@@ -165,7 +176,7 @@ class PerceptronLayerMutationService {
         final perceptron = gene.value;
 
         final weights = List<double>.from(perceptron.weights);
-        weights.add(geneService.randomNegOneToPosOne);
+        weights.add(numberGenerator.randomNegOneToPosOne);
 
         genes[i] = gene.copyWith(
           value: perceptron.copyWith(weights: weights),
@@ -199,7 +210,7 @@ class PerceptronLayerMutationService {
     final targetLayerGenes = List.from(
         genes.where((gene) => gene.value.layer == targetLayer).toList());
 
-    final randIndex = random.nextInt(targetLayerGenes.length);
+    final randIndex = numberGenerator.nextInt(targetLayerGenes.length);
 
     final targetPerceptron = targetLayerGenes[randIndex];
 

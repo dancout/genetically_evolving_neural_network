@@ -1,14 +1,20 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Crosses over parents to create a child.
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
   GENNCrossoverService({
     required this.perceptronLayerMutationService,
     required super.geneMutationService,
     required this.numOutputs,
     super.random,
-  });
+    NumberGenerator? numberGenerator,
+  }) : numberGenerator = numberGenerator ?? NumberGenerator();
 
+  /// Used to mutate the [GENNPerceptronLayer]s.
   final PerceptronLayerMutationService perceptronLayerMutationService;
+
+  /// Used to generate random numbers and bools.
+  final NumberGenerator numberGenerator;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
@@ -264,7 +270,7 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     );
 
     while (maxValue != minValue) {
-      if (random.nextBool()) {
+      if (numberGenerator.nextBool) {
         // Increment the min value towards the max value
         minValue++;
       } else {

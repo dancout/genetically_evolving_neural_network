@@ -9,24 +9,27 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required GENNGeneMutationService geneMutationService,
     required super.trackParents,
     @visibleForTesting required super.crossoverService,
-    Random? random,
+    NumberGenerator? numberGenerator,
     // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
-  }) : super(
+  })  : numberGenerator = numberGenerator ?? NumberGenerator(),
+        super(
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
         ) {
-    this.random = random ?? Random();
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
         PerceptronLayerMutationService(
           fitnessService: fitnessService,
-          geneService: geneMutationService.gennGeneService,
+          gennGeneServiceHelper:
+              geneMutationService.gennGeneService.gennGeneServiceHelper,
         );
   }
+
+  /// Used to generate random numbers and bools.
+  final NumberGenerator numberGenerator;
   final double layerMutationRate;
   final double perceptronMutationRate;
   late final PerceptronLayerMutationService perceptronLayerMutationService;
-  late final Random random;
 
   @override
   Future<Entity<GENNPerceptron>> crossOver({
@@ -43,7 +46,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       entity: superCrossover,
     );
 
-    final randNumber = random.nextDouble();
+    final randNumber = numberGenerator.nextDouble;
     final gennNN = GENNNeuralNetwork.fromGenes(genes: child.gennDna.gennGenes);
     var numLayers = gennNN.numLayers;
 
@@ -51,9 +54,9 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     if (randNumber < layerMutationRate) {
       // NOTE: If there is only a single layer, then we cannot remove it, so we
       // must add to it.
-      if (numLayers == 1 || random.nextBool()) {
+      if (numLayers == 1 || numberGenerator.nextBool) {
         // Randomly pick a layer to duplicate
-        final duplicationLayer = random.nextInt(numLayers);
+        final duplicationLayer = numberGenerator.nextInt(numLayers);
 
         // Duplicate PerceptronLayer
         final duplicatedPerceptronLayer =
@@ -72,7 +75,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         // NOTE:  Cannot remove last layer, hence the -1. This is because the
         //        last layer represents the expected outputs, and that cannot
         //        change.
-        final targetLayer = random.nextInt(numLayers - 1);
+        final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
         // Remove PerceptronLayer from Entity
         child = await perceptronLayerMutationService
@@ -91,7 +94,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       // NOTE:  Cannot update the last layer, hence the -1. This is because the
       //        last layer represents the expected outputs, and that cannot
       //        change.
-      final targetLayer = random.nextInt(numLayers - 1);
+      final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
       // TODO: Could this be optimized? Looking at the GENNPerceptronLayer we
       /// could have access to the layer value immediately. But we'd have to
@@ -101,7 +104,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
           .length;
 
       // Cannot remove from a layer that only has 1 perceptron
-      if ((numGenesInTargetLayer == 1) || random.nextBool()) {
+      if ((numGenesInTargetLayer == 1) || numberGenerator.nextBool) {
         child = await perceptronLayerMutationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
