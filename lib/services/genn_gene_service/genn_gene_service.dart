@@ -12,8 +12,6 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
             );
 
   /// Used to assist this class with overridden methods.
-  // TODO: Do we need this to be @visibleForTesting from here so that a user
-  /// cannot access it through the GENNGeneService?
   @visibleForTesting
   final GennGeneServiceHelper gennGeneServiceHelper;
 
