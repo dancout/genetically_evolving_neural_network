@@ -61,6 +61,7 @@ class GennGeneServiceMutationHelper {
       randValue -= selectionProbabilty;
       if (randValue < 0) {
         selectedOption = i;
+        break;
       }
     }
     return selectedOption;
