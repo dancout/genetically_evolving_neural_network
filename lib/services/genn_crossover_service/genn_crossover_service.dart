@@ -7,37 +7,41 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     required super.geneMutationService,
     required this.numOutputs,
     super.random,
+    GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
     NumberGenerator? numberGenerator,
-  }) : numberGenerator = numberGenerator ?? NumberGenerator();
+  }) {
+    this.numberGenerator = numberGenerator ?? NumberGenerator();
+    this.gennCrossoverServiceHelper = gennCrossoverServiceHelper ??
+        GENNCrossoverServiceHelper(numberGenerator: this.numberGenerator);
+  }
 
   /// Used to mutate the [GENNPerceptronLayer]s.
   final PerceptronLayerMutationService perceptronLayerMutationService;
 
   /// Used to generate random numbers and bools.
-  final NumberGenerator numberGenerator;
+  late final NumberGenerator numberGenerator;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
+
+  late final GENNCrossoverServiceHelper gennCrossoverServiceHelper;
 
   Future<List<GENNEntity>> alignNumLayersForParents({
     required List<GENNEntity> parents,
   }) async {
     final copiedParents = List<GENNEntity>.from(parents);
 
-    int maxLayerNum = copiedParents.fold(
-        0,
-        (previousValue, gennEntity) => (previousValue > gennEntity.maxLayerNum)
-            ? previousValue
-            : gennEntity.maxLayerNum);
+    int maxLayerNum = gennCrossoverServiceHelper.maxLayerNum(
+      parents: copiedParents,
+    );
 
-    int minLayerNum = copiedParents.fold(
-        maxLayerNum,
-        (previousValue, gennEntity) => (previousValue < gennEntity.maxLayerNum)
-            ? previousValue
-            : gennEntity.maxLayerNum);
+    int minLayerNum = gennCrossoverServiceHelper.minLayerNum(
+      maxLayerNum: maxLayerNum,
+      parents: copiedParents,
+    );
 
     // Make the maxLayerNum and minLayerNum match
-    final targetNumLayers = alignMinAndMaxValues(
+    final targetNumLayers = gennCrossoverServiceHelper.alignMinAndMaxValues(
       maxValue: maxLayerNum,
       minValue: minLayerNum,
     );
@@ -160,7 +164,7 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
               : gennPerceptronLayer.numPerceptrons,
     );
 
-    return alignMinAndMaxValues(
+    return gennCrossoverServiceHelper.alignMinAndMaxValues(
       maxValue: maxNumPerceptrons,
       minValue: minNumPerceptrons,
     );
@@ -258,26 +262,5 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     }
 
     return updatedEntity;
-  }
-
-  int alignMinAndMaxValues({
-    required int maxValue,
-    required int minValue,
-  }) {
-    assert(
-      maxValue >= minValue,
-      'maxValue must be greater than or equal to minValue',
-    );
-
-    while (maxValue != minValue) {
-      if (numberGenerator.nextBool) {
-        // Increment the min value towards the max value
-        minValue++;
-      } else {
-        // Decrement the max value towards the min value
-        maxValue--;
-      }
-    }
-    return maxValue;
   }
 }

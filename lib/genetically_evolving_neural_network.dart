@@ -13,7 +13,8 @@ part 'package:genetically_evolving_neural_network/models/genn_genetic_evolution_
 part 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
-part 'package:genetically_evolving_neural_network/services/genn_crossover_service.dart';
+part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service.dart';
+part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_dna_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_entity_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
