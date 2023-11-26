@@ -16,7 +16,6 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
       this.gennCrossoverServiceAlignmentHelper =
           gennCrossoverServiceAlignmentHelper;
     } else {
-      // gennCrossoverServiceAlignmentHelper is null
       if (perceptronLayerMutationService != null) {
         this.gennCrossoverServiceAlignmentHelper =
             GENNCrossoverServiceAlignmentHelper(

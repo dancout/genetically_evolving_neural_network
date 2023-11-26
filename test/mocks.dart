@@ -24,3 +24,6 @@ class MockGennCrossoverServiceHelper extends Mock
 
 class MockGennCrossoverServiceAlignmentPerceptronHelper extends Mock
     implements GENNCrossoverServiceAlignmentPerceptronHelper {}
+
+class MockGENNCrossoverServiceAlignmentHelper extends Mock
+    implements GENNCrossoverServiceAlignmentHelper {}
