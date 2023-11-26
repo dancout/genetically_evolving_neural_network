@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../mocks.dart';
+import '../../mocks.dart';
 
 void main() {
   late NumberGenerator mockNumberGenerator;
