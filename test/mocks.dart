@@ -18,3 +18,9 @@ class MockGeneMutationService<T> extends Mock
     implements GeneMutationService<T> {}
 
 class MockRandom extends Mock implements Random {}
+
+class MockGennCrossoverServiceHelper extends Mock
+    implements GENNCrossoverServiceHelper {}
+
+class MockGennCrossoverServiceAlignmentPerceptronHelper extends Mock
+    implements GENNCrossoverServiceAlignmentPerceptronHelper {}
