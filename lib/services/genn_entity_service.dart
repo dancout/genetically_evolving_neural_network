@@ -1,5 +1,6 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Used for creating new [Entity] objects.
 class GENNEntityService extends EntityService<GENNPerceptron> {
   GENNEntityService({
     required this.layerMutationRate,
@@ -8,7 +9,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required GENNFitnessService fitnessService,
     required GENNGeneMutationService geneMutationService,
     required super.trackParents,
-    @visibleForTesting required super.crossoverService,
+    @visibleForTesting super.crossoverService,
     NumberGenerator? numberGenerator,
     // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
@@ -117,12 +118,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       }
     }
 
-    // TODO: Consider doing the above adding/removing layer work from the
-    /// PopulationService. This is already included in GeneticEvolution (so no
-    /// changes necessary to the GeneticEvolution dependency). The downside is
-    /// that we have to run through the created population and either change the
-    /// entities in place or create a new population list, which feels
-    /// inefficient.
     return child;
   }
 }

@@ -27,3 +27,12 @@ class MockGennCrossoverServiceAlignmentPerceptronHelper extends Mock
 
 class MockGENNCrossoverServiceAlignmentHelper extends Mock
     implements GENNCrossoverServiceAlignmentHelper {}
+
+class MockGENNFitnessService extends Mock implements GENNFitnessService {}
+
+class MockGENNGeneMutationService extends Mock
+    implements GENNGeneMutationService {}
+
+class MockDNAService<T> extends Mock implements DNAService<T> {}
+
+class MockCrossoverService<T> extends Mock implements CrossoverService<T> {}
