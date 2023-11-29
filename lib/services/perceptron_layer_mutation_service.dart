@@ -53,6 +53,7 @@ class PerceptronLayerMutationService {
     return GENNPerceptronLayer(gennPerceptrons: duplicatedPerceptrons);
   }
 
+  /// Inserts the given [perceptronLayer] into the given [entity].
   GENNEntity addPerceptronLayer({
     required GENNEntity entity,
     required GENNPerceptronLayer perceptronLayer,
@@ -83,6 +84,8 @@ class PerceptronLayerMutationService {
     );
   }
 
+  /// Removed the PerceptronLayer represented by [targetLayer] from the input
+  /// [entity].
   Future<GENNEntity> removePerceptronLayerFromEntity({
     required GENNEntity entity,
     required int targetLayer,
@@ -140,6 +143,7 @@ class PerceptronLayerMutationService {
     );
   }
 
+  /// Adds a random [GENNPerceptron] to the given [entity] at the [targetLayer].
   Future<GENNEntity> addPerceptronToLayer({
     required GENNEntity entity,
     required int targetLayer,
@@ -192,6 +196,7 @@ class PerceptronLayerMutationService {
     );
   }
 
+  /// Removes a [GENNPerceptron] from the given [entity] from the [targetLayer].
   Future<GENNEntity> removePerceptronFromLayer({
     required GENNEntity entity,
     required int targetLayer,
