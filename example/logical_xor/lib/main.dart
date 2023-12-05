@@ -1,125 +1,312 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({
+    super.key,
+    this.autoPlay = true,
+  });
 
-  // This widget is the root of your application.
+  final bool autoPlay;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isPlaying = false;
+  late final double target;
+
+  late final GENN genn;
+
+  // TODO: This is causing the genetic_evolution import above. Can I make it so
+  /// that we don't need to import 2 packages for this?
+  Generation<GENNPerceptron>? generation;
+
+  int? waveTargetFound;
+
+  @override
+  void initState() {
+    final config = GENNGeneticEvolutionConfig(
+      numOutputs: 1,
+      mutationRate: 0.05,
+      numInitialInputs: 3,
+      layerMutationRate: 0.15,
+      perceptronMutationRate: 0.25,
+    );
+
+    final fitnessService = LogicalXORFitnessService();
+
+    target = pow(4, 8) + fitnessService.nonZeroBias;
+
+    genn = GENN.create(
+      config: config,
+      fitnessService: fitnessService,
+    );
+
+    // Initialize the first generation
+    genn.nextGeneration().then((value) {
+      setState(() {
+        generation = value;
+      });
+    });
+
+    super.initState();
+  }
+
+  Widget showGuesses(Entity<GENNPerceptron> entity) {
+    final logicalXORFitnessService = LogicalXORFitnessService();
+    final guesses = logicalXORFitnessService.getGuesses(
+      gennDna: GENNDNA.fromDNA(
+        dna: entity.dna,
+      ),
+    );
+
+    final guessTextWidgets = [];
+
+    for (int i = 0; i < guesses.length; i++) {
+      final guess = guesses[i][0];
+      final textWidget = Text(
+        guess.toString(),
+        style: (guess == logicalXORFitnessService.targetOutputsList[i][0])
+            ? null
+            : const TextStyle(
+                color: Colors.red,
+              ),
+      );
+
+      guessTextWidgets.add(textWidget);
+    }
+    return Column(
+      children: [
+        const Text('Guesses'),
+        ...guessTextWidgets,
+      ],
+    );
+  }
+
+  Widget showCorrectAnswers() {
+    return Column(
+      children: [
+        const Text('Correct Answer'),
+        ...LogicalXORFitnessService()
+            .targetOutputsList
+            .map(
+              (targetValue) => Text(
+                targetValue[0].toString(),
+              ),
+            )
+            .toList()
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final generation = this.generation;
+    if (generation == null) {
+      return const CircularProgressIndicator();
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      if (isPlaying) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        genn.nextGeneration().then((value) {
+          setState(() {
+            this.generation = value;
+          });
+        });
+      }
+    });
+
+    // Check if target has been found.
+    if (waveTargetFound == null &&
+        generation.population.topScoringEntity.fitnessScore == target) {
+      waveTargetFound = generation.wave;
+    }
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Target: $target',
+              ),
+              Text(
+                'Wave: ${generation.wave.toString()}',
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      const Text('Top Value'),
+                      // Text(
+                      //   convertWord(generation.population.topScoringEntity),
+                      // ),
+                      // Text(
+                      Row(
+                        children: [
+                          showCorrectAnswers(),
+                          const SizedBox(width: 12),
+                          showGuesses(generation.population.topScoringEntity),
+                        ],
+                      ),
+                      // ),
+                    ],
+                  ),
+                  const SizedBox(width: 24),
+                  Column(
+                    children: [
+                      const Text('Top Score'),
+                      Text(
+                        generation.population.topScoringEntity.fitnessScore
+                            .toString(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              if (waveTargetFound != null)
+                Text('Target reached at wave: $waveTargetFound'),
+              const SizedBox(height: 24),
+              // const Text('Entities'),
+              // Flexible(
+              //   child: ListView(
+              //     children: wordRows,
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (widget.autoPlay) {
+              setState(() {
+                isPlaying = !isPlaying;
+              });
+            } else {
+              genn.nextGeneration().then((value) {
+                setState(() {
+                  this.generation = value;
+                });
+              });
+            }
+          },
+          child: (!widget.autoPlay || !isPlaying)
+              ? const Icon(Icons.play_arrow)
+              : const Icon(Icons.pause),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+/// This fitness service will be used to score a logical XOR calculator. The
+/// output should only return true if a single value is 1.0 and both other
+/// values are 0.0. There should be one exclusive positive value! The more
+/// correct guesses that a NeuralNetwork makes, the higher its fitness score
+/// will be.
+class LogicalXORFitnessService extends GENNFitnessService {
+  /// The list of logical inputs for your XOR calculator. The possible options
+  /// are 0 or 1, effectively true or false.
+  List<List<double>> logicalInputsList = [
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 1.0, 1.0],
+    [1.0, 0.0, 0.0],
+    [1.0, 0.0, 1.0],
+    [1.0, 1.0, 0.0],
+    [1.0, 1.0, 1.0],
+  ];
+
+  /// The list of logical outputs for your XOR calculator. These are the
+  /// expected outputs respective to the logical inputs.
+  List<List<double>> targetOutputsList = [
+    [0.0],
+    [1.0],
+    [1.0],
+    [0.0],
+    [1.0],
+    [0.0],
+    [0.0],
+    [0.0],
+  ];
+
+  List<List<double>> getGuesses({
+    required GENNDNA gennDna,
+  }) {
+    // Declare the NeuralNetwork
+    final neuralNetwork = GENNNeuralNetwork.fromGenes(
+      genes: List<GENNGene>.from(gennDna.gennGenes),
+    );
+
+    // Declare a list of guesses
+    List<List<double>> guesses = [];
+
+    // Cycle through each input
+    for (int i = 0; i < logicalInputsList.length; i++) {
+      // Declare this run's set of inputs
+      final inputs = logicalInputsList[i];
+
+      // Make a guess using the NeuralNetwork
+      final guess = neuralNetwork.guess(inputs: inputs);
+
+      // Add this guess to the list of guesses
+      guesses.add(guess);
+    }
+
+    // Return the list of guesses
+    return guesses;
+  }
+
+  @override
+  double get nonZeroBias => 0.01;
+
+  @override
+  Future<double> gennScoringFunction({
+    required GENNDNA gennDna,
+  }) async {
+    // Collect all the guesses from this NeuralNetwork
+    final guesses = getGuesses(gennDna: gennDna);
+
+    // Declare a variable to store the sum of all errors
+    var errorSum = 0.0;
+
+    // Cycle through each guess to check its validity
+    for (int i = 0; i < guesses.length; i++) {
+      // Calculate the error from this guess
+      final error = (targetOutputsList[i][0] - guesses[i][0]).abs();
+
+      // Add this error to the errorSum
+      errorSum += error;
+    }
+
+    // Calculate the difference between a perfect score (8) and the total
+    // errors. A perfect score would mean zero errors with 8 correct answers,
+    // meaning a perfect score would be 8.
+    final diff = logicalInputsList.length - errorSum;
+
+    // To make the better performing Entities stand out more in this population,
+    // use the following equation to calculate the FitnessScore.
+    //
+    // 4 to the power of diff
+    // 4^(diff)
+    return pow(4, diff).toDouble();
   }
 }

@@ -28,8 +28,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  genetically_evolving_neural_network:
+    path:  ../../../genetically_evolving_neural_network
   flutter:
     sdk: flutter
+  
 
 
   # The following adds the Cupertino Icons font to your application.
