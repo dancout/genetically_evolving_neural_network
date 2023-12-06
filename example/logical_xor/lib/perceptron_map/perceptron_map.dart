@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
-import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
 import 'package:logical_xor/perceptron_map/visualized_perceptron.dart';
 import 'package:logical_xor/perceptron_map/weight_line_painter.dart';
 
@@ -105,8 +104,6 @@ class PerceptronMap extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const PerceptronMapKey(),
-        const Text('Top Performing Neural Network'),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

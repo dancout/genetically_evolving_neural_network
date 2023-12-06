@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
+import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     final config = GENNGeneticEvolutionConfig(
+      populationSize: 20,
       numOutputs: 1,
       mutationRate: 0.05,
       numInitialInputs: numInitialInputs,
@@ -144,6 +146,7 @@ class _MyAppState extends State<MyApp> {
       waveTargetFound = generation.wave;
     }
 
+    final perceptronMapDivider = Container(height: 4, color: Colors.grey);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -155,11 +158,10 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              PerceptronMap(
-                entity: GENNEntity.fromEntity(
-                  entity: generation.population.topScoringEntity,
-                ),
-                numInputs: numInitialInputs,
+              const PerceptronMapKey(),
+              const Text('Top Performing Neural Network'),
+              showPerceptronMapWithScore(
+                generation.population.topScoringEntity,
               ),
               Text(
                 'Target: $target',
@@ -198,12 +200,17 @@ class _MyAppState extends State<MyApp> {
               if (waveTargetFound != null)
                 Text('Target reached at wave: $waveTargetFound'),
               const SizedBox(height: 24),
-              // const Text('Entities'),
-              // Flexible(
-              //   child: ListView(
-              //     children: wordRows,
-              //   ),
-              // ),
+              const Text('Population Entities'),
+              perceptronMapDivider,
+              Flexible(
+                child: ListView.separated(
+                  itemBuilder: (context, index) => showPerceptronMapWithScore(
+                    generation.population.entities[index],
+                  ),
+                  itemCount: generation.population.entities.length,
+                  separatorBuilder: (context, index) => perceptronMapDivider,
+                ),
+              ),
             ],
           ),
         ),
@@ -242,6 +249,23 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
       ),
+    );
+  }
+
+  Row showPerceptronMapWithScore(Entity<GENNPerceptron> entity) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        PerceptronMap(
+          entity: GENNEntity.fromEntity(
+            entity: entity,
+          ),
+          numInputs: numInitialInputs,
+        ),
+        Text(
+          'Score: ${entity.fitnessScore.toString()}',
+        )
+      ],
     );
   }
 }
