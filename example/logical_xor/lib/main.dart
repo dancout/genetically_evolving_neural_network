@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> {
   Widget showCorrectAnswers() {
     return Column(
       children: [
-        const Text('Correct Answer'),
+        const Text('Correct Answers'),
         ...LogicalXORFitnessService()
             .targetOutputsList
             .map(
@@ -103,6 +103,18 @@ class _MyAppState extends State<MyApp> {
                 targetValue[0].toString(),
               ),
             )
+            .toList()
+      ],
+    );
+  }
+
+  Widget showLogicalInputs() {
+    return Column(
+      children: [
+        const Text('Logical Inputs'),
+        ...LogicalXORFitnessService()
+            .logicalInputsList
+            .map((e) => Text(e.toString()))
             .toList()
       ],
     );
@@ -162,6 +174,8 @@ class _MyAppState extends State<MyApp> {
                     children: [
                       Row(
                         children: [
+                          showLogicalInputs(),
+                          const SizedBox(width: 12),
                           showCorrectAnswers(),
                           const SizedBox(width: 12),
                           showGuesses(generation.population.topScoringEntity),
