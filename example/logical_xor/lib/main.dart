@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   Generation<GENNPerceptron>? generation;
 
   int? waveTargetFound;
+  static const numInitialInputs = 3;
 
   bool autoPlay = true;
   @override
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
     final config = GENNGeneticEvolutionConfig(
       numOutputs: 1,
       mutationRate: 0.05,
-      numInitialInputs: 3,
+      numInitialInputs: numInitialInputs,
       layerMutationRate: 0.15,
       perceptronMutationRate: 0.25,
     );
@@ -146,6 +147,7 @@ class _MyAppState extends State<MyApp> {
                 entity: GENNEntity.fromEntity(
                   entity: generation.population.topScoringEntity,
                 ),
+                numInputs: numInitialInputs,
               ),
               Text(
                 'Target: $target',

@@ -10,14 +10,44 @@ class PerceptronMap extends StatelessWidget {
   const PerceptronMap({
     super.key,
     required this.entity,
+    required this.numInputs,
   });
 
   final GENNEntity entity;
+  final int numInputs;
 
   @override
   Widget build(BuildContext context) {
     final rows = <Widget>[];
 
+    // Add initial inputs as passthrough perceptrons with weights
+    final inputPerceptrons = List.generate(
+        numInputs,
+        (index) =>
+            GENNPerceptron(layer: 0, bias: 0, threshold: 1.0, weights: [1.0]));
+
+    addWeightsLayer(
+      perceptrons: inputPerceptrons,
+      totalPerceptronSize: totalPerceptronSize,
+      rows: rows,
+    );
+
+    rows.add(
+      Column(
+        children: List.generate(
+          numInputs,
+          (index) => const Padding(
+            padding: EdgeInsets.symmetric(vertical: extraSidePadding),
+            child: VisualizedPerceptron(
+              biasColor: Colors.transparent,
+              borderThickness: maxBorderThickness,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Add perceptrons from entity
     for (int layer = 0; layer < entity.maxLayerNum + 1; layer++) {
       final visualizedPerceptrons = <Widget>[];
       final genesInThisLayer =
@@ -58,6 +88,19 @@ class PerceptronMap extends StatelessWidget {
       );
     }
 
+    // Add final output passthrough weight
+    rows.add(
+      CustomPaint(
+        painter: WeightLinePainter(
+          leftX: 0,
+          leftY: (totalPerceptronSize / 2),
+          rightX: weightsColumnWidth,
+          rightY: (totalPerceptronSize / 2),
+          weight: 1.0,
+        ),
+      ),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -67,10 +110,7 @@ class PerceptronMap extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...rows,
-            // container
-          ],
+          children: rows,
         ),
       ],
     );
@@ -81,10 +121,10 @@ class PerceptronMap extends StatelessWidget {
     required double totalPerceptronSize,
     required List<Widget> rows,
   }) {
-    if (rows.isNotEmpty) {
-      final prevColumn = rows.last as Column;
+    final weightsChildren = <Widget>[];
 
-      final weightsChildren = <Widget>[];
+    if (rows.length > 1) {
+      final prevColumn = rows.last as Column;
 
       for (int perceptronIndex = 0;
           perceptronIndex < perceptrons.length;
@@ -92,29 +132,52 @@ class PerceptronMap extends StatelessWidget {
         for (int weightIndex = 0;
             weightIndex < prevColumn.children.length;
             weightIndex++) {
-          var container = Container(
+          var weightLayer = Container(
             width: weightsColumnWidth,
             height: perceptrons.length * totalPerceptronSize,
             color: Colors.transparent,
             child: CustomPaint(
               painter: WeightLinePainter(
-                  leftX: 0,
-                  leftY: (weightIndex * totalPerceptronSize) +
-                      (totalPerceptronSize / 2),
-                  rightX: weightsColumnWidth,
-                  rightY: (perceptronIndex * totalPerceptronSize) +
-                      (totalPerceptronSize / 2),
-                  weight: perceptrons[perceptronIndex].weights[weightIndex]),
+                leftX: 0,
+                leftY: (weightIndex * totalPerceptronSize) +
+                    (totalPerceptronSize / 2),
+                rightX: weightsColumnWidth,
+                rightY: (perceptronIndex * totalPerceptronSize) +
+                    (totalPerceptronSize / 2),
+                weight: perceptrons[perceptronIndex].weights[weightIndex],
+              ),
             ),
           );
-          weightsChildren.add(container);
+          weightsChildren.add(weightLayer);
         }
       }
-      rows.add(
-        Stack(
-          children: weightsChildren,
-        ),
-      );
+    } else {
+      for (int perceptronIndex = 0;
+          perceptronIndex < perceptrons.length;
+          perceptronIndex++) {
+        var weightLayer = Container(
+          width: weightsColumnWidth,
+          height: perceptrons.length * totalPerceptronSize,
+          color: Colors.transparent,
+          child: CustomPaint(
+            painter: WeightLinePainter(
+              leftX: 0,
+              leftY: (perceptronIndex * totalPerceptronSize) +
+                  (totalPerceptronSize / 2),
+              rightX: weightsColumnWidth,
+              rightY: (perceptronIndex * totalPerceptronSize) +
+                  (totalPerceptronSize / 2),
+              weight: perceptrons[perceptronIndex].weights[0],
+            ),
+          ),
+        );
+        weightsChildren.add(weightLayer);
+      }
     }
+    rows.add(
+      Stack(
+        children: weightsChildren,
+      ),
+    );
   }
 }
