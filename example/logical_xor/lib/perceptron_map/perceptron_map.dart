@@ -63,7 +63,7 @@ class PerceptronMap extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const PerceptronMapKey(),
-        const Text('Top Performing Perceptron'),
+        const Text('Top Performing Neural Network'),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

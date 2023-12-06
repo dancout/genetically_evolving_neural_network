@@ -12,10 +12,7 @@ void main() {
 class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
-    this.autoPlay = true,
   });
-
-  final bool autoPlay;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -33,6 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   int? waveTargetFound;
 
+  bool autoPlay = true;
   @override
   void initState() {
     final config = GENNGeneticEvolutionConfig(
@@ -193,23 +191,39 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (widget.autoPlay) {
-              setState(() {
-                isPlaying = !isPlaying;
-              });
-            } else {
-              genn.nextGeneration().then((value) {
-                setState(() {
-                  this.generation = value;
-                });
-              });
-            }
-          },
-          child: (!widget.autoPlay || !isPlaying)
-              ? const Icon(Icons.play_arrow)
-              : const Icon(Icons.pause),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text('AutoPlay: ${autoPlay ? 'On' : 'Off'}'),
+            Switch.adaptive(
+                value: autoPlay,
+                onChanged: (value) {
+                  setState(() {
+                    autoPlay = value;
+                    isPlaying = false;
+                  });
+                }),
+            FloatingActionButton(
+              onPressed: () {
+                if (autoPlay) {
+                  setState(() {
+                    isPlaying = !isPlaying;
+                  });
+                } else {
+                  genn.nextGeneration().then((value) {
+                    setState(() {
+                      this.generation = value;
+                    });
+                  });
+                }
+              },
+              child: (!autoPlay || !isPlaying)
+                  ? const Icon(Icons.play_arrow)
+                  : const Icon(Icons.pause),
+            ),
+            const SizedBox(height: 12.0),
+          ],
         ),
       ),
     );
