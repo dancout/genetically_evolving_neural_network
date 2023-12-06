@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
+import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
 void main() {
   runApp(const MyApp());
@@ -143,6 +144,11 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              PerceptronMap(
+                entity: GENNEntity.fromEntity(
+                  entity: generation.population.topScoringEntity,
+                ),
+              ),
               Text(
                 'Target: $target',
               ),
@@ -154,11 +160,6 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   Column(
                     children: [
-                      const Text('Top Value'),
-                      // Text(
-                      //   convertWord(generation.population.topScoringEntity),
-                      // ),
-                      // Text(
                       Row(
                         children: [
                           showCorrectAnswers(),
@@ -166,7 +167,6 @@ class _MyAppState extends State<MyApp> {
                           showGuesses(generation.population.topScoringEntity),
                         ],
                       ),
-                      // ),
                     ],
                   ),
                   const SizedBox(width: 24),
