@@ -10,10 +10,12 @@ class PerceptronMap extends StatelessWidget {
     super.key,
     required this.entity,
     required this.numInputs,
+    this.showLabels = false,
   });
 
   final GENNEntity entity;
   final int numInputs;
+  final bool showLabels;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,14 @@ class PerceptronMap extends StatelessWidget {
     // Add initial inputs as passthrough perceptrons with weights
     final inputPerceptrons = List.generate(
         numInputs,
-        (index) =>
-            GENNPerceptron(layer: 0, bias: 0, threshold: 1.0, weights: [1.0]));
+        (index) => const GENNPerceptron(
+            layer: 0, bias: 0, threshold: 1.0, weights: [1.0]));
 
     addWeightsLayer(
       perceptrons: inputPerceptrons,
       totalPerceptronSize: totalPerceptronSize,
       rows: rows,
+      showLabels: showLabels,
     );
 
     rows.add(
@@ -53,7 +56,6 @@ class PerceptronMap extends StatelessWidget {
           entity.dna.genes.where((gene) => gene.value.layer == layer);
       for (final gene in genesInThisLayer) {
         final threshold = gene.value.threshold;
-        const maxBorderThickness = 8.0;
         final thresholdStrokeWidth = clampDouble(
             maxBorderThickness * (threshold.abs()),
             minThickness,
@@ -88,7 +90,7 @@ class PerceptronMap extends StatelessWidget {
     }
 
     // Add final output passthrough weight
-    rows.add(
+    rows.addAll([
       CustomPaint(
         painter: WeightLinePainter(
           leftX: 0,
@@ -98,7 +100,9 @@ class PerceptronMap extends StatelessWidget {
           weight: 1.0,
         ),
       ),
-    );
+      if (showLabels) const SizedBox(width: weightsColumnWidth),
+      if (showLabels) const Text('guess')
+    ]);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,6 +121,7 @@ class PerceptronMap extends StatelessWidget {
     required List<GENNPerceptron> perceptrons,
     required double totalPerceptronSize,
     required List<Widget> rows,
+    bool showLabels = false,
   }) {
     final weightsChildren = <Widget>[];
 
@@ -149,6 +154,7 @@ class PerceptronMap extends StatelessWidget {
         }
       }
     } else {
+      // This is for the input layer
       for (int perceptronIndex = 0;
           perceptronIndex < perceptrons.length;
           perceptronIndex++) {
@@ -172,8 +178,21 @@ class PerceptronMap extends StatelessWidget {
       }
     }
     rows.add(
-      Stack(
-        children: weightsChildren,
+      Row(
+        children: [
+          if (showLabels)
+            const Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('a'),
+                Text('b'),
+                Text('c'),
+              ],
+            ),
+          Stack(
+            children: weightsChildren,
+          ),
+        ],
       ),
     );
   }

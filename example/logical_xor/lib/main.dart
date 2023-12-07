@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
+import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
 
@@ -32,16 +33,19 @@ class _MyAppState extends State<MyApp> {
   int? waveTargetFound;
   static const numInitialInputs = 3;
 
+  static const waitTimeBetweenWaves = 900;
+
   bool autoPlay = true;
   @override
   void initState() {
     final config = GENNGeneticEvolutionConfig(
-      populationSize: 20,
+      populationSize: 40,
       numOutputs: 1,
       mutationRate: 0.05,
       numInitialInputs: numInitialInputs,
-      layerMutationRate: 0.15,
-      perceptronMutationRate: 0.25,
+      layerMutationRate: 0.10,
+      perceptronMutationRate: 0.2,
+      // trackParents: true,
     );
 
     final fitnessService = LogicalXORFitnessService();
@@ -80,7 +84,7 @@ class _MyAppState extends State<MyApp> {
         style: (guess == logicalXORFitnessService.targetOutputsList[i][0])
             ? null
             : const TextStyle(
-                color: Colors.red,
+                color: negativeColor,
               ),
       );
 
@@ -89,6 +93,7 @@ class _MyAppState extends State<MyApp> {
     return Column(
       children: [
         const Text('Guesses'),
+        const Text('   '),
         ...guessTextWidgets,
       ],
     );
@@ -98,6 +103,7 @@ class _MyAppState extends State<MyApp> {
     return Column(
       children: [
         const Text('Correct Answers'),
+        const Text('   '),
         ...LogicalXORFitnessService()
             .targetOutputsList
             .map(
@@ -114,6 +120,12 @@ class _MyAppState extends State<MyApp> {
     return Column(
       children: [
         const Text('Logical Inputs'),
+        const Text(
+          'a, b, c',
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+          ),
+        ),
         ...LogicalXORFitnessService()
             .logicalInputsList
             .map((e) => Text(e.toString()))
@@ -131,7 +143,8 @@ class _MyAppState extends State<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (isPlaying) {
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(
+            const Duration(milliseconds: waitTimeBetweenWaves));
         genn.nextGeneration().then((value) {
           setState(() {
             this.generation = value;
@@ -147,6 +160,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     final perceptronMapDivider = Container(height: 4, color: Colors.grey);
+    final topScoringParents = generation.population.topScoringEntity.parents;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -158,16 +172,40 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 24.0),
               const PerceptronMapKey(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 48.0),
+                child: Text(
+                  'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
+                  'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0.\n\n'
+                  'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
+                  'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
+                ),
+              ),
+              const SizedBox(height: 12.0),
+              Text(
+                'Generation: ${generation.wave.toString()}',
+              ),
+              if (topScoringParents != null)
+                const Text('Parents of Top Performing Neural Network'),
+              // if (topScoringParents == null)
+              //   const Text('The first generation does not have parents'),
+              if (topScoringParents != null)
+                Column(
+                  children: [
+                    showPerceptronMapWithScore(entity: topScoringParents[0]),
+                    showPerceptronMapWithScore(entity: topScoringParents[1]),
+                  ],
+                ),
+              const SizedBox(height: 12.0),
               const Text('Top Performing Neural Network'),
               showPerceptronMapWithScore(
-                generation.population.topScoringEntity,
+                entity: generation.population.topScoringEntity,
+                showLabels: true,
               ),
               Text(
-                'Target: $target',
-              ),
-              Text(
-                'Wave: ${generation.wave.toString()}',
+                'Target Score: $target',
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -198,16 +236,22 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
               if (waveTargetFound != null)
-                Text('Target reached at wave: $waveTargetFound'),
+                Text('Target reached at Generation: $waveTargetFound'),
               const SizedBox(height: 24),
-              const Text('Population Entities'),
+              Text(
+                'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
+              ),
+              const Text(
+                'These are chosen as parents to breed the next generation',
+              ),
               perceptronMapDivider,
               Flexible(
                 child: ListView.separated(
                   itemBuilder: (context, index) => showPerceptronMapWithScore(
-                    generation.population.entities[index],
+                    entity: generation.population.entities[index],
                   ),
-                  itemCount: generation.population.entities.length,
+                  // itemCount: generation.population.entities.length,
+                  itemCount: 14,
                   separatorBuilder: (context, index) => perceptronMapDivider,
                 ),
               ),
@@ -252,19 +296,56 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Row showPerceptronMapWithScore(Entity<GENNPerceptron> entity) {
-    return Row(
+  Widget showPerceptronMapWithScore({
+    required Entity<GENNPerceptron> entity,
+    bool showLabels = false,
+  }) {
+    const textWidth = 150.0;
+
+    var labeledTextWidth = showLabels ? textWidth + 50 : textWidth;
+    var row = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        PerceptronMap(
-          entity: GENNEntity.fromEntity(
-            entity: entity,
-          ),
-          numInputs: numInitialInputs,
+        SizedBox(width: weightsColumnWidth),
+        Container(
+          height: 24.0,
+          width: circleDiameter,
+          color: Colors.grey,
         ),
-        Text(
-          'Score: ${entity.fitnessScore.toString()}',
-        )
+        Container(
+          height: 24.0,
+          width: circleDiameter,
+          color: Colors.grey,
+        ),
+        SizedBox(width: weightsColumnWidth),
+      ],
+    );
+    return Column(
+      children: [
+        if (showLabels) row,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const SizedBox(width: 20),
+            PerceptronMap(
+              entity: GENNEntity.fromEntity(
+                entity: entity,
+              ),
+              numInputs: numInitialInputs,
+              showLabels: showLabels,
+            ),
+            SizedBox(
+              width: textWidth,
+              child: Text(
+                'Score: ${entity.fitnessScore.toString()}',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(
+                width: (MediaQuery.of(context).size.width * 0.5) -
+                    labeledTextWidth),
+          ],
+        ),
       ],
     );
   }

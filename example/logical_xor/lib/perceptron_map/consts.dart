@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-const circleDiameter = 30.0;
-const extraSidePadding = 10.0;
-const maxBorderThickness = 8.0;
+const circleDiameter = 14.0;
+const extraSidePadding = circleDiameter / 3.0;
+const maxBorderThickness = (8.0 / 30.0) * circleDiameter;
 const minThickness = .1;
-const weightsColumnWidth = 75.0;
+const weightsColumnWidth = circleDiameter * 2.5;
 const totalPerceptronSize = circleDiameter + (extraSidePadding * 2);
 const thresholdColor = Colors.purple;
 const negativeColor = Colors.red;

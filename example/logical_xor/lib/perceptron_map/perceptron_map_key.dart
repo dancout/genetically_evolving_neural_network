@@ -15,6 +15,7 @@ class PerceptronMapKey extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 12.0),
+        const Text('KEY'),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
