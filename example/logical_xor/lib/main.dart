@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
   int? waveTargetFound;
   static const numInitialInputs = 3;
 
-  static const waitTimeBetweenWaves = 900;
+  static const waitTimeBetweenWaves = 100;
 
   bool autoPlay = true;
   @override
@@ -176,14 +176,108 @@ class _MyAppState extends State<MyApp> {
               const PerceptronMapKey(),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 48.0),
-                child: Text(
-                  'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
-                  'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0.\n\n'
-                  'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
-                  'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
+                child: Column(
+                  children: [
+                    Text(
+                      'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
+                      'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0.\n\n'
+                      'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
+                      'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
+                    ),
+                    SizedBox(height: 12.0),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            'Inputs:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'These represent real-world-inputs that can be put into your function.',
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 50),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'The temperature of a plate you are touching at a restaurant.',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.0),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            'BRAIN:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'This represents where the algorithm is "thinking" or making decisions based on the input it was given. You can think of these colored connections exactly like neurons firing inside your brain.',
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 50),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'OUCH! This plate feels VERY HOT!',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.0),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            'Output:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'This represents the "guess" or decision that the algorithm has made, based on the "thinking" it did in the previous step.',
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 50),
+                        SizedBox(width: 12.0),
+                        Flexible(
+                          child: Text(
+                            'Reflexively, you pull your hand away from the hot plate.',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.0),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12.0),
               Text(
                 'Generation: ${generation.wave.toString()}',
               ),
@@ -302,38 +396,76 @@ class _MyAppState extends State<MyApp> {
   }) {
     const textWidth = 150.0;
 
-    var labeledTextWidth = showLabels ? textWidth + 50 : textWidth;
+    final veritcalDivider = Container(
+      height: 48.0,
+      width: circleDiameter,
+      color: Colors.grey,
+    );
     var row = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(width: weightsColumnWidth),
-        Container(
-          height: 24.0,
-          width: circleDiameter,
-          color: Colors.grey,
+        SizedBox(
+          width: weightsColumnWidth + 9 + circleDiameter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Inputs',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              veritcalDivider,
+            ],
+          ),
         ),
-        Container(
-          height: 24.0,
-          width: circleDiameter,
-          color: Colors.grey,
+        const Spacer(),
+        const Text(
+          'BRAIN',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        SizedBox(width: weightsColumnWidth),
+        const Spacer(),
+        SizedBox(
+          width: weightsColumnWidth + 53,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              veritcalDivider,
+              const Text(
+                'Output',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 12.0),
+            ],
+          ),
+        ),
       ],
     );
-    return Column(
-      children: [
-        if (showLabels) row,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const SizedBox(width: 20),
-            PerceptronMap(
-              entity: GENNEntity.fromEntity(
-                entity: entity,
+    return IntrinsicWidth(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showLabels) row,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PerceptronMap(
+                entity: GENNEntity.fromEntity(
+                  entity: entity,
+                ),
+                numInputs: numInitialInputs,
+                showLabels: showLabels,
               ),
-              numInputs: numInitialInputs,
-              showLabels: showLabels,
-            ),
+              if (!showLabels)
+                SizedBox(
+                  width: textWidth,
+                  child: Text(
+                    'Score: ${entity.fitnessScore.toString()}',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
+          if (showLabels)
             SizedBox(
               width: textWidth,
               child: Text(
@@ -341,12 +473,8 @@ class _MyAppState extends State<MyApp> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(
-                width: (MediaQuery.of(context).size.width * 0.5) -
-                    labeledTextWidth),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
