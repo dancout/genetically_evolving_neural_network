@@ -8,15 +8,25 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required super.dnaService,
     required GENNFitnessService fitnessService,
     required GENNGeneMutationService geneMutationService,
-    required super.trackParents,
+    required bool trackParents,
+    int? generationsToTrack,
     @visibleForTesting super.crossoverService,
     NumberGenerator? numberGenerator,
     // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
+
+    // TODO: Should we event expose this as a param that you can adjust? Or should it be hidden?
+    @visibleForTesting
+    EntityParentManinpulator<GENNPerceptron>? entityParentManinpulator,
   })  : numberGenerator = numberGenerator ?? NumberGenerator(),
         super(
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
+          entityParentManinpulator: entityParentManinpulator ??
+              EntityParentManinpulator<GENNPerceptron>(
+                trackParents: trackParents,
+                generationsToTrack: generationsToTrack,
+              ),
         ) {
     this.perceptronLayerMutationService = perceptronLayerMutationService ??
         PerceptronLayerMutationService(
