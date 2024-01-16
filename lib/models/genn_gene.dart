@@ -1,6 +1,6 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-/// An extension of [NeuralNetwork.Gene].
+/// An extension of [GeneticEvolution.Gene].
 class GENNGene extends Gene<GENNPerceptron> {
   const GENNGene({
     required super.value,

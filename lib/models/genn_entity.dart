@@ -1,5 +1,6 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// An extension of [GeneticEvolution.Entity]
 class GENNEntity extends Entity<GENNPerceptron> {
   const GENNEntity({
     required this.gennDna,
@@ -21,10 +22,11 @@ class GENNEntity extends Entity<GENNPerceptron> {
             : gennGene.value.layer,
       );
 
-  // TODO: This recursion feels super innefficient, but what can you do?
+  /// Returns a [GENNEntity] object created from the input [Entity].
   factory GENNEntity.fromEntity({required Entity<GENNPerceptron> entity}) {
     List<GENNEntity>? gennParents;
 
+    // Copy the parents of this Entity into the new GENNEntity
     final parents = entity.parents;
     if (parents != null) {
       gennParents = <GENNEntity>[];
@@ -33,6 +35,7 @@ class GENNEntity extends Entity<GENNPerceptron> {
       }
     }
 
+    // Return the newly converted GENNEntity
     return GENNEntity(
       gennDna: GENNDNA.fromDNA(dna: entity.dna),
       fitnessScore: entity.fitnessScore,
