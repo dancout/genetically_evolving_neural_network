@@ -93,6 +93,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           layerMutationRate: config.layerMutationRate,
           perceptronMutationRate: config.perceptronMutationRate,
           crossoverService: crossoverService,
+          generationsToTrack: config.generationsToTrack,
         );
 
     return GENN(

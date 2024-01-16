@@ -15,8 +15,10 @@ class GENNGeneticEvolutionConfig extends GeneticEvolutionConfig {
     super.random,
     super.trackMutatedWaves,
     super.trackParents,
+    super.generationsToTrack,
   }) : super(numGenes: numOutputs);
 
+  /// Represents the number of initial inputs for creating a Random Gene.
   final int numInitialInputs;
 
   /// The rate at which a PerceptronLayer will be added or removed from an
