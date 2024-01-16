@@ -138,7 +138,7 @@ void main() {
       );
 
       final copiedWithGennDna =
-          originalGennEntity.copyWith(gennDna: updatedGennDNA);
+          originalGennEntity.copyWith(dna: updatedGennDNA);
       expect(
         copiedWithGennDna.gennDna,
         updatedGennDNA,
@@ -153,7 +153,7 @@ void main() {
       );
 
       final copiedWithParents = originalGennEntity.copyWith(
-        gennParents: gennParents,
+        parents: gennParents,
       );
       expect(
         copiedWithParents.gennDna,

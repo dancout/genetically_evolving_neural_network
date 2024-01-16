@@ -40,15 +40,18 @@ class GENNEntity extends Entity<GENNPerceptron> {
     );
   }
 
+  @override
   GENNEntity copyWith({
-    GENNDNA? gennDna,
+    DNA<GENNPerceptron>? dna,
     double? fitnessScore,
-    List<GENNEntity>? gennParents,
+    List<Entity<GENNPerceptron>>? parents,
   }) {
-    return GENNEntity(
-      gennDna: gennDna ?? this.gennDna,
-      fitnessScore: fitnessScore ?? this.fitnessScore,
-      gennParents: gennParents ?? this.gennParents,
+    return GENNEntity.fromEntity(
+      entity: super.copyWith(
+        dna: dna,
+        fitnessScore: fitnessScore,
+        parents: parents,
+      ),
     );
   }
 

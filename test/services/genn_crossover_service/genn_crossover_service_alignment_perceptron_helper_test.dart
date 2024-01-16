@@ -107,7 +107,7 @@ void main() {
         layer: secondLayer,
       );
       final secondLayerGennEntity = gennEntity.copyWith(
-        gennDna: GENNDNA(
+        dna: GENNDNA(
           gennGenes: [
             GENNGene(
               value: secondLayerGennPerceptron,
@@ -158,7 +158,7 @@ void main() {
       const targetGeneNum = 0;
 
       final gennEntityTwoGenes = gennEntity.copyWith(
-          gennDna: GENNDNA(gennGenes: [
+          dna: GENNDNA(gennGenes: [
         GENNGene(
           value: gennPerceptron,
         ),
@@ -236,7 +236,7 @@ void main() {
       const targetGeneNum = 3;
 
       final gennEntityTwoGenes = gennEntity.copyWith(
-          gennDna: GENNDNA(gennGenes: [
+          dna: GENNDNA(gennGenes: [
         GENNGene(
           value: gennPerceptron,
         ),

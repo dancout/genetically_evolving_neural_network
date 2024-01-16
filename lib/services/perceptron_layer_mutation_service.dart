@@ -80,7 +80,7 @@ class PerceptronLayerMutationService {
     );
 
     return entity.copyWith(
-      gennDna: GENNDNA(gennGenes: genes),
+      dna: GENNDNA(gennGenes: genes),
     );
   }
 
@@ -138,7 +138,7 @@ class PerceptronLayerMutationService {
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
     return entity.copyWith(
-      gennDna: dna,
+      dna: dna,
       fitnessScore: fitnessScore,
     );
   }
@@ -191,7 +191,7 @@ class PerceptronLayerMutationService {
     final dna = GENNDNA(gennGenes: genes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
     return entity.copyWith(
-      gennDna: dna,
+      dna: dna,
       fitnessScore: fitnessScore,
     );
   }
@@ -238,7 +238,7 @@ class PerceptronLayerMutationService {
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
     return entity.copyWith(
-      gennDna: dna,
+      dna: dna,
       fitnessScore: fitnessScore,
     );
   }
