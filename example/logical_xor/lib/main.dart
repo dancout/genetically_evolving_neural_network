@@ -28,12 +28,15 @@ class _MyAppState extends State<MyApp> {
 
   // TODO: This is causing the genetic_evolution import above. Can I make it so
   /// that we don't need to import 2 packages for this?
+  ///
+  /// Update! I think that when we are not depending from path that this will fix itself.
   Generation<GENNPerceptron>? generation;
 
   int? waveTargetFound;
   static const numInitialInputs = 3;
 
-  static const waitTimeBetweenWaves = 100;
+  // This represents the time to wait between waves shown on screen.
+  static const waitTimeBetweenWaves = 400;
 
   bool autoPlay = true;
   @override
@@ -45,7 +48,10 @@ class _MyAppState extends State<MyApp> {
       numInitialInputs: numInitialInputs,
       layerMutationRate: 0.10,
       perceptronMutationRate: 0.2,
-      // trackParents: true,
+      trackParents: true,
+      // We only care about tracking the parents of the current generation to
+      // show on-screen
+      generationsToTrack: 1,
     );
 
     final fitnessService = LogicalXORFitnessService();
@@ -85,6 +91,7 @@ class _MyAppState extends State<MyApp> {
             ? null
             : const TextStyle(
                 color: negativeColor,
+                fontWeight: FontWeight.bold,
               ),
       );
 
@@ -169,184 +176,311 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Row(
             children: [
-              const SizedBox(height: 24.0),
-              const PerceptronMapKey(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 48.0),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
                 child: Column(
                   children: [
-                    Text(
-                      'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
-                      'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0.\n\n'
-                      'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
-                      'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
-                    ),
-                    SizedBox(height: 12.0),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          child: Text(
-                            'Inputs:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'These represent real-world-inputs that can be put into your function.',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(width: 50),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'The temperature of a plate you are touching at a restaurant.',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12.0),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          child: Text(
-                            'BRAIN:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'This represents where the algorithm is "thinking" or making decisions based on the input it was given. You can think of these colored connections exactly like neurons firing inside your brain.',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(width: 50),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'OUCH! This plate feels VERY HOT!',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12.0),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          child: Text(
-                            'Output:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'This represents the "guess" or decision that the algorithm has made, based on the "thinking" it did in the previous step.',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(width: 50),
-                        SizedBox(width: 12.0),
-                        Flexible(
-                          child: Text(
-                            'Reflexively, you pull your hand away from the hot plate.',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12.0),
-                  ],
-                ),
-              ),
-              Text(
-                'Generation: ${generation.wave.toString()}',
-              ),
-              if (topScoringParents != null)
-                const Text('Parents of Top Performing Neural Network'),
-              // if (topScoringParents == null)
-              //   const Text('The first generation does not have parents'),
-              if (topScoringParents != null)
-                Column(
-                  children: [
-                    showPerceptronMapWithScore(entity: topScoringParents[0]),
-                    showPerceptronMapWithScore(entity: topScoringParents[1]),
-                  ],
-                ),
-              const SizedBox(height: 12.0),
-              const Text('Top Performing Neural Network'),
-              showPerceptronMapWithScore(
-                entity: generation.population.topScoringEntity,
-                showLabels: true,
-              ),
-              Text(
-                'Target Score: $target',
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Row(
+                    const PerceptronMapKey(),
+                    const SizedBox(height: 12.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                      child: Column(
                         children: [
-                          showLogicalInputs(),
-                          const SizedBox(width: 12),
-                          showCorrectAnswers(),
-                          const SizedBox(width: 12),
-                          showGuesses(generation.population.topScoringEntity),
+                          const Text(
+                            'Diagram Descriptions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'bias:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'Every thought we have has at least a little bit of bias, swaying our decision making process. For instance, when choosing colors for this page, I chose red for negative (obviously), and then blue for positive. I could have also chosen black, green, or anything else.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'I can\'t explain it, but I just kinda like blue.',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'weight:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'Weight represents how strongly a particular factor might influence our thinking.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'It being 9PM will influence me to turn the lights on moreso than the fact that it is winter outside.',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'threshold:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'A neuron in your brain is not actually triggered until a certain limit, or threshold, has been breached. Once this limit has been met, the neuron activates and you react to the stimuli. The lower the threshold, the more quickly you will react.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'Pain receptors in your finger do not really care if you press against a needle, until the skin is broken and then YOU REALLY KNOW IT.',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Text(
+                            'Section Descriptions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'Inputs:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'These represent real-world-inputs that can be put into your function.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'The temperature of a plate you are touching at a restaurant.',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'BRAIN:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'This represents where the algorithm is "thinking" or making decisions based on the input it was given. You can think of these colored connections exactly like neurons firing inside your brain.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'OUCH! This plate feels VERY HOT!',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: keyTextWidth,
+                                child: Text(
+                                  'Output:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'This represents the "guess" or decision that the algorithm has made, based on the "thinking" it did in the previous step.',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Row(
+                            children: [
+                              SizedBox(width: keyTextWidth),
+                              SizedBox(width: 12.0),
+                              Flexible(
+                                child: Text(
+                                  'Reflexively, you pull your hand away from the hot plate.',
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          perceptronMapDivider,
+                          const SizedBox(height: 12.0),
+                          const Text(
+                            'Logical XOR Description',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Text(
+                            'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
+                            'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0 (see table to the right for all Correct Answers).\n\n'
+                            'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
+                            'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      const Text('Top Score'),
-                      Text(
-                        generation.population.topScoringEntity.fitnessScore
-                            .toString(),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 24.0),
+                    if (topScoringParents != null)
+                      const Text(
+                        'Parents of Top Performing Neural Network',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              if (waveTargetFound != null)
-                Text('Target reached at Generation: $waveTargetFound'),
-              const SizedBox(height: 24),
-              Text(
-                'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
-              ),
-              const Text(
-                'These are chosen as parents to breed the next generation',
-              ),
-              perceptronMapDivider,
-              Flexible(
-                child: ListView.separated(
-                  itemBuilder: (context, index) => showPerceptronMapWithScore(
-                    entity: generation.population.entities[index],
-                  ),
-                  // itemCount: generation.population.entities.length,
-                  itemCount: 14,
-                  separatorBuilder: (context, index) => perceptronMapDivider,
+                    if (topScoringParents != null)
+                      Column(
+                        children: [
+                          showPerceptronMapWithScore(
+                              entity: topScoringParents[0]),
+                          showPerceptronMapWithScore(
+                              entity: topScoringParents[1]),
+                        ],
+                      ),
+                    const SizedBox(height: 12.0),
+                    const Text(
+                      ' Top Performing Neural Network',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Generation: ${generation.wave.toString()}',
+                    ),
+                    showPerceptronMapWithScore(
+                      entity: generation.population.topScoringEntity,
+                      showLabels: true,
+                    ),
+                    Text(
+                      'Target Score: $target',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                showLogicalInputs(),
+                                const SizedBox(width: 12),
+                                showCorrectAnswers(),
+                                const SizedBox(width: 12),
+                                showGuesses(
+                                    generation.population.topScoringEntity),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    if (waveTargetFound != null)
+                      Text('Target reached at Generation: $waveTargetFound'),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
+                    ),
+                    const Text(
+                      'These are chosen as parents to breed the next generation',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                    perceptronMapDivider,
+                    Flexible(
+                      child: ListView.separated(
+                        itemBuilder: (context, index) =>
+                            showPerceptronMapWithScore(
+                          entity: generation.population.sortedEntities[index],
+                        ),
+                        // itemCount: generation.population.entities.length,
+                        itemCount: 16,
+                        separatorBuilder: (context, index) =>
+                            perceptronMapDivider,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

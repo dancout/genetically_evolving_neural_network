@@ -15,7 +15,10 @@ class PerceptronMapKey extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 12.0),
-        const Text('KEY'),
+        const Text(
+          'DIAGRAM KEY',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -76,7 +79,6 @@ class PerceptronMapKey extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 24),
       ],
     );
   }

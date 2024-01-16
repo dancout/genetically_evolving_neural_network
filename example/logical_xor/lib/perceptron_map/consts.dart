@@ -9,3 +9,4 @@ const totalPerceptronSize = circleDiameter + (extraSidePadding * 2);
 const thresholdColor = Colors.purple;
 const negativeColor = Colors.red;
 const positiveColor = Colors.blue;
+const keyTextWidth = 65.0;
