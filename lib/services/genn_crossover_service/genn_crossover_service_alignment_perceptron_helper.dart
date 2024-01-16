@@ -1,16 +1,23 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Used to update the number of [Gene] objects within a [PerceptronLayer],
+/// and the number of [PerceptronLayer] objects within a [GENNEntity].
 class GENNCrossoverServiceAlignmentPerceptronHelper {
+  /// Used to update the number of [Gene] objects within a [PerceptronLayer],
+  /// and the number of [PerceptronLayer] objects within a [GENNEntity].
   GENNCrossoverServiceAlignmentPerceptronHelper({
     required this.perceptronLayerMutationService,
-    // TODO: This should probably not be required
     required this.gennCrossoverServiceHelper,
   });
 
+  /// Used for mutating Perceptron Layers on the Entities.
   final PerceptronLayerMutationService perceptronLayerMutationService;
 
+  /// Used to assist with cross-breeding Entities.
   final GENNCrossoverServiceHelper gennCrossoverServiceHelper;
 
+  /// Returns an updated [gennEntity] that now has [targetNumLayers] number of
+  /// Perceptron Layers.
   Future<GENNEntity> alignPerceptronLayersWithinEntity({
     required GENNEntity gennEntity,
     required int targetNumLayers,
@@ -62,6 +69,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
     return updatedEntity;
   }
 
+  /// Returns an updated [entity] that now has [targetGeneNum] genes within the
+  /// PerceptronLayer matching [targetLayer].
   Future<GENNEntity> alignGenesWithinLayer({
     required GENNEntity entity,
     required int targetLayer,
@@ -105,6 +114,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
     return updatedEntity;
   }
 
+  /// Returns an [int] between the max and min number of perceptrons within the
+  /// incoming [perceptronLayers].
   int alignNumPerceptronsWithinLayer({
     required List<GENNPerceptronLayer> perceptronLayers,
   }) {

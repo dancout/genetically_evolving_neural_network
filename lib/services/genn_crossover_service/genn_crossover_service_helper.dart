@@ -1,6 +1,8 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Used for finding min, max, or in-between layer values on Entity objects.
 class GENNCrossoverServiceHelper {
+  /// Used for finding min, max, or in-between layer values on Entity objects.
   GENNCrossoverServiceHelper({
     NumberGenerator? numberGenerator,
   }) : numberGenerator = numberGenerator ?? NumberGenerator();
@@ -8,6 +10,7 @@ class GENNCrossoverServiceHelper {
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
 
+  /// Returns an [int] somewhere between the input [minValue] and [maxValue].
   int alignMinAndMaxValues({
     required int maxValue,
     required int minValue,
@@ -29,6 +32,7 @@ class GENNCrossoverServiceHelper {
     return maxValue;
   }
 
+  /// Returns the max layer value on an Entity from the incoming [parents].
   int maxLayerNum({
     required List<GENNEntity> parents,
   }) {
@@ -39,6 +43,7 @@ class GENNCrossoverServiceHelper {
             : gennEntity.maxLayerNum);
   }
 
+  /// Returns the min layer value on an Entity from the incoming [parents].
   int minLayerNum({
     required int maxLayerNum,
     required List<GENNEntity> parents,
