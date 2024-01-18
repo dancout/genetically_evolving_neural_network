@@ -24,7 +24,6 @@ class PerceptronLayerMutationService {
   /// Returns a [GENNPerceptronLayer] that is duplicated from the input
   /// [gennPerceptronLayer] with the weights adjusted so the [GENNPerceptron]
   /// objects will only receive input from their adjacent, previous neighbor.
-  /// TODO: Include example in this doc.
   GENNPerceptronLayer duplicatePerceptronLayer({
     required GENNPerceptronLayer gennPerceptronLayer,
   }) {
@@ -37,7 +36,6 @@ class PerceptronLayerMutationService {
 
       // Set this perceptron's adjacent, previous weight to 1.0. This will
       // effectively pass through the previous perceptron's value forward.
-      // weights[i] = perceptrons[i].weights[i];
       weights[i] = 1.0;
 
       duplicatedPerceptrons.add(
