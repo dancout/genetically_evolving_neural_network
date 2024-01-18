@@ -10,6 +10,7 @@ void main() {
   const perceptronMutationRate = 0.3;
   const trackParents = false;
   const fitnessScore = 1.0;
+  const updatedFitnessScore = 2.0;
   const layer = 0;
   const bias = 0.1;
   const updatedBias = 0.9;
@@ -561,6 +562,99 @@ void main() {
           entity: superCrossoverEntity, targetLayer: layer));
       verifyNoMoreInteractions(mockPerceptronLayerMutationService);
     });
+
+    test(
+        'does call layer mutations when randNumber is less than layerMutationRate and calls perceptron mutations when randNumber is less than perceptronMutationRate',
+        () async {
+      final twoLayersOfGenes = [
+        const Gene(
+          value: GENNPerceptron(
+            layer: layer,
+            bias: bias,
+            threshold: threshold,
+            weights: weights,
+          ),
+        ),
+        const Gene(
+          value: GENNPerceptron(
+            layer: layer,
+            bias: bias,
+            threshold: threshold,
+            weights: weights,
+          ),
+        ),
+        const Gene(
+          value: GENNPerceptron(
+            layer: layer + 1,
+            bias: bias,
+            threshold: threshold,
+            weights: weights,
+          ),
+        ),
+      ];
+
+      final updatedUpdatedEntity = updatedEntity.copyWith(
+        fitnessScore: updatedFitnessScore,
+      );
+
+      // Update the originalDNA that every test uses
+      originalDNA = DNA<GENNPerceptron>(
+        genes: twoLayersOfGenes,
+      );
+
+      superCrossoverEntity = GENNEntity.fromEntity(
+        entity: Entity(
+          dna: originalDNA,
+          fitnessScore: fitnessScore,
+        ),
+      );
+
+      final superCrossoverGENNNeuralNetwork = GENNNeuralNetwork.fromGenes(
+          genes: superCrossoverEntity.gennDna.gennGenes);
+
+      testObject = buildTestObject(
+        updatedLayerMutationRate: 0.5,
+        updatedPerceptronMutationRate: 0.5,
+      );
+      const nextDouble = 0.4;
+      mockSuperCrossover(nextDouble: nextDouble);
+
+      when(() => mockNumberGenerator.nextInt(2)).thenReturn(layer);
+      when(() => mockNumberGenerator.nextBool).thenReturn(true);
+
+      when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
+          gennPerceptronLayer: superCrossoverGENNNeuralNetwork
+              .gennLayers[layer])).thenReturn(duplicatedPerceptronLayer);
+
+      when(() => mockPerceptronLayerMutationService.addPerceptronLayer(
+              entity: superCrossoverEntity,
+              perceptronLayer: duplicatedPerceptronLayer))
+          .thenReturn(updatedEntity);
+
+      when(
+        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
+          entity: updatedEntity,
+          targetLayer: layer,
+        ),
+      ).thenAnswer((_) async => updatedUpdatedEntity);
+
+      final actual = await testObject.crossOver(parents: parents, wave: wave);
+
+      expect(actual, updatedUpdatedEntity);
+
+      verify(() => mockNumberGenerator.nextDouble);
+      verify(() => mockNumberGenerator.nextInt(2));
+      verify(() => mockNumberGenerator.nextBool);
+      verifyNoMoreInteractions(mockNumberGenerator);
+      verify(() => mockPerceptronLayerMutationService.addPerceptronToLayer(
+          entity: updatedEntity, targetLayer: layer));
+      verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
+          gennPerceptronLayer:
+              superCrossoverGENNNeuralNetwork.gennLayers[layer]));
+      verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
+          entity: superCrossoverEntity,
+          perceptronLayer: duplicatedPerceptronLayer));
+      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+    });
   });
-  // TODO: Write a test where both layer and perceptron mutation rates are hit.
 }

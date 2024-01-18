@@ -68,6 +68,10 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.
     if (randNumber < layerMutationRate) {
+      // TODO: Could extract this logic out into a helper function for when
+      /// layerMutationRate is triggered to make this class more easily
+      /// testable.
+
       // NOTE: If there is only a single layer, then we cannot remove it, so we
       // must add to it.
       if (numLayers == 1 || numberGenerator.nextBool) {
@@ -107,6 +111,10 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     // Add or Remove a Perceptron from a PerceptronLayer if there is more than
     // one layer.
     if (numLayers > 1 && randNumber < perceptronMutationRate) {
+      // TODO: Could extract this logic out into a helper function for when
+      /// perceptronMutationRate is triggered to make this class more easily
+      /// testable.
+
       // NOTE:  Cannot update the last layer, hence the -1. This is because the
       //        last layer represents the expected outputs, and that cannot
       //        change.
