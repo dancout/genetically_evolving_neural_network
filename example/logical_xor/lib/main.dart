@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> {
   /// that we don't need to import 2 packages for this?
   ///
   /// Update! I think that when we are not depending from path that this will fix itself.
+  // TODO: I could also make a GENNGeneration class that would fix this.
   Generation<GENNPerceptron>? generation;
 
   int? waveTargetFound;
