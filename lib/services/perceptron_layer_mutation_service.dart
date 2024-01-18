@@ -148,7 +148,6 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
-    // TODO: Do we need this assert? Or is it overkill and inefficient?
     assert(
       targetLayer < entity.maxLayerNum,
       'Cannot add Perceptrons to the last perceptron layer. '
@@ -201,7 +200,6 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
-    // TODO: Do we need this assert, or should we remove for efficiency?
     assert(
       entity.gennDna.gennGenes
               .where((gennGene) => gennGene.value.layer == targetLayer)
