@@ -12,10 +12,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     int? generationsToTrack,
     @visibleForTesting super.crossoverService,
     NumberGenerator? numberGenerator,
-    // TODO: Should this be visibleForTesting?
     PerceptronLayerMutationService? perceptronLayerMutationService,
-
-    // TODO: Should we event expose this as a param that you can adjust? Or should it be hidden?
     @visibleForTesting
     EntityParentManinpulator<GENNPerceptron>? entityParentManinpulator,
   })  : numberGenerator = numberGenerator ?? NumberGenerator(),
@@ -38,8 +35,16 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
 
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
+
+  /// The rate at which a PerceptronLayer will be added or removed from an
+  /// Entity.
   final double layerMutationRate;
+
+  /// The rate at which a Perceptron will be added or removed from a given
+  /// PerceptronLayer.
   final double perceptronMutationRate;
+
+  /// Used for mutating Perceptron Layers on the Entities.
   late final PerceptronLayerMutationService perceptronLayerMutationService;
 
   @override
@@ -107,9 +112,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       //        change.
       final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
-      // TODO: Could this be optimized? Looking at the GENNPerceptronLayer we
-      /// could have access to the layer value immediately. But we'd have to
-      /// build that object, which might also be inefficient.
+      // Calculate the number of Genes in the target layer
       final numGenesInTargetLayer = child.gennDna.gennGenes
           .where((gene) => gene.value.layer == targetLayer)
           .length;
