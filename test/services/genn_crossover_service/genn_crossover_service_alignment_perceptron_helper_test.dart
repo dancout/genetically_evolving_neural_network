@@ -103,8 +103,13 @@ void main() {
       const targetNumLayers = 0;
 
       const secondLayer = targetNumLayers + 1;
+      const thirdLayer = secondLayer + 1;
       final secondLayerGennPerceptron = gennPerceptron.copyWith(
         layer: secondLayer,
+      );
+
+      final thirdLayerGennPerceptron = gennPerceptron.copyWith(
+        layer: thirdLayer,
       );
       final secondLayerGennEntity = gennEntity.copyWith(
         dna: GENNDNA(
@@ -115,8 +120,24 @@ void main() {
           ],
         ),
       );
-      final updatedSecondLayerGennEntity = secondLayerGennEntity.copyWith(
-        fitnessScore: updatedFitnessScore,
+      final thirdLayerGennEntity = gennEntity.copyWith(
+        dna: GENNDNA(
+          gennGenes: [
+            GENNGene(
+              value: thirdLayerGennPerceptron,
+            ),
+          ],
+        ),
+      );
+
+      when(
+        () =>
+            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+          entity: thirdLayerGennEntity,
+          targetLayer: thirdLayer,
+        ),
+      ).thenAnswer(
+        (_) async => secondLayerGennEntity,
       );
       when(
         () =>
@@ -125,23 +146,29 @@ void main() {
           targetLayer: secondLayer,
         ),
       ).thenAnswer(
-        (_) async => updatedSecondLayerGennEntity,
+        (_) async => gennEntity,
       );
 
       final actual = await testObject.alignPerceptronLayersWithinEntity(
-        gennEntity: secondLayerGennEntity,
+        gennEntity: thirdLayerGennEntity,
         targetNumLayers: targetNumLayers,
       );
 
-      expect(actual, updatedSecondLayerGennEntity);
+      expect(actual, gennEntity);
 
-      // TODO: Could write better test to make sure this was called X amount of
-      /// times for when the diff value is greater than 1.
       verify(
         () =>
             mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
           entity: secondLayerGennEntity,
           targetLayer: secondLayer,
+        ),
+      );
+
+      verify(
+        () =>
+            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+          entity: thirdLayerGennEntity,
+          targetLayer: thirdLayer,
         ),
       );
 
