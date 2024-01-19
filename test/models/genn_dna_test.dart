@@ -29,12 +29,12 @@ void main() {
   group('constructor', () {
     test('sorts genes by layer value', () async {
       final actual = GENNDNA(
-        gennGenes: [
+        genes: [
           gennGeneLayer2,
           gennGeneLayer0,
           gennGeneLayer1,
         ],
-      ).gennGenes;
+      ).genes;
 
       expect(actual, expectedGenes);
     });
@@ -52,7 +52,7 @@ void main() {
               ],
             ),
           )
-          .gennGenes;
+          .genes;
 
       expect(actual, expectedGenes);
       expect(actual.runtimeType, List<GENNGene>);

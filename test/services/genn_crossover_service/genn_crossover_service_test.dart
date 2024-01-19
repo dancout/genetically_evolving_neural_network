@@ -11,8 +11,7 @@ void main() {
   const wave = 0;
   final gennGenes = <GENNGene>[];
   final parents = <GENNEntity>[
-    GENNEntity(
-        gennDna: GENNDNA(gennGenes: gennGenes), fitnessScore: fitnessScore)
+    GENNEntity(dna: GENNDNA(genes: gennGenes), fitnessScore: fitnessScore)
   ];
   late GeneMutationService<GENNPerceptron> mockGeneMutationService;
   late GENNCrossoverServiceAlignmentHelper

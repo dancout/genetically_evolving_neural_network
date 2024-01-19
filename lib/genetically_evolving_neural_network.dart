@@ -9,10 +9,12 @@ import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 part 'package:genetically_evolving_neural_network/models/genn_dna.dart';
 part 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 part 'package:genetically_evolving_neural_network/models/genn_gene.dart';
+part 'package:genetically_evolving_neural_network/models/genn_generation.dart';
 part 'package:genetically_evolving_neural_network/models/genn_genetic_evolution_config.dart';
 part 'package:genetically_evolving_neural_network/models/genn_neural_network.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
+part 'package:genetically_evolving_neural_network/models/genn_population.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_perceptron_helper.dart';
@@ -102,6 +104,13 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       geneService: gennGeneService,
       entityService: gennEntityService,
       populationService: populationService,
+    );
+  }
+
+  @override
+  Future<GENNGeneration> nextGeneration() async {
+    return GENNGeneration.fromGeneration(
+      generation: await super.nextGeneration(),
     );
   }
 }

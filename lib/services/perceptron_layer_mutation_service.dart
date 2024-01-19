@@ -29,7 +29,7 @@ class PerceptronLayerMutationService {
   }) {
     final duplicatedPerceptrons = <GENNPerceptron>[];
 
-    final perceptrons = gennPerceptronLayer.gennPerceptrons;
+    final perceptrons = gennPerceptronLayer.perceptrons;
     for (int i = 0; i < perceptrons.length; i++) {
       // Set all weights to 0 so they ignore input
       final weights = List<double>.generate(perceptrons.length, (index) => 0.0);
@@ -48,7 +48,7 @@ class PerceptronLayerMutationService {
       );
     }
 
-    return GENNPerceptronLayer(gennPerceptrons: duplicatedPerceptrons);
+    return GENNPerceptronLayer(perceptrons: duplicatedPerceptrons);
   }
 
   /// Inserts the given [perceptronLayer] into the given [entity].
@@ -56,10 +56,10 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required GENNPerceptronLayer perceptronLayer,
   }) {
-    final duplicationLayer = perceptronLayer.gennPerceptrons.first.layer - 1;
+    final duplicationLayer = perceptronLayer.perceptrons.first.layer - 1;
 
     // Increment all layers after duplicationLayer
-    final genes = entity.gennDna.gennGenes.map((gene) {
+    final genes = entity.dna.genes.map((gene) {
       if (gene.value.layer > duplicationLayer) {
         return gene.copyWith(
           value: gene.value.copyWith(layer: gene.value.layer + 1),
@@ -70,7 +70,7 @@ class PerceptronLayerMutationService {
 
     // Add duplicated layer to genes
     genes.addAll(
-      perceptronLayer.gennPerceptrons.map(
+      perceptronLayer.perceptrons.map(
         (perceptron) => GENNGene(
           value: perceptron,
         ),
@@ -78,7 +78,7 @@ class PerceptronLayerMutationService {
     );
 
     return entity.copyWith(
-      dna: GENNDNA(gennGenes: genes),
+      dna: GENNDNA(genes: genes),
     );
   }
 
@@ -89,9 +89,9 @@ class PerceptronLayerMutationService {
     required int targetLayer,
   }) async {
     // Grab the genes from the given Entity
-    final gennGenes = entity.gennDna.gennGenes;
+    final gennGenes = entity.dna.genes;
 
-    final numWeightsOfTargetLayer = entity.gennDna.gennGenes
+    final numWeightsOfTargetLayer = entity.dna.genes
         .firstWhere((gennGene) => gennGene.value.layer == targetLayer)
         .value
         .weights
@@ -132,7 +132,7 @@ class PerceptronLayerMutationService {
       return gene;
     }).toList();
 
-    final dna = GENNDNA(gennGenes: genesWithUpdatedWeights);
+    final dna = GENNDNA(genes: genesWithUpdatedWeights);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
     return entity.copyWith(
@@ -152,7 +152,7 @@ class PerceptronLayerMutationService {
       'This is the output layer and has a fixed number of perceptrons.',
     );
 
-    final genes = entity.gennDna.gennGenes;
+    final genes = entity.dna.genes;
 
     // Grab the number of weights necessary from another gene from the
     // targetLayer.
@@ -185,7 +185,7 @@ class PerceptronLayerMutationService {
       }
     }
 
-    final dna = GENNDNA(gennGenes: genes);
+    final dna = GENNDNA(genes: genes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
     return entity.copyWith(
       dna: dna,
@@ -199,14 +199,14 @@ class PerceptronLayerMutationService {
     required int targetLayer,
   }) async {
     assert(
-      entity.gennDna.gennGenes
+      entity.dna.genes
               .where((gennGene) => gennGene.value.layer == targetLayer)
               .length >
           1,
       'Cannot remove the only Perceptron from a given layer.',
     );
 
-    var genes = entity.gennDna.gennGenes;
+    var genes = entity.dna.genes;
 
     final targetLayerGenes = List.from(
         genes.where((gene) => gene.value.layer == targetLayer).toList());
@@ -230,7 +230,7 @@ class PerceptronLayerMutationService {
       return gene;
     }).toList();
 
-    final dna = GENNDNA(gennGenes: genes);
+    final dna = GENNDNA(genes: genes);
     final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
     return entity.copyWith(

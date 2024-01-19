@@ -44,7 +44,7 @@ void main() {
         gennPerceptron,
       ];
       final gennPerceptronLayer = GENNPerceptronLayer(
-        gennPerceptrons: gennPerceptrons,
+        perceptrons: gennPerceptrons,
       );
 
       final actual = testObject.duplicatePerceptronLayer(
@@ -54,7 +54,7 @@ void main() {
       expect(
         actual,
         GENNPerceptronLayer(
-          gennPerceptrons: [
+          perceptrons: [
             gennPerceptron.copyWith(
               weights: [1.0, 0.0, 0.0],
               layer: 1,
@@ -79,12 +79,12 @@ void main() {
       final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
 
       final perceptronLayer = GENNPerceptronLayer(
-        gennPerceptrons: [secondGennPerceptron],
+        perceptrons: [secondGennPerceptron],
       );
 
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -100,8 +100,8 @@ void main() {
       );
 
       final expected = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -139,7 +139,7 @@ void main() {
       const targetLayer = 1;
       const randNegOneToPosOne = -0.5;
       final updatedDna = GENNDNA(
-        gennGenes: [
+        genes: [
           const GENNGene(
             value: gennPerceptron,
           ),
@@ -157,8 +157,8 @@ void main() {
           .thenReturn(randNegOneToPosOne);
 
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -174,7 +174,7 @@ void main() {
       );
 
       final expected = GENNEntity(
-        gennDna: updatedDna,
+        dna: updatedDna,
         fitnessScore: fitnessScore,
       );
 
@@ -195,8 +195,8 @@ void main() {
       const targetLayer = 2;
 
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -234,7 +234,7 @@ void main() {
         weights: randomWeights,
       );
       final updatedDna = GENNDNA(
-        gennGenes: [
+        genes: [
           const GENNGene(
             value: gennPerceptron,
           ),
@@ -255,8 +255,8 @@ void main() {
         ],
       );
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -285,7 +285,7 @@ void main() {
           .thenAnswer((_) async => fitnessScore);
 
       final expected = GENNEntity(
-        gennDna: updatedDna,
+        dna: updatedDna,
         fitnessScore: fitnessScore,
       );
 
@@ -307,8 +307,8 @@ void main() {
       const targetLayer = 1;
 
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -337,8 +337,8 @@ void main() {
       const updatedBias = 0.99;
 
       final entity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: [
+        dna: GENNDNA(
+          genes: [
             const GENNGene(
               value: gennPerceptron,
             ),
@@ -362,7 +362,7 @@ void main() {
       );
 
       final updatedDna = GENNDNA(
-        gennGenes: [
+        genes: [
           const GENNGene(
             value: gennPerceptron,
           ),
@@ -387,7 +387,7 @@ void main() {
       when(() => mockNumberGenerator.nextInt(3)).thenReturn(0);
 
       final expected = GENNEntity(
-        gennDna: updatedDna,
+        dna: updatedDna,
         fitnessScore: fitnessScore,
       );
 

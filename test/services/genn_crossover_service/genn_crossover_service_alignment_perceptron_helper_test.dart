@@ -19,7 +19,7 @@ void main() {
     weights: weights,
   );
   final gennEntity = GENNEntity(
-    gennDna: GENNDNA(gennGenes: [
+    dna: GENNDNA(genes: [
       GENNGene(
         value: gennPerceptron,
       ),
@@ -50,7 +50,7 @@ void main() {
       const targetNumLayers = 1;
 
       final gennPerceptronLayer =
-          GENNPerceptronLayer(gennPerceptrons: [gennPerceptron]);
+          GENNPerceptronLayer(perceptrons: [gennPerceptron]);
 
       when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
               gennPerceptronLayer: gennPerceptronLayer))
@@ -113,7 +113,7 @@ void main() {
       );
       final secondLayerGennEntity = gennEntity.copyWith(
         dna: GENNDNA(
-          gennGenes: [
+          genes: [
             GENNGene(
               value: secondLayerGennPerceptron,
             ),
@@ -122,7 +122,7 @@ void main() {
       );
       final thirdLayerGennEntity = gennEntity.copyWith(
         dna: GENNDNA(
-          gennGenes: [
+          genes: [
             GENNGene(
               value: thirdLayerGennPerceptron,
             ),
@@ -185,7 +185,7 @@ void main() {
       const targetGeneNum = 0;
 
       final gennEntityTwoGenes = gennEntity.copyWith(
-          dna: GENNDNA(gennGenes: [
+          dna: GENNDNA(genes: [
         GENNGene(
           value: gennPerceptron,
         ),
@@ -263,7 +263,7 @@ void main() {
       const targetGeneNum = 3;
 
       final gennEntityTwoGenes = gennEntity.copyWith(
-          dna: GENNDNA(gennGenes: [
+          dna: GENNDNA(genes: [
         GENNGene(
           value: gennPerceptron,
         ),
@@ -328,12 +328,12 @@ void main() {
 
       final perceptronLayers = [
         GENNPerceptronLayer(
-          gennPerceptrons: [
+          perceptrons: [
             gennPerceptron,
           ],
         ),
         GENNPerceptronLayer(
-          gennPerceptrons: [
+          perceptrons: [
             gennPerceptron,
             gennPerceptron,
             gennPerceptron,

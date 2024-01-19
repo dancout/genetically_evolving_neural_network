@@ -31,8 +31,8 @@ void main() {
       ),
     ];
     final testObject = GENNEntity(
-      gennDna: GENNDNA(
-        gennGenes: gennGenes,
+      dna: GENNDNA(
+        genes: gennGenes,
       ),
       fitnessScore: 0.0,
     );
@@ -54,7 +54,7 @@ void main() {
       final emptyList = <GENNGene>[];
       final gennParents = [
         GENNEntity(
-          gennDna: GENNDNA(gennGenes: emptyList),
+          dna: GENNDNA(genes: emptyList),
           fitnessScore: parentFitnessScore,
         ),
       ];
@@ -68,9 +68,9 @@ void main() {
       expect(
         GENNEntity.fromEntity(entity: entity),
         GENNEntity(
-          gennDna: GENNDNA(gennGenes: asdf),
+          dna: GENNDNA(genes: asdf),
           fitnessScore: fitnessScore,
-          gennParents: gennParents,
+          parents: gennParents,
         ),
       );
     });
@@ -83,7 +83,7 @@ void main() {
       final emptyList = <GENNGene>[];
       final gennParents = [
         GENNEntity(
-          gennDna: GENNDNA(gennGenes: emptyList),
+          dna: GENNDNA(genes: emptyList),
           fitnessScore: parentFitnessScore,
         ),
       ];
@@ -109,8 +109,8 @@ void main() {
       ];
 
       final originalGennEntity = GENNEntity(
-        gennDna: GENNDNA(
-          gennGenes: gennGenes,
+        dna: GENNDNA(
+          genes: gennGenes,
         ),
         fitnessScore: fitnessScore,
       );
@@ -121,7 +121,7 @@ void main() {
           value: gennPerceptron,
         ),
       ];
-      final updatedGennDNA = GENNDNA(gennGenes: updatedGennGenes);
+      final updatedGennDNA = GENNDNA(genes: updatedGennGenes);
       final copiedWithFitnessScore =
           originalGennEntity.copyWith(fitnessScore: updatedFitnessScore);
       expect(
@@ -129,18 +129,18 @@ void main() {
         updatedFitnessScore,
       );
       expect(
-        copiedWithFitnessScore.gennDna,
-        GENNDNA(gennGenes: gennGenes),
+        copiedWithFitnessScore.dna,
+        GENNDNA(genes: gennGenes),
       );
       expect(
-        copiedWithFitnessScore.gennParents,
+        copiedWithFitnessScore.parents,
         isNull,
       );
 
       final copiedWithGennDna =
           originalGennEntity.copyWith(dna: updatedGennDNA);
       expect(
-        copiedWithGennDna.gennDna,
+        copiedWithGennDna.dna,
         updatedGennDNA,
       );
       expect(
@@ -148,7 +148,7 @@ void main() {
         fitnessScore,
       );
       expect(
-        copiedWithGennDna.gennParents,
+        copiedWithGennDna.parents,
         isNull,
       );
 
@@ -156,15 +156,15 @@ void main() {
         parents: gennParents,
       );
       expect(
-        copiedWithParents.gennDna,
-        GENNDNA(gennGenes: gennGenes),
+        copiedWithParents.dna,
+        GENNDNA(genes: gennGenes),
       );
       expect(
         copiedWithParents.fitnessScore,
         fitnessScore,
       );
       expect(
-        copiedWithParents.gennParents,
+        copiedWithParents.parents,
         gennParents,
       );
     });

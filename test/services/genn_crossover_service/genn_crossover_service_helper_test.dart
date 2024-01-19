@@ -148,7 +148,7 @@ void main() {
         }
 
         final gennEntity = GENNEntity(
-          gennDna: GENNDNA(gennGenes: gennGenes),
+          dna: GENNDNA(genes: gennGenes),
           fitnessScore: fitnessScore,
         );
 
@@ -186,7 +186,7 @@ void main() {
         }
 
         final gennEntity = GENNEntity(
-          gennDna: GENNDNA(gennGenes: gennGenes),
+          dna: GENNDNA(genes: gennGenes),
           fitnessScore: fitnessScore,
         );
 

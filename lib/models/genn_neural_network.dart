@@ -1,16 +1,17 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// An extension of [NeuralNetwork].
 class GENNNeuralNetwork extends NeuralNetwork {
+  /// An extension of [NeuralNetwork].
   GENNNeuralNetwork({
-    required this.gennLayers,
+    required List<GENNPerceptronLayer> layers,
     super.guessService,
-  }) : super(layers: gennLayers);
+  })  : _gennLayers = layers,
+        super(layers: layers);
 
-  final List<GENNPerceptronLayer> gennLayers;
+  final List<GENNPerceptronLayer> _gennLayers;
 
-  /// The number of [GennperceptronsLayer]s within this [GENNNeuralNetwork].
-  int get numLayers => gennLayers.length;
-
+  /// Returns a [GENNNeuralNetwork] constructed from the input [genes].
   factory GENNNeuralNetwork.fromGenes({
     required List<GENNGene> genes,
     GuessService? guessService,
@@ -35,14 +36,20 @@ class GENNNeuralNetwork extends NeuralNetwork {
       // Then add the genes into a PerceptronLayer within the layers list.
       layers.add(
         GENNPerceptronLayer(
-          gennPerceptrons: perceptronsOfLayer,
+          perceptrons: perceptronsOfLayer,
         ),
       );
     }
 
     return GENNNeuralNetwork(
-      gennLayers: layers,
+      layers: layers,
       guessService: guessService,
     );
   }
+
+  @override
+  List<GENNPerceptronLayer> get layers => _gennLayers;
+
+  /// The number of [GennperceptronsLayer]s within this [GENNNeuralNetwork].
+  int get numLayers => _gennLayers.length;
 }

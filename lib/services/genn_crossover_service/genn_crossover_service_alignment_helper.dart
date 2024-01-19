@@ -93,7 +93,7 @@ class GENNCrossoverServiceAlignmentHelper {
 
       for (var copiedParent in copiedParents) {
         final perceptronLayerWithinParent = GENNPerceptronLayer(
-          gennPerceptrons: copiedParent.gennDna.gennGenes
+          perceptrons: copiedParent.dna.genes
               .where((gennGene) => gennGene.value.layer == currLayer)
               .map((gene) => gene.value)
               .toList(),

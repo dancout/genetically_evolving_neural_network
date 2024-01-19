@@ -34,7 +34,7 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
 
         // Extract the last PeceptronLayer on the entity
         final lastPerceptronLayer = GENNPerceptronLayer(
-          gennPerceptrons: updatedEntity.gennDna.gennGenes
+          perceptrons: updatedEntity.dna.genes
               .where((gennGene) => gennGene.value.layer == lastLayerNum)
               .map((gennGene) => gennGene.value)
               .toList(),
@@ -79,7 +79,7 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
     var updatedEntity = entity;
 
     // Get how many current genes there are within the target layer.
-    final genesWithinTargetLayer = updatedEntity.gennDna.gennGenes
+    final genesWithinTargetLayer = updatedEntity.dna.genes
         .where((gennGene) => gennGene.value.layer == targetLayer)
         .length;
 

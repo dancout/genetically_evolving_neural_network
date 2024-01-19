@@ -58,13 +58,13 @@ void main() {
   );
 
   final duplicatedPerceptronLayer = GENNPerceptronLayer(
-    gennPerceptrons: [
+    perceptrons: [
       gene.value.copyWith(layer: gene.value.layer + 1),
     ],
   );
 
   final originalPerceptronLayer = GENNPerceptronLayer(
-    gennPerceptrons: [
+    perceptrons: [
       gene.value,
     ],
   );
@@ -609,8 +609,8 @@ void main() {
         ),
       );
 
-      final superCrossoverGENNNeuralNetwork = GENNNeuralNetwork.fromGenes(
-          genes: superCrossoverEntity.gennDna.gennGenes);
+      final superCrossoverGENNNeuralNetwork =
+          GENNNeuralNetwork.fromGenes(genes: superCrossoverEntity.dna.genes);
 
       testObject = buildTestObject(
         updatedLayerMutationRate: 0.5,
@@ -624,7 +624,7 @@ void main() {
 
       when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
           gennPerceptronLayer: superCrossoverGENNNeuralNetwork
-              .gennLayers[layer])).thenReturn(duplicatedPerceptronLayer);
+              .layers[layer])).thenReturn(duplicatedPerceptronLayer);
 
       when(() => mockPerceptronLayerMutationService.addPerceptronLayer(
               entity: superCrossoverEntity,
@@ -649,8 +649,7 @@ void main() {
       verify(() => mockPerceptronLayerMutationService.addPerceptronToLayer(
           entity: updatedEntity, targetLayer: layer));
       verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer:
-              superCrossoverGENNNeuralNetwork.gennLayers[layer]));
+          gennPerceptronLayer: superCrossoverGENNNeuralNetwork.layers[layer]));
       verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
           entity: superCrossoverEntity,
           perceptronLayer: duplicatedPerceptronLayer));

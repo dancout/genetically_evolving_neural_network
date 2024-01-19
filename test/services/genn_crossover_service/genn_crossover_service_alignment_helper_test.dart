@@ -36,15 +36,15 @@ void main() {
     firstLayerGennGene,
   ];
   final firstLayerGennEntity = GENNEntity(
-    gennDna: GENNDNA(
-      gennGenes: gennGenes,
+    dna: GENNDNA(
+      genes: gennGenes,
     ),
     fitnessScore: fitnessScore,
   );
 
   final secondLayerGennEntity = GENNEntity(
-    gennDna: GENNDNA(
-      gennGenes: [
+    dna: GENNDNA(
+      genes: [
         firstLayerGennGene,
         secondLayerGennGene,
       ],
@@ -53,8 +53,8 @@ void main() {
   );
 
   final secondLayerCrossodOverGennEntity = GENNEntity(
-    gennDna: GENNDNA(
-      gennGenes: [
+    dna: GENNDNA(
+      genes: [
         firstLayerGennGene,
         secondLayerGennGene,
       ],
@@ -63,15 +63,15 @@ void main() {
   );
 
   final firstLayerCrossedOverGennEntity = GENNEntity(
-    gennDna: GENNDNA(
-      gennGenes: gennGenes,
+    dna: GENNDNA(
+      genes: gennGenes,
     ),
     fitnessScore: crossedOverFitnessScore,
   );
 
   final thirdLayerGennEntity = GENNEntity(
-    gennDna: GENNDNA(
-      gennGenes: [
+    dna: GENNDNA(
+      genes: [
         firstLayerGennGene,
         secondLayerGennGene,
         thirdLayerGennGene,
@@ -295,8 +295,8 @@ void main() {
         () => mockGennCrossoverServiceAlignmentPerceptronHelper
             .alignNumPerceptronsWithinLayer(
           perceptronLayers: [
-            GENNPerceptronLayer(gennPerceptrons: const [gennPerceptron]),
-            GENNPerceptronLayer(gennPerceptrons: const [gennPerceptron]),
+            GENNPerceptronLayer(perceptrons: const [gennPerceptron]),
+            GENNPerceptronLayer(perceptrons: const [gennPerceptron]),
           ],
         ),
       ).thenReturn(firstLayer);

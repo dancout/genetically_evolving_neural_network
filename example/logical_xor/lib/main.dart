@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:genetic_evolution/genetic_evolution.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
@@ -26,12 +25,7 @@ class _MyAppState extends State<MyApp> {
 
   late final GENN genn;
 
-  // TODO: This is causing the genetic_evolution import above. Can I make it so
-  /// that we don't need to import 2 packages for this?
-  ///
-  /// Update! I think that when we are not depending from path that this will fix itself.
-  // TODO: I could also make a GENNGeneration class that would fix this.
-  Generation<GENNPerceptron>? generation;
+  GENNGeneration? generation;
 
   int? waveTargetFound;
   static const numInitialInputs = 3;
@@ -74,7 +68,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  Widget showGuesses(Entity<GENNPerceptron> entity) {
+  Widget showGuesses(GENNEntity entity) {
     final logicalXORFitnessService = LogicalXORFitnessService();
     final guesses = logicalXORFitnessService.getGuesses(
       gennDna: GENNDNA.fromDNA(
@@ -526,7 +520,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget showPerceptronMapWithScore({
-    required Entity<GENNPerceptron> entity,
+    required GENNEntity entity,
     bool showLabels = false,
   }) {
     const textWidth = 150.0;
@@ -651,7 +645,7 @@ class LogicalXORFitnessService extends GENNFitnessService {
   }) {
     // Declare the NeuralNetwork
     final neuralNetwork = GENNNeuralNetwork.fromGenes(
-      genes: List<GENNGene>.from(gennDna.gennGenes),
+      genes: List<GENNGene>.from(gennDna.genes),
     );
 
     // Declare a list of guesses

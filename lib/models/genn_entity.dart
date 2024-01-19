@@ -2,20 +2,23 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// An extension of [GeneticEvolution.Entity]
 class GENNEntity extends Entity<GENNPerceptron> {
+  /// An extension of [GeneticEvolution.Entity]
   const GENNEntity({
-    required this.gennDna,
+    required GENNDNA dna,
     required super.fitnessScore,
-    this.gennParents,
-  }) : super(
-          dna: gennDna,
-          parents: gennParents,
+    List<GENNEntity>? parents,
+  })  : _gennDna = dna,
+        _gennParents = parents,
+        super(
+          dna: dna,
+          parents: parents,
         );
 
-  final List<GENNEntity>? gennParents;
-  final GENNDNA gennDna;
+  final List<GENNEntity>? _gennParents;
+  final GENNDNA _gennDna;
 
-  /// The highest Layer value present within the [gennDna]'s [gennGene] objects.
-  int get maxLayerNum => gennDna.gennGenes.fold(
+  /// The highest Layer value present within the [_gennDna]'s [gennGene] objects.
+  int get maxLayerNum => _gennDna.genes.fold(
         0,
         (previousValue, gennGene) => (previousValue > gennGene.value.layer)
             ? previousValue
@@ -37,9 +40,9 @@ class GENNEntity extends Entity<GENNPerceptron> {
 
     // Return the newly converted GENNEntity
     return GENNEntity(
-      gennDna: GENNDNA.fromDNA(dna: entity.dna),
+      dna: GENNDNA.fromDNA(dna: entity.dna),
       fitnessScore: entity.fitnessScore,
-      gennParents: gennParents,
+      parents: gennParents,
     );
   }
 
@@ -59,9 +62,15 @@ class GENNEntity extends Entity<GENNPerceptron> {
   }
 
   @override
+  List<GENNEntity>? get parents => _gennParents;
+
+  @override
+  GENNDNA get dna => _gennDna;
+
+  @override
   List<Object?> get props => [
         ...super.props,
-        gennParents,
-        gennDna,
+        _gennParents,
+        _gennDna,
       ];
 }

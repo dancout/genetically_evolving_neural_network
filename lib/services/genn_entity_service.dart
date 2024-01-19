@@ -63,7 +63,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     );
 
     final randNumber = numberGenerator.nextDouble;
-    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.gennDna.gennGenes);
+    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);
     var numLayers = gennNN.numLayers;
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.
@@ -81,7 +81,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         // Duplicate PerceptronLayer
         final duplicatedPerceptronLayer =
             perceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: gennNN.gennLayers[duplicationLayer],
+          gennPerceptronLayer: gennNN.layers[duplicationLayer],
         );
 
         // Add PerceptronLayer into Entity
@@ -121,7 +121,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
       final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
       // Calculate the number of Genes in the target layer
-      final numGenesInTargetLayer = child.gennDna.gennGenes
+      final numGenesInTargetLayer = child.dna.genes
           .where((gene) => gene.value.layer == targetLayer)
           .length;
 
