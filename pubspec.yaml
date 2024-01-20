@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  genetic_evolution: ^0.2.0
-  neural_network_skeleton: ^0.1.1
+  genetic_evolution: ^0.2.1
+  neural_network_skeleton: ^0.1.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
