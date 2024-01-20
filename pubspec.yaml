@@ -19,6 +19,13 @@ dev_dependencies:
     sdk: flutter
   mocktail: ^1.0.0
 
+topics:
+  - artificial-intelligence
+  - ai
+  - genetic-evolution
+  - algorithm
+  - neural-network
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
