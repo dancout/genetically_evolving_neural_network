@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
+import 'package:logical_xor/ui_helper.dart';
 
 class DiagramKey extends StatelessWidget {
   const DiagramKey({
     super.key,
+    required this.numInitialInputs,
   });
+
+  final int numInitialInputs;
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +219,8 @@ class DiagramKey extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12.0),
-                Container(height: 4, color: Colors.grey),
+                UIHelper(numInitialInputs: numInitialInputs)
+                    .perceptronMapDivider,
                 const SizedBox(height: 12.0),
                 const Text(
                   'Logical XOR Description',

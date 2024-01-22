@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/diagram_key.dart';
+import 'package:logical_xor/logical_xor_fitness_service.dart';
 import 'package:logical_xor/ui_helper.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   /// The Genetically Evolving Neural Network object.
   late final GENN genn;
 
-  /// The current generation of Neural ENtworks.
+  /// The current generation of Neural Networks.
   GENNGeneration? generation;
 
   /// The first wave to contain an Entity that reached the target fitness score.
@@ -48,9 +49,10 @@ class _MyAppState extends State<MyApp> {
 
   /// Used to build components of this example file's UI that are not related to
   /// understanding how the GENN class works.
-  static const UIHelper uiHelper = UIHelper(numInitialInputs: numInitialInputs);
+  static UIHelper get uiHelper => UIHelper(numInitialInputs: numInitialInputs);
   @override
   void initState() {
+    // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
       populationSize: 40,
       numOutputs: 1,
@@ -64,6 +66,7 @@ class _MyAppState extends State<MyApp> {
       generationsToTrack: 1,
     );
 
+    // Create your Genetically Evolving Neural Network object.
     genn = GENN.create(
       config: config,
       fitnessService: LogicalXORFitnessService(),
@@ -81,6 +84,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Necessary for initial loading of the screen.
     final generation = this.generation;
     if (generation == null) {
       return const CircularProgressIndicator();
@@ -88,8 +92,12 @@ class _MyAppState extends State<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (isPlaying) {
+        // Sleep for [waitTimeBetweenWaves] during continuous play so that the
+        // gradual evolution changes are easier to see.
         await Future.delayed(
             const Duration(milliseconds: waitTimeBetweenWaves));
+
+        // Create and set the next Generation to be displayed
         genn.nextGeneration().then((value) {
           setState(() {
             this.generation = value;
@@ -105,7 +113,6 @@ class _MyAppState extends State<MyApp> {
       waveTargetFound = generation.wave;
     }
 
-    final perceptronMapDivider = Container(height: 4, color: Colors.grey);
     final topScoringParents = generation.population.topScoringEntity.parents;
     return MaterialApp(
       title: 'Flutter Demo',
@@ -117,7 +124,7 @@ class _MyAppState extends State<MyApp> {
         body: SafeArea(
           child: Row(
             children: [
-              const DiagramKey(),
+              const DiagramKey(numInitialInputs: numInitialInputs),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Column(
@@ -164,7 +171,7 @@ class _MyAppState extends State<MyApp> {
                                 const SizedBox(width: 12),
                                 uiHelper.showCorrectAnswers(),
                                 const SizedBox(width: 12),
-                                uiHelper.showGuesses(
+                                uiHelper.showNeuralNetworkGuesses(
                                   generation.population.topScoringEntity,
                                 ),
                               ],
@@ -183,7 +190,7 @@ class _MyAppState extends State<MyApp> {
                       'These are chosen as parents to breed the next generation',
                       style: TextStyle(fontStyle: FontStyle.italic),
                     ),
-                    perceptronMapDivider,
+                    uiHelper.perceptronMapDivider,
                     Flexible(
                       child: ListView.separated(
                         itemBuilder: (context, index) =>
@@ -193,7 +200,7 @@ class _MyAppState extends State<MyApp> {
                         itemCount: generation.population.entities.length,
                         // itemCount: 16,
                         separatorBuilder: (context, index) =>
-                            perceptronMapDivider,
+                            uiHelper.perceptronMapDivider,
                       ),
                     ),
                   ],
@@ -238,94 +245,5 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
-  }
-}
-
-/// This fitness service will be used to score a logical XOR calculator. The
-/// output should only return true if a single value is 1.0 and both other
-/// values are 0.0. There should be one exclusive positive value! The more
-/// correct guesses that a NeuralNetwork makes, the higher its fitness score
-/// will be.
-class LogicalXORFitnessService extends GENNFitnessService {
-  /// The list of logical inputs for your XOR calculator. The possible options
-  /// are 0 or 1, effectively true or false.
-  List<List<double>> logicalInputsList = [
-    [0.0, 0.0, 0.0],
-    [0.0, 0.0, 1.0],
-    [0.0, 1.0, 0.0],
-    [0.0, 1.0, 1.0],
-    [1.0, 0.0, 0.0],
-    [1.0, 0.0, 1.0],
-    [1.0, 1.0, 0.0],
-    [1.0, 1.0, 1.0],
-  ];
-
-  /// The list of logical outputs for your XOR calculator. These are the
-  /// expected outputs respective to the logical inputs.
-  List<List<double>> targetOutputsList = [
-    [0.0],
-    [1.0],
-    [1.0],
-    [0.0],
-    [1.0],
-    [0.0],
-    [0.0],
-    [0.0],
-  ];
-
-  /// Returns the list of guesses (or outputs) from the input [neuralNetwork]
-  /// based on the standard set of inputs,
-  /// [LogicalXORFitnessService.logicalInputsList].
-  List<List<double>> getGuesses({
-    required GENNNeuralNetwork neuralNetwork,
-  }) {
-    // Declare a list of guesses
-    List<List<double>> guesses = [];
-
-    // Cycle through each input
-    for (int i = 0; i < logicalInputsList.length; i++) {
-      // Declare this run's set of inputs
-      final inputs = logicalInputsList[i];
-
-      // Make a guess using the NeuralNetwork
-      final guess = neuralNetwork.guess(inputs: inputs);
-
-      // Add this guess to the list of guesses
-      guesses.add(guess);
-    }
-
-    // Return the list of guesses
-    return guesses;
-  }
-
-  @override
-  Future<double> gennScoringFunction({
-    required GENNNeuralNetwork neuralNetwork,
-  }) async {
-    // Collect all the guesses from this NeuralNetwork
-    final guesses = getGuesses(neuralNetwork: neuralNetwork);
-
-    // Declare a variable to store the sum of all errors
-    var errorSum = 0.0;
-
-    // Cycle through each guess to check its validity
-    for (int i = 0; i < guesses.length; i++) {
-      // Calculate the error from this guess
-      final error = (targetOutputsList[i][0] - guesses[i][0]).abs();
-
-      // Add this error to the errorSum
-      errorSum += error;
-    }
-
-    // Calculate the difference between a perfect score (8) and the total
-    // errors. A perfect score would mean zero errors with 8 correct answers,
-    // meaning a perfect score would be 8.
-    final diff = logicalInputsList.length - errorSum;
-
-    // To make the better performing Entities stand out more in this population,
-    // use the following equation to calculate the FitnessScore.
-    //
-    // 4 to the power of diff
-    return pow(4, diff).toDouble();
   }
 }

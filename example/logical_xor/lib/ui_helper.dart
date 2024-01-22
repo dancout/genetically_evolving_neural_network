@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
-import 'package:logical_xor/main.dart';
+import 'package:logical_xor/logical_xor_fitness_service.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
 class UIHelper {
-  const UIHelper({
+  UIHelper({
     required this.numInitialInputs,
   });
 
   final int numInitialInputs;
+
+  final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
   Widget showCorrectAnswers() {
     return Column(
@@ -46,9 +48,9 @@ class UIHelper {
     );
   }
 
-  Widget showGuesses(GENNEntity entity) {
+  Widget showNeuralNetworkGuesses(GENNEntity entity) {
     final logicalXORFitnessService = LogicalXORFitnessService();
-    final guesses = logicalXORFitnessService.getGuesses(
+    final guesses = logicalXORFitnessService.getNeuralNetworkGuesses(
       neuralNetwork: GENNNeuralNetwork.fromGenes(
         genes: entity.dna.genes,
       ),
