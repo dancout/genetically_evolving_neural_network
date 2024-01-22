@@ -71,8 +71,8 @@ class _MyAppState extends State<MyApp> {
   Widget showGuesses(GENNEntity entity) {
     final logicalXORFitnessService = LogicalXORFitnessService();
     final guesses = logicalXORFitnessService.getGuesses(
-      gennDna: GENNDNA.fromDNA(
-        dna: entity.dna,
+      neuralNetwork: GENNNeuralNetwork.fromGenes(
+        genes: entity.dna.genes,
       ),
     );
 
@@ -641,13 +641,8 @@ class LogicalXORFitnessService extends GENNFitnessService {
   ];
 
   List<List<double>> getGuesses({
-    required GENNDNA gennDna,
+    required GENNNeuralNetwork neuralNetwork,
   }) {
-    // Declare the NeuralNetwork
-    final neuralNetwork = GENNNeuralNetwork.fromGenes(
-      genes: List<GENNGene>.from(gennDna.genes),
-    );
-
     // Declare a list of guesses
     List<List<double>> guesses = [];
 
@@ -668,14 +663,11 @@ class LogicalXORFitnessService extends GENNFitnessService {
   }
 
   @override
-  double get nonZeroBias => 0.01;
-
-  @override
   Future<double> gennScoringFunction({
-    required GENNDNA gennDna,
+    required GENNNeuralNetwork neuralNetwork,
   }) async {
     // Collect all the guesses from this NeuralNetwork
-    final guesses = getGuesses(gennDna: gennDna);
+    final guesses = getGuesses(neuralNetwork: neuralNetwork);
 
     // Declare a variable to store the sum of all errors
     var errorSum = 0.0;
