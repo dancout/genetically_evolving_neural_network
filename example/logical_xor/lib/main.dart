@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/diagram_key.dart';
-import 'package:logical_xor/perceptron_map/consts.dart';
-import 'package:logical_xor/perceptron_map/perceptron_map.dart';
+import 'package:logical_xor/ui_helper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,20 +19,36 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  /// Whether the example is currently playing forward.
   bool isPlaying = false;
-  late final double target;
 
+  /// The highest possible fitness score.
+  final double targetFitnessScore =
+      pow(4, 8) + LogicalXORFitnessService().nonZeroBias;
+
+  /// The Genetically Evolving Neural Network object.
   late final GENN genn;
 
+  /// The current generation of Neural ENtworks.
   GENNGeneration? generation;
 
+  /// The first wave to contain an Entity that reached the target fitness score.
   int? waveTargetFound;
+
+  /// The number of inputs being fed into the Neural Network.
   static const numInitialInputs = 3;
 
-  // This represents the time to wait between waves shown on screen.
+  /// This represents the time to wait between waves shown on screen during
+  /// continuous play.
   static const waitTimeBetweenWaves = 400;
 
-  bool autoPlay = true;
+  /// Whether to continuously play on through generations, or only increment by
+  /// a single generation after each "play" click.
+  bool continuousPlay = true;
+
+  /// Used to build components of this example file's UI that are not related to
+  /// understanding how the GENN class works.
+  static const UIHelper uiHelper = UIHelper(numInitialInputs: numInitialInputs);
   @override
   void initState() {
     final config = GENNGeneticEvolutionConfig(
@@ -49,13 +64,9 @@ class _MyAppState extends State<MyApp> {
       generationsToTrack: 1,
     );
 
-    final fitnessService = LogicalXORFitnessService();
-
-    target = pow(4, 8) + fitnessService.nonZeroBias;
-
     genn = GENN.create(
       config: config,
-      fitnessService: fitnessService,
+      fitnessService: LogicalXORFitnessService(),
     );
 
     // Initialize the first generation
@@ -66,74 +77,6 @@ class _MyAppState extends State<MyApp> {
     });
 
     super.initState();
-  }
-
-  Widget showGuesses(GENNEntity entity) {
-    final logicalXORFitnessService = LogicalXORFitnessService();
-    final guesses = logicalXORFitnessService.getGuesses(
-      neuralNetwork: GENNNeuralNetwork.fromGenes(
-        genes: entity.dna.genes,
-      ),
-    );
-
-    final guessTextWidgets = [];
-
-    for (int i = 0; i < guesses.length; i++) {
-      final guess = guesses[i][0];
-      final textWidget = Text(
-        guess.toString(),
-        style: (guess == logicalXORFitnessService.targetOutputsList[i][0])
-            ? null
-            : const TextStyle(
-                color: negativeColor,
-                fontWeight: FontWeight.bold,
-              ),
-      );
-
-      guessTextWidgets.add(textWidget);
-    }
-    return Column(
-      children: [
-        const Text('Guesses'),
-        const Text('   '),
-        ...guessTextWidgets,
-      ],
-    );
-  }
-
-  Widget showCorrectAnswers() {
-    return Column(
-      children: [
-        const Text('Correct Answers'),
-        const Text('   '),
-        ...LogicalXORFitnessService()
-            .targetOutputsList
-            .map(
-              (targetValue) => Text(
-                targetValue[0].toString(),
-              ),
-            )
-            .toList()
-      ],
-    );
-  }
-
-  Widget showLogicalInputs() {
-    return Column(
-      children: [
-        const Text('Logical Inputs'),
-        const Text(
-          'a, b, c',
-          style: TextStyle(
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        ...LogicalXORFitnessService()
-            .logicalInputsList
-            .map((e) => Text(e.toString()))
-            .toList()
-      ],
-    );
   }
 
   @override
@@ -157,7 +100,8 @@ class _MyAppState extends State<MyApp> {
 
     // Check if target has been found.
     if (waveTargetFound == null &&
-        generation.population.topScoringEntity.fitnessScore == target) {
+        generation.population.topScoringEntity.fitnessScore ==
+            targetFitnessScore) {
       waveTargetFound = generation.wave;
     }
 
@@ -188,9 +132,9 @@ class _MyAppState extends State<MyApp> {
                     if (topScoringParents != null)
                       Column(
                         children: [
-                          showPerceptronMapWithScore(
+                          uiHelper.showPerceptronMapWithScore(
                               entity: topScoringParents[0]),
-                          showPerceptronMapWithScore(
+                          uiHelper.showPerceptronMapWithScore(
                               entity: topScoringParents[1]),
                         ],
                       ),
@@ -202,12 +146,12 @@ class _MyAppState extends State<MyApp> {
                     Text(
                       'Generation: ${generation.wave.toString()}',
                     ),
-                    showPerceptronMapWithScore(
+                    uiHelper.showPerceptronMapWithScore(
                       entity: generation.population.topScoringEntity,
                       showLabels: true,
                     ),
                     Text(
-                      'Target Score: $target',
+                      'Target Score: $targetFitnessScore',
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -216,12 +160,13 @@ class _MyAppState extends State<MyApp> {
                           children: [
                             Row(
                               children: [
-                                showLogicalInputs(),
+                                uiHelper.showLogicalInputs(),
                                 const SizedBox(width: 12),
-                                showCorrectAnswers(),
+                                uiHelper.showCorrectAnswers(),
                                 const SizedBox(width: 12),
-                                showGuesses(
-                                    generation.population.topScoringEntity),
+                                uiHelper.showGuesses(
+                                  generation.population.topScoringEntity,
+                                ),
                               ],
                             ),
                           ],
@@ -242,11 +187,11 @@ class _MyAppState extends State<MyApp> {
                     Flexible(
                       child: ListView.separated(
                         itemBuilder: (context, index) =>
-                            showPerceptronMapWithScore(
+                            uiHelper.showPerceptronMapWithScore(
                           entity: generation.population.sortedEntities[index],
                         ),
-                        // itemCount: generation.population.entities.length,
-                        itemCount: 16,
+                        itemCount: generation.population.entities.length,
+                        // itemCount: 16,
                         separatorBuilder: (context, index) =>
                             perceptronMapDivider,
                       ),
@@ -261,18 +206,18 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('AutoPlay: ${autoPlay ? 'On' : 'Off'}'),
+            Text('ContinuousPlay: ${continuousPlay ? 'On' : 'Off'}'),
             Switch.adaptive(
-                value: autoPlay,
+                value: continuousPlay,
                 onChanged: (value) {
                   setState(() {
-                    autoPlay = value;
+                    continuousPlay = value;
                     isPlaying = false;
                   });
                 }),
             FloatingActionButton(
               onPressed: () {
-                if (autoPlay) {
+                if (continuousPlay) {
                   setState(() {
                     isPlaying = !isPlaying;
                   });
@@ -284,101 +229,13 @@ class _MyAppState extends State<MyApp> {
                   });
                 }
               },
-              child: (!autoPlay || !isPlaying)
+              child: (!continuousPlay || !isPlaying)
                   ? const Icon(Icons.play_arrow)
                   : const Icon(Icons.pause),
             ),
             const SizedBox(height: 12.0),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget showPerceptronMapWithScore({
-    required GENNEntity entity,
-    bool showLabels = false,
-  }) {
-    const textWidth = 150.0;
-
-    final veritcalDivider = Container(
-      height: 48.0,
-      width: circleDiameter,
-      color: Colors.grey,
-    );
-    var row = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: weightsColumnWidth + 9 + circleDiameter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Inputs',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              veritcalDivider,
-            ],
-          ),
-        ),
-        const Spacer(),
-        const Text(
-          'BRAIN',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const Spacer(),
-        SizedBox(
-          width: weightsColumnWidth + 53,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              veritcalDivider,
-              const Text(
-                'Output',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 12.0),
-            ],
-          ),
-        ),
-      ],
-    );
-    return IntrinsicWidth(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (showLabels) row,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PerceptronMap(
-                entity: GENNEntity.fromEntity(
-                  entity: entity,
-                ),
-                numInputs: numInitialInputs,
-                showLabels: showLabels,
-              ),
-              if (!showLabels)
-                SizedBox(
-                  width: textWidth,
-                  child: Text(
-                    'Score: ${entity.fitnessScore.toString()}',
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-            ],
-          ),
-          if (showLabels)
-            SizedBox(
-              width: textWidth,
-              child: Text(
-                'Score: ${entity.fitnessScore.toString()}',
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-        ],
       ),
     );
   }
@@ -416,6 +273,9 @@ class LogicalXORFitnessService extends GENNFitnessService {
     [0.0],
   ];
 
+  /// Returns the list of guesses (or outputs) from the input [neuralNetwork]
+  /// based on the standard set of inputs,
+  /// [LogicalXORFitnessService.logicalInputsList].
   List<List<double>> getGuesses({
     required GENNNeuralNetwork neuralNetwork,
   }) {
