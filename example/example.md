@@ -1,7 +1,9 @@
 ## Logical XOR Example
-This example will attempt to correctly guess if a set of inputs satisfies Logical XOR - meaning one and only one input should be 1.0, and all other inputs should be 0.0.
+This example will attempt to correctly guess if a set of inputs satisfies Logical XOR - meaning one and only one input should be True (represented by 1.0), and all other inputs should be False (represented by 0.0).
 
 You can access the full example by cloning this package locally, [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main).
+
+![genn_xor 1](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/49dd19d0-a951-4521-9038-cc734bad483c)
 
 ### logical_xor_fitness_service.dart
 This file contains your custom `FitnessService` that will reward correctly guessing if a set of inputs satisfies Logical XOR.
