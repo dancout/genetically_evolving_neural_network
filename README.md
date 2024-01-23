@@ -1,8 +1,8 @@
 # genetically_evolving_neural_network
  This package implements a Genetically Evolving Neural Network. A Population of Entities, each containing a mutable Neural Network to drive decisions, will reproduce to create a new Generation (through cross-breeding the DNA of high-performing Entities and introducing new mutations).
 
- //TODO: Put a GIF here of the zoomed in neural network & its parents
- zoomed_in_GENN.mp4 --> GIF
+![zoomed_in_GENN](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/178ff29c-029d-4bfb-bf9a-12a816ed023b)
+
 
 ## Usage
 You simply need to define your own `FitnessService` to determine how well an Entity's decisions perform, along with a config that states how often the DNA of your population should mutate.
