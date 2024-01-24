@@ -1,6 +1,6 @@
 name: genetically_evolving_neural_network
-description: This package implements a Genetically Evolving Neural Network. A Population of Entities, each containing a mutable Neural Network to drive decisions, will reproduce to create a new Generation (through cross-breeding the DNA of high-performing Entities and introducing new mutations).
-version: 0.1.0
+description: This package mimicks the process of Genetic Evolution on Entities, each comprised of a Neural Network, through cross-breeding parents and genetic mutations.
+version: 0.1.1
 homepage: https://github.com/dancout/genetically_evolving_neural_network
 
 environment:
