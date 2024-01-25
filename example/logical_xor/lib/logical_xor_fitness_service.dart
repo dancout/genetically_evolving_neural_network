@@ -93,27 +93,4 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
   double? get targetFitnessScore => (highestPossibleScore != null)
       ? (highestPossibleScore! + nonZeroBias)
       : null;
-
-  @override
-  List<List<double>> getNeuralNetworkGuesses({
-    required GENNNeuralNetwork neuralNetwork,
-  }) {
-    // Declare a list of guesses
-    List<List<double>> guesses = [];
-
-    // Cycle through each input
-    for (int i = 0; i < inputsList.length; i++) {
-      // Declare this run's set of inputs
-      final inputs = inputsList[i];
-
-      // Make a guess using the NeuralNetwork
-      final guess = neuralNetwork.guess(inputs: inputs);
-
-      // Add this guess to the list of guesses
-      guesses.add(guess);
-    }
-
-    // Return the list of guesses
-    return guesses;
-  }
 }
