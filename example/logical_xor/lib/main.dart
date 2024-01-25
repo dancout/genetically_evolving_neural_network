@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/diagram_key.dart';
+import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/logical_xor_fitness_service.dart';
 import 'package:logical_xor/ui_helper.dart';
 
@@ -22,10 +21,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   /// Whether the example is currently playing forward.
   bool isPlaying = false;
-
-  /// The highest possible fitness score.
-  final double targetFitnessScore =
-      pow(4, 8) + LogicalXORFitnessService().nonZeroBias;
 
   /// The Genetically Evolving Neural Network object.
   late final GENN genn;
@@ -47,11 +42,21 @@ class _MyAppState extends State<MyApp> {
   /// a single generation after each "play" click.
   bool continuousPlay = true;
 
+  final GENNVisualizationExampleFitnessService gennExampleFitnessService =
+      LogicalXORFitnessService();
+
   /// Used to build components of this example file's UI that are not related to
   /// understanding how the GENN class works.
-  static UIHelper get uiHelper => UIHelper(numInitialInputs: numInitialInputs);
+  late final UIHelper uiHelper;
+
   @override
   void initState() {
+    // Define your UIHelper based on your gennExampleFitnessService
+    uiHelper = UIHelper(
+      numInitialInputs: numInitialInputs,
+      gennExampleFitnessService: gennExampleFitnessService,
+    );
+
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
       populationSize: 40,
@@ -69,7 +74,7 @@ class _MyAppState extends State<MyApp> {
     // Create your Genetically Evolving Neural Network object.
     genn = GENN.create(
       config: config,
-      fitnessService: LogicalXORFitnessService(),
+      fitnessService: gennExampleFitnessService,
     );
 
     // Initialize the first generation
@@ -109,7 +114,7 @@ class _MyAppState extends State<MyApp> {
     // Check if target has been found.
     if (waveTargetFound == null &&
         generation.population.topScoringEntity.fitnessScore ==
-            targetFitnessScore) {
+            gennExampleFitnessService.targetFitnessScore) {
       waveTargetFound = generation.wave;
     }
 
@@ -124,7 +129,10 @@ class _MyAppState extends State<MyApp> {
         body: SafeArea(
           child: Row(
             children: [
-              const DiagramKey(numInitialInputs: numInitialInputs),
+              DiagramKey(
+                numInitialInputs: numInitialInputs,
+                gennExampleFitnessService: gennExampleFitnessService,
+              ),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Column(
@@ -157,9 +165,10 @@ class _MyAppState extends State<MyApp> {
                       entity: generation.population.topScoringEntity,
                       showLabels: true,
                     ),
-                    Text(
-                      'Target Score: $targetFitnessScore',
-                    ),
+                    if (gennExampleFitnessService.targetFitnessScore != null)
+                      Text(
+                        'Target Score: ${gennExampleFitnessService.targetFitnessScore}',
+                      ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

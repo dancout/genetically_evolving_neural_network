@@ -1,28 +1,31 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
-import 'package:logical_xor/logical_xor_fitness_service.dart';
+import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
 class UIHelper {
   UIHelper({
     required this.numInitialInputs,
+    required this.gennExampleFitnessService,
   });
 
   final int numInitialInputs;
 
   final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
+  final GENNVisualizationExampleFitnessService gennExampleFitnessService;
+
   Widget showCorrectAnswers() {
     return Column(
       children: [
         const Text('Correct Answers'),
         const Text('   '),
-        ...LogicalXORFitnessService()
-            .targetOutputsList
+        ...gennExampleFitnessService.readableTargetList
             .map(
               (targetValue) => Text(
-                targetValue[0].toString(),
+                targetValue,
               ),
             )
             .toList()
@@ -40,17 +43,15 @@ class UIHelper {
             fontStyle: FontStyle.italic,
           ),
         ),
-        ...LogicalXORFitnessService()
-            .logicalInputsList
-            .map((e) => Text(e.toString()))
+        ...gennExampleFitnessService.readableInputList
+            .map((e) => Text(e))
             .toList()
       ],
     );
   }
 
   Widget showNeuralNetworkGuesses(GENNEntity entity) {
-    final logicalXORFitnessService = LogicalXORFitnessService();
-    final guesses = logicalXORFitnessService.getNeuralNetworkGuesses(
+    final guesses = gennExampleFitnessService.getNeuralNetworkGuesses(
       neuralNetwork: GENNNeuralNetwork.fromGenes(
         genes: entity.dna.genes,
       ),
@@ -59,10 +60,13 @@ class UIHelper {
     final guessTextWidgets = [];
 
     for (int i = 0; i < guesses.length; i++) {
-      final guess = guesses[i][0];
+      final guess = guesses[i];
       final textWidget = Text(
-        guess.toString(),
-        style: (guess == logicalXORFitnessService.targetOutputsList[i][0])
+        gennExampleFitnessService.convertToReadableString(guess),
+        style: listEquals(
+          guess,
+          gennExampleFitnessService.targetOutputsList[i],
+        )
             ? null
             : const TextStyle(
                 color: negativeColor,

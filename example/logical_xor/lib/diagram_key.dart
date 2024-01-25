@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
 import 'package:logical_xor/ui_helper.dart';
@@ -7,9 +8,11 @@ class DiagramKey extends StatelessWidget {
   const DiagramKey({
     super.key,
     required this.numInitialInputs,
+    required this.gennExampleFitnessService,
   });
 
   final int numInitialInputs;
+  final GENNVisualizationExampleFitnessService gennExampleFitnessService;
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +222,10 @@ class DiagramKey extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12.0),
-                UIHelper(numInitialInputs: numInitialInputs)
-                    .perceptronMapDivider,
+                UIHelper(
+                  numInitialInputs: numInitialInputs,
+                  gennExampleFitnessService: gennExampleFitnessService,
+                ).perceptronMapDivider,
                 const SizedBox(height: 12.0),
                 const Text(
                   'Logical XOR Description',

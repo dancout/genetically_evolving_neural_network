@@ -21,7 +21,7 @@ abstract class GENNVisualizationExample {
 
   /// The function used to convert a List of values (whether inputs or outputs)
   /// to be more human readable.
-  static String convertToReadableString(List<double> valueList) {
+  String convertToReadableString(List<double> valueList) {
     throw UnimplementedError();
   }
 

@@ -1,41 +1,18 @@
 import 'dart:math';
 
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
+import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
 
 /// This fitness service will be used to score a logical XOR calculator. The
 /// output should only return true if a single value is 1.0 and both other
 /// values are 0.0. There should be one exclusive positive value! The more
 /// correct guesses that a NeuralNetwork makes, the higher its fitness score
 /// will be.
-class LogicalXORFitnessService extends GENNFitnessService {
-  /// The list of logical inputs for your XOR calculator. The possible options
-  /// are 0 or 1, effectively true or false.
-  List<List<double>> logicalInputsList = [
-    [0.0, 0.0, 0.0],
-    [0.0, 0.0, 1.0],
-    [0.0, 1.0, 0.0],
-    [0.0, 1.0, 1.0],
-    [1.0, 0.0, 0.0],
-    [1.0, 0.0, 1.0],
-    [1.0, 1.0, 0.0],
-    [1.0, 1.0, 1.0],
-  ];
-
-  /// The list of logical outputs for your XOR calculator. These are the
-  /// expected outputs respective to the logical inputs.
-  List<List<double>> targetOutputsList = [
-    [0.0],
-    [1.0],
-    [1.0],
-    [0.0],
-    [1.0],
-    [0.0],
-    [0.0],
-    [0.0],
-  ];
+class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
+// ================== GENNFitnessService Overrides ========================
 
   /// This function will calculate a fitness score after guessing with every
-  /// input within [LogicalXORFitnessService.logicalInputsList] on the input
+  /// input within [LogicalXORFitnessService.inputsList] on the input
   /// [neuralNetwork].
   @override
   Future<double> gennScoringFunction({
@@ -59,7 +36,7 @@ class LogicalXORFitnessService extends GENNFitnessService {
     // Calculate the difference between a perfect score (8) and the total
     // errors. A perfect score would mean zero errors with 8 correct answers,
     // meaning a perfect score would be 8.
-    final diff = logicalInputsList.length - errorSum;
+    final diff = inputsList.length - errorSum;
 
     // To make the better performing Entities stand out more in this population,
     // use the following equation to calculate the FitnessScore.
@@ -68,9 +45,56 @@ class LogicalXORFitnessService extends GENNFitnessService {
     return pow(4, diff).toDouble();
   }
 
-  /// Returns the list of guesses (or outputs) from the input [neuralNetwork]
-  /// based on the standard set of inputs,
-  /// [LogicalXORFitnessService.logicalInputsList].
+  // ================== GENNVisualizationExample Overrides ===================
+  @override
+  List<List<double>> inputsList = [
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 1.0, 1.0],
+    [1.0, 0.0, 0.0],
+    [1.0, 0.0, 1.0],
+    [1.0, 1.0, 0.0],
+    [1.0, 1.0, 1.0],
+  ];
+
+  @override
+  List<String> get readableInputList =>
+      inputsList.map((e) => convertToReadableString(e)).toList();
+
+  @override
+  List<List<double>> targetOutputsList = [
+    [0.0],
+    [1.0],
+    [1.0],
+    [0.0],
+    [1.0],
+    [0.0],
+    [0.0],
+    [0.0],
+  ];
+
+  @override
+  List<String> get readableTargetList => targetOutputsList
+      .map(
+        (e) => convertToReadableString(e),
+      )
+      .toList();
+
+  @override
+  String convertToReadableString(List<double> valueList) {
+    return valueList.toString();
+  }
+
+  @override
+  double? get highestPossibleScore => pow(4, 8).toDouble();
+
+  @override
+  double? get targetFitnessScore => (highestPossibleScore != null)
+      ? (highestPossibleScore! + nonZeroBias)
+      : null;
+
+  @override
   List<List<double>> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   }) {
@@ -78,9 +102,9 @@ class LogicalXORFitnessService extends GENNFitnessService {
     List<List<double>> guesses = [];
 
     // Cycle through each input
-    for (int i = 0; i < logicalInputsList.length; i++) {
+    for (int i = 0; i < inputsList.length; i++) {
       // Declare this run's set of inputs
-      final inputs = logicalInputsList[i];
+      final inputs = inputsList[i];
 
       // Make a guess using the NeuralNetwork
       final guess = neuralNetwork.guess(inputs: inputs);
