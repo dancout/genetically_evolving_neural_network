@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
-import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
+import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 
 /// This fitness service will be used to score a logical XOR calculator. The
 /// output should only return true if a single value is 1.0 and both other

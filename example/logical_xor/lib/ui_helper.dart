@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
-import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
+import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 

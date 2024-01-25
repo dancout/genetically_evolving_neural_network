@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:logical_xor/genn_visualization_example_fitness_service.dart';
+import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map_key.dart';
 import 'package:logical_xor/ui_helper.dart';
