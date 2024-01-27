@@ -88,9 +88,4 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
 
   @override
   double? get highestPossibleScore => pow(4, 8).toDouble();
-
-  @override
-  double? get targetFitnessScore => (highestPossibleScore != null)
-      ? (highestPossibleScore! + nonZeroBias)
-      : null;
 }

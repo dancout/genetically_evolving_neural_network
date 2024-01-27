@@ -45,7 +45,9 @@ abstract class GENNVisualizationExampleFitnessService extends GENNFitnessService
   List<String> get readableTargetList;
 
   @override
-  double? get targetFitnessScore;
+  double? get targetFitnessScore => (highestPossibleScore != null)
+      ? (highestPossibleScore! + nonZeroBias)
+      : null;
 
   @override
   List<List<double>> get targetOutputsList;
