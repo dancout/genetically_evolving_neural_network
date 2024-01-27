@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
@@ -61,12 +60,14 @@ class UIHelper {
 
     for (int i = 0; i < guesses.length; i++) {
       final guess = guesses[i];
+      final readableGuess =
+          gennExampleFitnessService.convertToReadableString(guess);
+      final readableTarget = gennExampleFitnessService.convertToReadableString(
+        gennExampleFitnessService.targetOutputsList[i],
+      );
       final textWidget = Text(
-        gennExampleFitnessService.convertToReadableString(guess),
-        style: listEquals(
-          guess,
-          gennExampleFitnessService.targetOutputsList[i],
-        )
+        readableGuess,
+        style: readableGuess == readableTarget
             ? null
             : const TextStyle(
                 color: negativeColor,
