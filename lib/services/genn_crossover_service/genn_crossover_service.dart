@@ -54,7 +54,7 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
       parents: gennParents,
     );
 
-    // Make the Genes match up in each layer across all pernts
+    // Make the Genes match up in each layer across all parents
     gennParents = await gennCrossoverServiceAlignmentHelper
         .alignGenesWithinLayersForParents(
       parents: gennParents,
