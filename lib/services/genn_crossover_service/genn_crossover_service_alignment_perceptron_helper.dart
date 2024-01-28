@@ -21,8 +21,12 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
   Future<GENNEntity> alignPerceptronLayersWithinEntity({
     required GENNEntity gennEntity,
     required int targetNumLayers,
+    // TODO: Should this be what we pass in? Also should be on class object.
+    required GENNCrossoverServiceAlignmentHelper
+        gENNCrossoverServiceAlignmentHelper,
   }) async {
-    var updatedEntity = gennEntity;
+    // TODO: Is this copywith necessary?
+    var updatedEntity = gennEntity.copyWith();
 
     if (updatedEntity.maxLayerNum < targetNumLayers) {
       // We need to add layers to the entity
@@ -62,6 +66,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
             .removePerceptronLayerFromEntity(
           entity: updatedEntity,
           targetLayer: updatedEntity.maxLayerNum,
+          gENNCrossoverServiceAlignmentHelper:
+              gENNCrossoverServiceAlignmentHelper,
         );
       }
     }
@@ -76,7 +82,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
     required int targetLayer,
     required int targetGeneNum,
   }) async {
-    var updatedEntity = entity;
+    // TODO: Is this copywith necessary?
+    var updatedEntity = entity.copyWith();
 
     // Get how many current genes there are within the target layer.
     final genesWithinTargetLayer = updatedEntity.dna.genes
@@ -85,17 +92,32 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
 
     // Check if the genesWithinTargetLayer does not equal the targetGeneNum
     if (genesWithinTargetLayer > targetGeneNum) {
+      // Calculate the difference between the target and actual number of genes
+      // within this layer.
       final diff = genesWithinTargetLayer - targetGeneNum;
+
+      // Declare a copy of the updated Entity's DNA.
+      var updatedDNA = updatedEntity.dna;
 
       // Remove as many genes as necessary to match the targetGeneNum
       for (int i = 0; i < diff; i++) {
-        // Remove perceptron from the entity
-        updatedEntity =
-            await perceptronLayerMutationService.removePerceptronFromLayer(
-          entity: updatedEntity,
+        // Store the updated GENNDNA after removing a perceptron
+        updatedDNA = perceptronLayerMutationService.removePerceptronFromDNA(
+          dna: updatedDNA,
           targetLayer: targetLayer,
         );
       }
+
+      // Declare the updated FitnessScore from your updated DNA
+      final updatedFitnessScore = await perceptronLayerMutationService
+          .fitnessService
+          .calculateScore(dna: updatedDNA);
+
+      // Update the entity with its updated DNA and updated Fitness Score.
+      updatedEntity = updatedEntity.copyWith(
+        dna: updatedDNA,
+        fitnessScore: updatedFitnessScore,
+      );
     } else if (genesWithinTargetLayer < targetGeneNum) {
       final diff = targetGeneNum - genesWithinTargetLayer;
 

@@ -64,6 +64,7 @@ class GENNCrossoverServiceAlignmentHelper {
             .alignPerceptronLayersWithinEntity(
           gennEntity: copiedParents[i],
           targetNumLayers: targetNumLayers,
+          gENNCrossoverServiceAlignmentHelper: this,
         );
       }
     }
@@ -71,6 +72,7 @@ class GENNCrossoverServiceAlignmentHelper {
     return copiedParents;
   }
 
+  // TODO: Documentation of this file
   Future<List<GENNEntity>> alignGenesWithinLayersForParents({
     required List<GENNEntity> parents,
   }) async {

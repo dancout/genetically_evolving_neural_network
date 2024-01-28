@@ -2,6 +2,7 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// Mutates the Perceptron Layers within a Neural Network.
 class PerceptronLayerMutationService {
+  /// Mutates the Perceptron Layers within a Neural Network.
   PerceptronLayerMutationService({
     required this.gennGeneServiceHelper,
     required this.fitnessService,
@@ -87,9 +88,15 @@ class PerceptronLayerMutationService {
   Future<GENNEntity> removePerceptronLayerFromEntity({
     required GENNEntity entity,
     required int targetLayer,
+    // TODO: Should this be what we pass in? Also, should probs be on the class
+    /// object above.
+    required GENNCrossoverServiceAlignmentHelper
+        gENNCrossoverServiceAlignmentHelper,
   }) async {
+    // TODO: Do we need to be creating a brand new list here, or is it just an
+    // inefficiency?
     // Grab the genes from the given Entity
-    final gennGenes = entity.dna.genes;
+    final gennGenes = List<GENNGene>.from(entity.dna.genes);
 
     final numWeightsOfTargetLayer = entity.dna.genes
         .firstWhere((gennGene) => gennGene.value.layer == targetLayer)
@@ -132,12 +139,40 @@ class PerceptronLayerMutationService {
       return gene;
     }).toList();
 
+    // Declare the dna to be updated
     final dna = GENNDNA(genes: genesWithUpdatedWeights);
-    final fitnessScore = await fitnessService.calculateScore(dna: dna);
 
+    // Create a copy of this entity with the new DNA
+    final copiedEntityNewDna = entity.copyWith(dna: dna);
+
+    // TODO: Calling alignGenesWithinLayersForParents is really inefficient
+    /// because we are building out EVERY perceptron layer from scratch and only
+    /// ever updating the last one (output layer). It might be better to make
+    /// the alignGenesWithinLayer call on ONLY the final layer AND only if the
+    /// [targetLayer] == entity.maxLayerNum.
+    // Create a new entity that has the correct number of genes in the output
+    // layer.
+    final genesAlignedEntityNewDna = (await gENNCrossoverServiceAlignmentHelper
+            // TODO: This alignGenesWithinLayersForParents should come from
+            /// somewhere better that is more testable and doesn't have
+            /// circular dependencies
+            .alignGenesWithinLayersForParents(
+      parents: [copiedEntityNewDna],
+    ))
+        .first;
+
+    // Declare the updated DNA after aligning genes in the final layer
+    final updatedDna = genesAlignedEntityNewDna.dna;
+
+    // Declare the updated fitness score from the updated DNA.
+    final updatedFitnessScore =
+        await fitnessService.calculateScore(dna: updatedDna);
+
+    // Return a copy of the original Entity with updated DNA and an updated
+    // Fitness Score.
     return entity.copyWith(
-      dna: dna,
-      fitnessScore: fitnessScore,
+      dna: updatedDna,
+      fitnessScore: updatedFitnessScore,
     );
   }
 
@@ -146,12 +181,6 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
-    assert(
-      targetLayer < entity.maxLayerNum,
-      'Cannot add Perceptrons to the last perceptron layer. '
-      'This is the output layer and has a fixed number of perceptrons.',
-    );
-
     final genes = entity.dna.genes;
 
     // Grab the number of weights necessary from another gene from the
@@ -198,18 +227,46 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
+    // TODO: Should we consider this being put onto another class so it is more
+    /// testable?
+    // Declare the updated DNA object
+    final updatedDNA = removePerceptronFromDNA(
+      dna: entity.dna,
+      targetLayer: targetLayer,
+    );
+    // Calculate the updated fitness score based on the updated DNA
+    final updatedFitnessScore =
+        await fitnessService.calculateScore(dna: updatedDNA);
+
+    // Return a copied version of the original Entity with updated DNA and an
+    // updated Fitness Score.
+    return entity.copyWith(
+      dna: updatedDNA,
+      fitnessScore: updatedFitnessScore,
+    );
+  }
+
+  // TODO: Tests for this function.
+
+  /// Removes a random perceptron from within the [targetLayer] of the incoming
+  /// [dna] and returns an updated [GENNDNA] object.
+  GENNDNA removePerceptronFromDNA({
+    required GENNDNA dna,
+    required int targetLayer,
+  }) {
     assert(
-      entity.dna.genes
+      dna.genes
               .where((gennGene) => gennGene.value.layer == targetLayer)
               .length >
           1,
       'Cannot remove the only Perceptron from a given layer.',
     );
 
-    var genes = entity.dna.genes;
+    var genes = dna.genes;
 
     final targetLayerGenes = List.from(
-        genes.where((gene) => gene.value.layer == targetLayer).toList());
+      genes.where((gene) => gene.value.layer == targetLayer).toList(),
+    );
 
     final randIndex = numberGenerator.nextInt(targetLayerGenes.length);
 
@@ -230,12 +287,6 @@ class PerceptronLayerMutationService {
       return gene;
     }).toList();
 
-    final dna = GENNDNA(genes: genes);
-    final fitnessScore = await fitnessService.calculateScore(dna: dna);
-
-    return entity.copyWith(
-      dna: dna,
-      fitnessScore: fitnessScore,
-    );
+    return GENNDNA(genes: genes);
   }
 }

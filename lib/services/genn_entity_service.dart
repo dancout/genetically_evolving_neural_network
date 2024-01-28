@@ -102,6 +102,10 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
             .removePerceptronLayerFromEntity(
           entity: child,
           targetLayer: targetLayer,
+          gENNCrossoverServiceAlignmentHelper:
+              // TODO: Can we get this without having to cast it?
+              (crossoverService as GENNCrossoverService)
+                  .gennCrossoverServiceAlignmentHelper,
         );
         // Decrement the number of Perceptron Layers
         numLayers--;
