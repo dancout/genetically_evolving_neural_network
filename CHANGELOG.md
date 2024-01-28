@@ -1,3 +1,7 @@
+## 0.1.1+hotfix
+
+* Fixed bug around too many perceptrons existing in output layer
+
 ## 0.1.1
 
 * Updated package documentation
