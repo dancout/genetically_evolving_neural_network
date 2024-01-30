@@ -15,6 +15,7 @@ part 'package:genetically_evolving_neural_network/models/genn_neural_network.dar
 part 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 part 'package:genetically_evolving_neural_network/models/genn_population.dart';
+part 'package:genetically_evolving_neural_network/services/dna_manipulation_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_perceptron_helper.dart';
@@ -26,6 +27,7 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_mutation_se
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
+part 'package:genetically_evolving_neural_network/services/layer_perceptron_alignment_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
@@ -50,6 +52,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
     GENNGeneService? geneService,
+    // TODO: Reconsider these for visibleForTesting. Maybe they should be open? Unsure.
     @visibleForTesting GENNEntityService? entityService,
     @visibleForTesting PopulationService<GENNPerceptron>? populationService,
   }) {
@@ -73,15 +76,30 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       geneMutationService: geneMutationService,
     );
 
+    final dnaManipulationService = DNAManipulationService(
+      gennGeneServiceHelper: gennGeneService.gennGeneServiceHelper,
+      fitnessService: fitnessService,
+    );
+
+    final layerPerceptronAlignmentHelper = LayerPerceptronAlignmentHelper(
+      fitnessService: fitnessService,
+      dnaManipulationService: dnaManipulationService,
+    );
+
+    final perceptronLayerMutationService = PerceptronLayerMutationService(
+      fitnessService: fitnessService,
+      gennGeneServiceHelper: gennGeneService.gennGeneServiceHelper,
+      random: config.random,
+      dnaManipulationService: dnaManipulationService,
+      layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
+      numOutputs: config.numGenes,
+    );
+
     final crossoverService = GENNCrossoverService(
-      perceptronLayerMutationService: PerceptronLayerMutationService(
-        fitnessService: fitnessService,
-        gennGeneServiceHelper:
-            geneMutationService.gennGeneService.gennGeneServiceHelper,
-        random: config.random,
-      ),
+      perceptronLayerMutationService: perceptronLayerMutationService,
       geneMutationService: geneMutationService,
       numOutputs: config.numGenes,
+      layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
     );
 
     // Use the gennEntityService passed in if any customizations are necessary.
@@ -96,6 +114,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           perceptronMutationRate: config.perceptronMutationRate,
           crossoverService: crossoverService,
           generationsToTrack: config.generationsToTrack,
+          perceptronLayerMutationService: perceptronLayerMutationService,
         );
 
     return GENN(

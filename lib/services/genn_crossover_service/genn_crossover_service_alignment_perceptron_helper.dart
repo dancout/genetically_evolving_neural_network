@@ -21,9 +21,6 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
   Future<GENNEntity> alignPerceptronLayersWithinEntity({
     required GENNEntity gennEntity,
     required int targetNumLayers,
-    // TODO: Should this be what we pass in? Also should be on class object.
-    required GENNCrossoverServiceAlignmentHelper
-        gENNCrossoverServiceAlignmentHelper,
   }) async {
     // TODO: Is this copywith necessary?
     var updatedEntity = gennEntity.copyWith();
@@ -51,7 +48,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
         );
 
         // Add PerceptronLayer into Entity
-        updatedEntity = perceptronLayerMutationService.addPerceptronLayer(
+        updatedEntity =
+            perceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: updatedEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         );
@@ -66,73 +64,10 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
             .removePerceptronLayerFromEntity(
           entity: updatedEntity,
           targetLayer: updatedEntity.maxLayerNum,
-          gENNCrossoverServiceAlignmentHelper:
-              gENNCrossoverServiceAlignmentHelper,
         );
       }
     }
 
-    return updatedEntity;
-  }
-
-  /// Returns an updated [entity] that now has [targetGeneNum] genes within the
-  /// PerceptronLayer matching [targetLayer].
-  Future<GENNEntity> alignGenesWithinLayer({
-    required GENNEntity entity,
-    required int targetLayer,
-    required int targetGeneNum,
-  }) async {
-    // TODO: Is this copywith necessary?
-    var updatedEntity = entity.copyWith();
-
-    // Get how many current genes there are within the target layer.
-    final genesWithinTargetLayer = updatedEntity.dna.genes
-        .where((gennGene) => gennGene.value.layer == targetLayer)
-        .length;
-
-    // Check if the genesWithinTargetLayer does not equal the targetGeneNum
-    if (genesWithinTargetLayer > targetGeneNum) {
-      // Calculate the difference between the target and actual number of genes
-      // within this layer.
-      final diff = genesWithinTargetLayer - targetGeneNum;
-
-      // Declare a copy of the updated Entity's DNA.
-      var updatedDNA = updatedEntity.dna;
-
-      // Remove as many genes as necessary to match the targetGeneNum
-      for (int i = 0; i < diff; i++) {
-        // Store the updated GENNDNA after removing a perceptron
-        updatedDNA = perceptronLayerMutationService.removePerceptronFromDNA(
-          dna: updatedDNA,
-          targetLayer: targetLayer,
-        );
-      }
-
-      // Declare the updated FitnessScore from your updated DNA
-      final updatedFitnessScore = await perceptronLayerMutationService
-          .fitnessService
-          .calculateScore(dna: updatedDNA);
-
-      // Update the entity with its updated DNA and updated Fitness Score.
-      updatedEntity = updatedEntity.copyWith(
-        dna: updatedDNA,
-        fitnessScore: updatedFitnessScore,
-      );
-    } else if (genesWithinTargetLayer < targetGeneNum) {
-      final diff = targetGeneNum - genesWithinTargetLayer;
-
-      // Add as many genes as necessary to match the targetGeneNum
-      for (int i = 0; i < diff; i++) {
-        // Add perceptron to the entity
-        updatedEntity =
-            await perceptronLayerMutationService.addPerceptronToLayer(
-          entity: updatedEntity,
-          targetLayer: targetLayer,
-        );
-      }
-    }
-
-    // Return the potentially updated entity
     return updatedEntity;
   }
 

@@ -4,6 +4,9 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 class PerceptronLayerMutationService {
   /// Mutates the Perceptron Layers within a Neural Network.
   PerceptronLayerMutationService({
+    required this.numOutputs,
+    required this.dnaManipulationService,
+    required this.layerPerceptronAlignmentHelper,
     required this.gennGeneServiceHelper,
     required this.fitnessService,
     Random? random,
@@ -12,6 +15,17 @@ class PerceptronLayerMutationService {
             NumberGenerator(
               random: random ?? Random(),
             );
+
+  // TODO: Verify all these parameters are used!
+
+  /// The number of expected outputs for this NeuralNetwork
+  final int numOutputs;
+
+  // TODO: Documentation
+
+  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
+
+  DNAManipulationService dnaManipulationService;
 
   /// Used to calculate the fitness score of an entity.
   final GENNFitnessService fitnessService;
@@ -52,8 +66,9 @@ class PerceptronLayerMutationService {
     return GENNPerceptronLayer(perceptrons: duplicatedPerceptrons);
   }
 
-  /// Inserts the given [perceptronLayer] into the given [entity].
-  GENNEntity addPerceptronLayer({
+  /// Returns a copy of the given [entity] with the given [perceptronLayer]
+  /// inserted.
+  GENNEntity addPerceptronLayerToEntity({
     required GENNEntity entity,
     required GENNPerceptronLayer perceptronLayer,
   }) {
@@ -83,16 +98,16 @@ class PerceptronLayerMutationService {
     );
   }
 
-  /// Removed the PerceptronLayer represented by [targetLayer] from the input
-  /// [entity].
+  /// Returns a copy of the given [entity] after removing the [PerceptronLayer]
+  /// represented by [targetLayer].
   Future<GENNEntity> removePerceptronLayerFromEntity({
     required GENNEntity entity,
     required int targetLayer,
-    // TODO: Should this be what we pass in? Also, should probs be on the class
-    /// object above.
-    required GENNCrossoverServiceAlignmentHelper
-        gENNCrossoverServiceAlignmentHelper,
   }) async {
+    // Determine if we are working with the last Perceptron Layer within an
+    // Entity.
+    final bool isLastLayer = targetLayer == entity.maxLayerNum;
+
     // TODO: Do we need to be creating a brand new list here, or is it just an
     // inefficiency?
     // Grab the genes from the given Entity
@@ -140,85 +155,34 @@ class PerceptronLayerMutationService {
     }).toList();
 
     // Declare the dna to be updated
-    final dna = GENNDNA(genes: genesWithUpdatedWeights);
+    var updatedDNA = GENNDNA(genes: genesWithUpdatedWeights);
 
     // Create a copy of this entity with the new DNA
-    final copiedEntityNewDna = entity.copyWith(dna: dna);
+    var copiedEntityNewDna = entity.copyWith(dna: updatedDNA);
 
-    // TODO: Calling alignGenesWithinLayersForParents is really inefficient
-    /// because we are building out EVERY perceptron layer from scratch and only
-    /// ever updating the last one (output layer). It might be better to make
-    /// the alignGenesWithinLayer call on ONLY the final layer AND only if the
-    /// [targetLayer] == entity.maxLayerNum.
-    // Create a new entity that has the correct number of genes in the output
-    // layer.
-    final genesAlignedEntityNewDna = (await gENNCrossoverServiceAlignmentHelper
-            // TODO: This alignGenesWithinLayersForParents should come from
-            /// somewhere better that is more testable and doesn't have
-            /// circular dependencies
-            .alignGenesWithinLayersForParents(
-      parents: [copiedEntityNewDna],
-    ))
-        .first;
+    // Check if we were working with the last layer.
+    if (isLastLayer) {
+      // If so, we need to ensure that there are the correct number of
+      // perceptrons in the output layer.
+      copiedEntityNewDna =
+          await layerPerceptronAlignmentHelper.alignGenesWithinLayer(
+        entity: copiedEntityNewDna,
+        targetLayer: copiedEntityNewDna.maxLayerNum,
+        targetGeneNum: numOutputs,
+      );
 
-    // Declare the updated DNA after aligning genes in the final layer
-    final updatedDna = genesAlignedEntityNewDna.dna;
+      updatedDNA = copiedEntityNewDna.dna;
+    }
 
     // Declare the updated fitness score from the updated DNA.
     final updatedFitnessScore =
-        await fitnessService.calculateScore(dna: updatedDna);
+        await fitnessService.calculateScore(dna: updatedDNA);
 
     // Return a copy of the original Entity with updated DNA and an updated
     // Fitness Score.
     return entity.copyWith(
-      dna: updatedDna,
+      dna: updatedDNA,
       fitnessScore: updatedFitnessScore,
-    );
-  }
-
-  /// Adds a random [GENNPerceptron] to the given [entity] at the [targetLayer].
-  Future<GENNEntity> addPerceptronToLayer({
-    required GENNEntity entity,
-    required int targetLayer,
-  }) async {
-    final genes = entity.dna.genes;
-
-    // Grab the number of weights necessary from another gene from the
-    // targetLayer.
-    final numWeights = genes
-        .firstWhere((gene) => gene.value.layer == targetLayer)
-        .value
-        .weights
-        .length;
-
-    genes.add(
-      GENNGene(
-        value: gennGeneServiceHelper.randomPerceptron(
-          numWeights: numWeights,
-          layer: targetLayer,
-        ),
-      ),
-    );
-
-    for (int i = 0; i < genes.length; i++) {
-      if (genes[i].value.layer == targetLayer + 1) {
-        final gene = genes[i];
-        final perceptron = gene.value;
-
-        final weights = List<double>.from(perceptron.weights);
-        weights.add(numberGenerator.randomNegOneToPosOne);
-
-        genes[i] = gene.copyWith(
-          value: perceptron.copyWith(weights: weights),
-        );
-      }
-    }
-
-    final dna = GENNDNA(genes: genes);
-    final fitnessScore = await fitnessService.calculateScore(dna: dna);
-    return entity.copyWith(
-      dna: dna,
-      fitnessScore: fitnessScore,
     );
   }
 
@@ -230,7 +194,7 @@ class PerceptronLayerMutationService {
     // TODO: Should we consider this being put onto another class so it is more
     /// testable?
     // Declare the updated DNA object
-    final updatedDNA = removePerceptronFromDNA(
+    final updatedDNA = dnaManipulationService.removePerceptronFromDNA(
       dna: entity.dna,
       targetLayer: targetLayer,
     );
@@ -246,47 +210,19 @@ class PerceptronLayerMutationService {
     );
   }
 
-  // TODO: Tests for this function.
-
-  /// Removes a random perceptron from within the [targetLayer] of the incoming
-  /// [dna] and returns an updated [GENNDNA] object.
-  GENNDNA removePerceptronFromDNA({
-    required GENNDNA dna,
+  /// Adds a random [GENNPerceptron] to the given [entity] at the [targetLayer].
+  Future<GENNEntity> addPerceptronToLayer({
+    required GENNEntity entity,
     required int targetLayer,
-  }) {
-    assert(
-      dna.genes
-              .where((gennGene) => gennGene.value.layer == targetLayer)
-              .length >
-          1,
-      'Cannot remove the only Perceptron from a given layer.',
+  }) async {
+    final updatedDNA = dnaManipulationService.addPerceptronToDNA(
+      dna: entity.dna,
+      targetLayer: targetLayer,
     );
-
-    var genes = dna.genes;
-
-    final targetLayerGenes = List.from(
-      genes.where((gene) => gene.value.layer == targetLayer).toList(),
+    final fitnessScore = await fitnessService.calculateScore(dna: updatedDNA);
+    return entity.copyWith(
+      dna: updatedDNA,
+      fitnessScore: fitnessScore,
     );
-
-    final randIndex = numberGenerator.nextInt(targetLayerGenes.length);
-
-    final targetPerceptron = targetLayerGenes[randIndex];
-
-    genes.remove(targetPerceptron);
-
-    genes = genes.map((gene) {
-      if (gene.value.layer == targetLayer + 1) {
-        final weights = List<double>.from(gene.value.weights);
-        // Remove the weight connected to the removed perceptron
-        weights.removeAt(randIndex);
-
-        return gene.copyWith(
-          value: gene.value.copyWith(weights: weights),
-        );
-      }
-      return gene;
-    }).toList();
-
-    return GENNDNA(genes: genes);
   }
 }

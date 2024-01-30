@@ -1,9 +1,13 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+// TODO: Documentation
 class GENNCrossoverServiceAlignmentHelper {
   GENNCrossoverServiceAlignmentHelper({
     required this.numOutputs,
+    // TODO: Should this be required? Re-evaluate all the parameters here if
+    /// they're necessary.
     required this.perceptronLayerMutationService,
+    required this.layerPerceptronAlignmentHelper,
     GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
     GENNCrossoverServiceAlignmentPerceptronHelper?
         gennCrossoverServiceAlignmentPerceptronHelper,
@@ -23,6 +27,8 @@ class GENNCrossoverServiceAlignmentHelper {
 
   late final GENNCrossoverServiceAlignmentPerceptronHelper
       gennCrossoverServiceAlignmentPerceptronHelper;
+
+  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
@@ -64,7 +70,6 @@ class GENNCrossoverServiceAlignmentHelper {
             .alignPerceptronLayersWithinEntity(
           gennEntity: copiedParents[i],
           targetNumLayers: targetNumLayers,
-          gENNCrossoverServiceAlignmentHelper: this,
         );
       }
     }
@@ -122,8 +127,8 @@ class GENNCrossoverServiceAlignmentHelper {
       for (int x = 0; x < copiedParents.length; x++) {
         // Make the number of Genes within the current layer match the
         // targetNumPerceptrons.
-        copiedParents[x] = await gennCrossoverServiceAlignmentPerceptronHelper
-            .alignGenesWithinLayer(
+        copiedParents[x] =
+            await layerPerceptronAlignmentHelper.alignGenesWithinLayer(
           entity: copiedParents[x],
           targetLayer: currLayer,
           targetGeneNum: targetNumPerceptrons,

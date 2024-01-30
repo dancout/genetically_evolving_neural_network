@@ -161,7 +161,7 @@ void main() {
         ),
       ).thenReturn(duplicatedPerceptronLayer);
       when(
-        () => mockPerceptronLayerMutationService.addPerceptronLayer(
+        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: superCrossoverEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         ),
@@ -175,9 +175,10 @@ void main() {
       verify(() => mockNumberGenerator.nextInt(1));
       verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
           gennPerceptronLayer: originalPerceptronLayer));
-      verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
-          entity: superCrossoverEntity,
-          perceptronLayer: duplicatedPerceptronLayer));
+      verify(() =>
+          mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+              entity: superCrossoverEntity,
+              perceptronLayer: duplicatedPerceptronLayer));
       verifyNoMoreInteractions(mockNumberGenerator);
       verifyNoMoreInteractions(mockPerceptronLayerMutationService);
     });
@@ -200,7 +201,7 @@ void main() {
         ),
       ).thenReturn(duplicatedPerceptronLayer);
       when(
-        () => mockPerceptronLayerMutationService.addPerceptronLayer(
+        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: superCrossoverEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         ),
@@ -214,9 +215,10 @@ void main() {
       verify(() => mockNumberGenerator.nextInt(1));
       verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
           gennPerceptronLayer: originalPerceptronLayer));
-      verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
-          entity: superCrossoverEntity,
-          perceptronLayer: duplicatedPerceptronLayer));
+      verify(() =>
+          mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+              entity: superCrossoverEntity,
+              perceptronLayer: duplicatedPerceptronLayer));
       verifyNoMoreInteractions(mockNumberGenerator);
       verifyNoMoreInteractions(mockPerceptronLayerMutationService);
     });
@@ -271,7 +273,7 @@ void main() {
         ),
       ).thenReturn(duplicatedPerceptronLayer);
       when(
-        () => mockPerceptronLayerMutationService.addPerceptronLayer(
+        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: superCrossoverEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         ),
@@ -287,9 +289,10 @@ void main() {
       verifyNoMoreInteractions(mockNumberGenerator);
       verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
           gennPerceptronLayer: originalPerceptronLayer));
-      verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
-          entity: superCrossoverEntity,
-          perceptronLayer: duplicatedPerceptronLayer));
+      verify(() =>
+          mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+              entity: superCrossoverEntity,
+              perceptronLayer: duplicatedPerceptronLayer));
       verifyNoMoreInteractions(mockPerceptronLayerMutationService);
     });
 
@@ -626,7 +629,7 @@ void main() {
           gennPerceptronLayer: superCrossoverGENNNeuralNetwork
               .layers[layer])).thenReturn(duplicatedPerceptronLayer);
 
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayer(
+      when(() => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
               entity: superCrossoverEntity,
               perceptronLayer: duplicatedPerceptronLayer))
           .thenReturn(updatedEntity);
@@ -650,9 +653,10 @@ void main() {
           entity: updatedEntity, targetLayer: layer));
       verify(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
           gennPerceptronLayer: superCrossoverGENNNeuralNetwork.layers[layer]));
-      verify(() => mockPerceptronLayerMutationService.addPerceptronLayer(
-          entity: superCrossoverEntity,
-          perceptronLayer: duplicatedPerceptronLayer));
+      verify(() =>
+          mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+              entity: superCrossoverEntity,
+              perceptronLayer: duplicatedPerceptronLayer));
       verifyNoMoreInteractions(mockPerceptronLayerMutationService);
     });
   });

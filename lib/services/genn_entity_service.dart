@@ -2,7 +2,9 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// Used for creating new [Entity] objects.
 class GENNEntityService extends EntityService<GENNPerceptron> {
+  /// Used for creating new [Entity] objects.
   GENNEntityService({
+    // TODO: Verify that all these parameters are actually necessary.
     required this.layerMutationRate,
     required this.perceptronMutationRate,
     required super.dnaService,
@@ -12,7 +14,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     int? generationsToTrack,
     @visibleForTesting super.crossoverService,
     NumberGenerator? numberGenerator,
-    PerceptronLayerMutationService? perceptronLayerMutationService,
+    required this.perceptronLayerMutationService,
     @visibleForTesting
     EntityParentManinpulator<GENNPerceptron>? entityParentManinpulator,
   })  : numberGenerator = numberGenerator ?? NumberGenerator(),
@@ -25,12 +27,25 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
                 generationsToTrack: generationsToTrack,
               ),
         ) {
-    this.perceptronLayerMutationService = perceptronLayerMutationService ??
-        PerceptronLayerMutationService(
-          fitnessService: fitnessService,
-          gennGeneServiceHelper:
-              geneMutationService.gennGeneService.gennGeneServiceHelper,
-        );
+    // this.perceptronLayerMutationService = perceptronLayerMutationService ??
+    //     // TODO: Does it make more sense to make this required to pass in? That
+    //     /// way we do not have quite so many parameters?
+
+    //     PerceptronLayerMutationService(
+    //       fitnessService: fitnessService,
+    //       gennGeneServiceHelper:
+    //           geneMutationService.gennGeneService.gennGeneServiceHelper,
+    //       perceptronLayerMutationServiceHelperRENAMEME:
+    //           perceptronLayerMutationServiceHelperRENAMEME,
+    //       layerPerceptronAlignmentHelper:
+    //           // TODO: Should you be able to pass a value in for this?
+    //           LayerPerceptronAlignmentHelper(
+    //         perceptronLayerMutationServiceHelperRENAMEME:
+    //             perceptronLayerMutationServiceHelperRENAMEME,
+    //         fitnessService: fitnessService,
+    //       ),
+    //       numOutputs:
+    //     );
   }
 
   /// Used to generate random numbers and bools.
@@ -85,7 +100,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
         );
 
         // Add PerceptronLayer into Entity
-        child = perceptronLayerMutationService.addPerceptronLayer(
+        child = perceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: child,
           perceptronLayer: duplicatedPerceptronLayer,
         );
@@ -102,10 +117,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
             .removePerceptronLayerFromEntity(
           entity: child,
           targetLayer: targetLayer,
-          gENNCrossoverServiceAlignmentHelper:
-              // TODO: Can we get this without having to cast it?
-              (crossoverService as GENNCrossoverService)
-                  .gennCrossoverServiceAlignmentHelper,
         );
         // Decrement the number of Perceptron Layers
         numLayers--;

@@ -2,11 +2,13 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// Crosses over parents to create a child.
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
+  /// Crosses over parents to create a child.
   GENNCrossoverService({
     /// Used to mutate the [GENNPerceptronLayer]s.
     required PerceptronLayerMutationService? perceptronLayerMutationService,
     required super.geneMutationService,
     required this.numOutputs,
+    required this.layerPerceptronAlignmentHelper,
     GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
     super.random,
     NumberGenerator? numberGenerator,
@@ -23,6 +25,10 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
           perceptronLayerMutationService: perceptronLayerMutationService,
           numberGenerator: numberGenerator,
           gennCrossoverServiceHelper: gennCrossoverServiceHelper,
+          // TODO: We are only passing layerPerceptronAlignmentHelper in case
+          /// gennCrossoverServiceAlignmentHelper was null. Should we make
+          /// gennCrossoverServiceAlignmentHelper required?
+          layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
         );
       } else {
         throw Exception(
@@ -36,8 +42,12 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
 
+  // TODO: Documentation for all values.
+
   late final GENNCrossoverServiceAlignmentHelper
       gennCrossoverServiceAlignmentHelper;
+
+  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
 
   @override
   Future<List<Gene<GENNPerceptron>>> crossover({

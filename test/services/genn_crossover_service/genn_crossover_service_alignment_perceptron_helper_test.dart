@@ -56,7 +56,7 @@ void main() {
               gennPerceptronLayer: gennPerceptronLayer))
           .thenReturn(gennPerceptronLayer);
 
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayer(
+      when(() => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: gennEntity,
           perceptronLayer: gennPerceptronLayer)).thenReturn(updatedGennEntity);
 
@@ -73,7 +73,7 @@ void main() {
         ),
       );
       verify(
-        () => mockPerceptronLayerMutationService.addPerceptronLayer(
+        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: gennEntity,
           perceptronLayer: gennPerceptronLayer,
         ),

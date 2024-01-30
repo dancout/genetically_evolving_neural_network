@@ -123,7 +123,7 @@ void main() {
         fitnessScore: fitnessScore,
       );
 
-      final actual = testObject.addPerceptronLayer(
+      final actual = testObject.addPerceptronLayerToEntity(
         entity: entity,
         perceptronLayer: perceptronLayer,
       );
