@@ -101,6 +101,15 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
     );
 
+    final numberGenerator = NumberGenerator(
+      random: config.random,
+    );
+
+    final entityParentManinpulator = EntityParentManinpulator<GENNPerceptron>(
+      trackParents: config.trackParents,
+      generationsToTrack: config.generationsToTrack,
+    );
+
     // Use the gennEntityService passed in if any customizations are necessary.
     final gennEntityService = entityService ??
         // Otherwise, generate one internally.
@@ -108,12 +117,12 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           dnaService: dnaService,
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
-          trackParents: config.trackParents,
           layerMutationRate: config.layerMutationRate,
           perceptronMutationRate: config.perceptronMutationRate,
           crossoverService: crossoverService,
-          generationsToTrack: config.generationsToTrack,
           perceptronLayerMutationService: perceptronLayerMutationService,
+          numberGenerator: numberGenerator,
+          entityParentManinpulator: entityParentManinpulator,
         );
 
     return GENN(

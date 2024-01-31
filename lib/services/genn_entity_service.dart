@@ -1,52 +1,19 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-/// Used for creating new [Entity] objects.
+/// Used for creating new [GENNEntity] objects.
 class GENNEntityService extends EntityService<GENNPerceptron> {
-  /// Used for creating new [Entity] objects.
+  /// Used for creating new [GENNEntity] objects.
   GENNEntityService({
-    // TODO: Verify that all these parameters are actually necessary.
     required this.layerMutationRate,
     required this.perceptronMutationRate,
     required super.dnaService,
-    required GENNFitnessService fitnessService,
-    required GENNGeneMutationService geneMutationService,
-    required bool trackParents,
-    int? generationsToTrack,
+    required super.fitnessService,
+    required super.geneMutationService,
     @visibleForTesting super.crossoverService,
     NumberGenerator? numberGenerator,
     required this.perceptronLayerMutationService,
-    @visibleForTesting
-    EntityParentManinpulator<GENNPerceptron>? entityParentManinpulator,
-  })  : numberGenerator = numberGenerator ?? NumberGenerator(),
-        super(
-          fitnessService: fitnessService,
-          geneMutationService: geneMutationService,
-          entityParentManinpulator: entityParentManinpulator ??
-              EntityParentManinpulator<GENNPerceptron>(
-                trackParents: trackParents,
-                generationsToTrack: generationsToTrack,
-              ),
-        ) {
-    // this.perceptronLayerMutationService = perceptronLayerMutationService ??
-    //     // TODO: Does it make more sense to make this required to pass in? That
-    //     /// way we do not have quite so many parameters?
-
-    //     PerceptronLayerMutationService(
-    //       fitnessService: fitnessService,
-    //       gennGeneServiceHelper:
-    //           geneMutationService.gennGeneService.gennGeneServiceHelper,
-    //       perceptronLayerMutationServiceHelperRENAMEME:
-    //           perceptronLayerMutationServiceHelperRENAMEME,
-    //       layerPerceptronAlignmentHelper:
-    //           // TODO: Should you be able to pass a value in for this?
-    //           LayerPerceptronAlignmentHelper(
-    //         perceptronLayerMutationServiceHelperRENAMEME:
-    //             perceptronLayerMutationServiceHelperRENAMEME,
-    //         fitnessService: fitnessService,
-    //       ),
-    //       numOutputs:
-    //     );
-  }
+    required super.entityParentManinpulator,
+  }) : numberGenerator = numberGenerator ?? NumberGenerator();
 
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
@@ -63,7 +30,7 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
   late final PerceptronLayerMutationService perceptronLayerMutationService;
 
   @override
-  Future<Entity<GENNPerceptron>> crossOver({
+  Future<GENNEntity> crossOver({
     required List<Entity<GENNPerceptron>> parents,
     required int wave,
   }) async {
