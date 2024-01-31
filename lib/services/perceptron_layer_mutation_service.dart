@@ -7,7 +7,6 @@ class PerceptronLayerMutationService {
     required this.numOutputs,
     required this.dnaManipulationService,
     required this.layerPerceptronAlignmentHelper,
-    required this.gennGeneServiceHelper,
     required this.fitnessService,
     Random? random,
     NumberGenerator? numberGenerator,
@@ -16,22 +15,17 @@ class PerceptronLayerMutationService {
               random: random ?? Random(),
             );
 
-  // TODO: Verify all these parameters are used!
-
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
 
-  // TODO: Documentation
-
+  /// Assists with updating the number of perceptrons within a Perceptron Layer.
   final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
 
+  /// Assists with adding and removing Genes from DNA.
   DNAManipulationService dnaManipulationService;
 
   /// Used to calculate the fitness score of an entity.
   final GENNFitnessService fitnessService;
-
-  /// Used to generate a random [GENNPerceptron].
-  final GennGeneServiceHelper gennGeneServiceHelper;
 
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
@@ -65,6 +59,10 @@ class PerceptronLayerMutationService {
 
     return GENNPerceptronLayer(perceptrons: duplicatedPerceptrons);
   }
+
+  // TODO: Consider breaking off another class, like EntityMutationService, that
+  /// will house all the functions that return an Entity, and this class will be
+  /// only for the PerceptronLayer returning functions.
 
   /// Returns a copy of the given [entity] with the given [perceptronLayer]
   /// inserted.
@@ -191,8 +189,6 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
-    // TODO: Should we consider this being put onto another class so it is more
-    /// testable?
     // Declare the updated DNA object
     final updatedDNA = dnaManipulationService.removePerceptronFromDNA(
       dna: entity.dna,

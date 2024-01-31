@@ -88,7 +88,6 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
 
     final perceptronLayerMutationService = PerceptronLayerMutationService(
       fitnessService: fitnessService,
-      gennGeneServiceHelper: gennGeneService.gennGeneServiceHelper,
       random: config.random,
       dnaManipulationService: dnaManipulationService,
       layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,

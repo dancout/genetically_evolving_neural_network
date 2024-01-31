@@ -1,6 +1,8 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 // TODO: Documentation & reconsider class name
+/// Maybe name it PerceptronLayerAlignmentHelper?
+
 class LayerPerceptronAlignmentHelper {
   LayerPerceptronAlignmentHelper({
     required this.dnaManipulationService,
