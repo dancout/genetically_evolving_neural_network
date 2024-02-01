@@ -22,6 +22,7 @@ part 'package:genetically_evolving_neural_network/services/genn_crossover_servic
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_dna_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_entity_service.dart';
+part 'package:genetically_evolving_neural_network/services/genn_entity_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_fitness_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_mutation_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service.dart';
@@ -117,12 +118,15 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           dnaService: dnaService,
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
-          layerMutationRate: config.layerMutationRate,
-          perceptronMutationRate: config.perceptronMutationRate,
           crossoverService: crossoverService,
           perceptronLayerMutationService: perceptronLayerMutationService,
-          numberGenerator: numberGenerator,
           entityParentManinpulator: entityParentManinpulator,
+          gennEntityServiceHelper: GENNEntityServiceHelper(
+            numberGenerator: numberGenerator,
+            layerMutationRate: config.layerMutationRate,
+            perceptronMutationRate: config.perceptronMutationRate,
+            perceptronLayerMutationService: perceptronLayerMutationService,
+          ),
         );
 
     return GENN(

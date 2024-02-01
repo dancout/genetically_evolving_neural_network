@@ -36,3 +36,9 @@ class MockGENNGeneMutationService extends Mock
 class MockDNAService<T> extends Mock implements DNAService<T> {}
 
 class MockCrossoverService<T> extends Mock implements CrossoverService<T> {}
+
+class MockEntityParentManipulator<T> extends Mock
+    implements EntityParentManinpulator<T> {}
+
+class MockGENNEntityServiceHelper extends Mock
+    implements GENNEntityServiceHelper {}

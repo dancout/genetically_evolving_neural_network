@@ -4,30 +4,39 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 class GENNEntityService extends EntityService<GENNPerceptron> {
   /// Used for creating new [GENNEntity] objects.
   GENNEntityService({
-    required this.layerMutationRate,
-    required this.perceptronMutationRate,
     required super.dnaService,
     required super.fitnessService,
     required super.geneMutationService,
     @visibleForTesting super.crossoverService,
-    NumberGenerator? numberGenerator,
     required this.perceptronLayerMutationService,
     required super.entityParentManinpulator,
-  }) : numberGenerator = numberGenerator ?? NumberGenerator();
+    required this.gennEntityServiceHelper,
+    @visibleForTesting
+    @visibleForTesting
+    Future<Entity<GENNPerceptron>> Function({
+      required List<Entity<GENNPerceptron>> parents,
+      required int wave,
+    })? superDotCrossover,
+  }) {
+    this.superDotCrossover = superDotCrossover ?? super.crossOver;
+  }
 
-  /// Used to generate random numbers and bools.
-  final NumberGenerator numberGenerator;
-
-  /// The rate at which a PerceptronLayer will be added or removed from an
-  /// Entity.
-  final double layerMutationRate;
-
-  /// The rate at which a Perceptron will be added or removed from a given
-  /// PerceptronLayer.
-  final double perceptronMutationRate;
+  /// Assists with updating the [GENNPerceptron] objects or
+  /// [GENNPerceptronLayer] objects within a [GENNEntity].
+  final GENNEntityServiceHelper gennEntityServiceHelper;
 
   /// Used for mutating Perceptron Layers on the Entities.
   late final PerceptronLayerMutationService perceptronLayerMutationService;
+
+  /// Represents the super.crossover function call.
+  ///
+  /// This is available so that we can mock this super call, skipping the super
+  /// logic that we are not looking to test within this service.
+  @visibleForTesting
+  late final Future<Entity<GENNPerceptron>> Function({
+    required List<Entity<GENNPerceptron>> parents,
+    required int wave,
+  }) superDotCrossover;
 
   @override
   Future<GENNEntity> crossOver({
@@ -35,92 +44,28 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required int wave,
   }) async {
     // Generate an Entity from the super class.
-    final superCrossover = await super.crossOver(
+    final superCrossoverEntity = await superDotCrossover(
       parents: parents,
       wave: wave,
     );
     // Convert the Entity into a GENNEntity
-    GENNEntity child = GENNEntity.fromEntity(
-      entity: superCrossover,
+    final GENNEntity child = GENNEntity.fromEntity(
+      entity: superCrossoverEntity,
     );
 
-    final randNumber = numberGenerator.nextDouble;
-    final gennNN = GENNNeuralNetwork.fromGenes(genes: child.dna.genes);
-    var numLayers = gennNN.numLayers;
+    // Potentially add or remove a Perceptron Layer within the GENNEntity.
+    // child = await gennEntityServiceHelper.mutatePerceptronLayersWithinEntity(
+    final mutatedLayersChild =
+        await gennEntityServiceHelper.mutatePerceptronLayersWithinEntity(
+      child: child,
+    );
 
-    // Add or Remove PerceptronLayer from Entity if mutation condition met.
-    if (randNumber < layerMutationRate) {
-      // TODO: Could extract this logic out into a helper function for when
-      /// layerMutationRate is triggered to make this class more easily
-      /// testable.
+    // Potentially mutate a perceptron within the GENNEntity.
+    final mutatedPerceptronsChild =
+        await gennEntityServiceHelper.mutatePerceptronsWithinLayer(
+      child: mutatedLayersChild,
+    );
 
-      // NOTE: If there is only a single layer, then we cannot remove it, so we
-      // must add to it.
-      if (numLayers == 1 || numberGenerator.nextBool) {
-        // Randomly pick a layer to duplicate
-        final duplicationLayer = numberGenerator.nextInt(numLayers);
-
-        // Duplicate PerceptronLayer
-        final duplicatedPerceptronLayer =
-            perceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: gennNN.layers[duplicationLayer],
-        );
-
-        // Add PerceptronLayer into Entity
-        child = perceptronLayerMutationService.addPerceptronLayerToEntity(
-          entity: child,
-          perceptronLayer: duplicatedPerceptronLayer,
-        );
-        // Increment the number of Perceptron Layers
-        numLayers++;
-      } else {
-        // NOTE:  Cannot remove last layer, hence the -1. This is because the
-        //        last layer represents the expected outputs, and that cannot
-        //        change.
-        final targetLayer = numberGenerator.nextInt(numLayers - 1);
-
-        // Remove PerceptronLayer from Entity
-        child = await perceptronLayerMutationService
-            .removePerceptronLayerFromEntity(
-          entity: child,
-          targetLayer: targetLayer,
-        );
-        // Decrement the number of Perceptron Layers
-        numLayers--;
-      }
-    }
-
-    // Add or Remove a Perceptron from a PerceptronLayer if there is more than
-    // one layer.
-    if (numLayers > 1 && randNumber < perceptronMutationRate) {
-      // TODO: Could extract this logic out into a helper function for when
-      /// perceptronMutationRate is triggered to make this class more easily
-      /// testable.
-
-      // NOTE:  Cannot update the last layer, hence the -1. This is because the
-      //        last layer represents the expected outputs, and that cannot
-      //        change.
-      final targetLayer = numberGenerator.nextInt(numLayers - 1);
-
-      // Calculate the number of Genes in the target layer
-      final numGenesInTargetLayer = child.dna.genes
-          .where((gene) => gene.value.layer == targetLayer)
-          .length;
-
-      // Cannot remove from a layer that only has 1 perceptron
-      if ((numGenesInTargetLayer == 1) || numberGenerator.nextBool) {
-        child = await perceptronLayerMutationService.addPerceptronToLayer(
-          entity: child,
-          targetLayer: targetLayer,
-        );
-      } else {
-        child = await perceptronLayerMutationService.removePerceptronFromLayer(
-          entity: child,
-          targetLayer: targetLayer,
-        );
-      }
-    }
-
-    return child;
+    return mutatedPerceptronsChild;
   }
 }
