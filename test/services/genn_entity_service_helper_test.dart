@@ -218,7 +218,7 @@ void main() {
         'does remove PerceptronLayer when random number is less than layerMutationRate and numLayers is 2 and nextBool is false',
         () async {
       final twoLayersOfGenes = [
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -226,7 +226,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer + 1,
             bias: bias,
@@ -319,7 +319,7 @@ void main() {
         'does call to add a Perceptron to a PerceptronLayer when random number is less than perceptronMutationRate and there is more than 1 PerceptronLayer and only 1 Perceptron in the chosen PerceptronLayer',
         () async {
       final twoLayersOfGenes = [
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -327,7 +327,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer + 1,
             bias: bias,
@@ -379,7 +379,7 @@ void main() {
         'does call to add a Perceptron to a PerceptronLayer when random number is less than perceptronMutationRate and there is more than 1 PerceptronLayer and more than 1 Perceptron in the chosen PerceptronLayer and nextBool is true',
         () async {
       final twoLayersOfGenes = [
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -387,7 +387,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -395,7 +395,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer + 1,
             bias: bias,
@@ -449,7 +449,7 @@ void main() {
         'does call to remove a Perceptron from a PerceptronLayer when random number is less than perceptronMutationRate and there is more than 1 PerceptronLayer and more than 1 Perceptron in the chosen PerceptronLayer and nextBool is false',
         () async {
       final twoLayersOfGenes = [
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -457,7 +457,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer,
             bias: bias,
@@ -465,7 +465,7 @@ void main() {
             weights: weights,
           ),
         ),
-        GENNGene(
+        const GENNGene(
           value: GENNPerceptron(
             layer: layer + 1,
             bias: bias,

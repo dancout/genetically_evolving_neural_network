@@ -33,11 +33,8 @@ class GENNEntityServiceHelper {
   Future<GENNEntity> mutatePerceptronLayersWithinEntity({
     required GENNEntity child,
   }) async {
-    // TODO: Is the copywith necessary?
-    var updatedChild = child.copyWith();
-
     final randNumber = numberGenerator.nextDouble;
-    final numLayers = updatedChild.maxLayerNum + 1;
+    final numLayers = child.maxLayerNum + 1;
 
     // Add or Remove PerceptronLayer from Entity if mutation condition met.
     if (randNumber < layerMutationRate) {
@@ -49,10 +46,11 @@ class GENNEntityServiceHelper {
 
         // Declare the PerceptronLayer to duplicate
         final duplicationLayer = GENNPerceptronLayer(
-            perceptrons: updatedChild.dna.genes
-                .where((gene) => gene.value.layer == targetLayer)
-                .map((gene) => gene.value)
-                .toList());
+          perceptrons: child.dna.genes
+              .where((gene) => gene.value.layer == targetLayer)
+              .map((gene) => gene.value)
+              .toList(),
+        );
 
         // Extract the duplicated PerceptronLayer
         final duplicatedPerceptronLayer =
@@ -61,9 +59,8 @@ class GENNEntityServiceHelper {
         );
 
         // Add PerceptronLayer into Entity
-        updatedChild =
-            await perceptronLayerMutationService.addPerceptronLayerToEntity(
-          entity: updatedChild,
+        child = await perceptronLayerMutationService.addPerceptronLayerToEntity(
+          entity: child,
           perceptronLayer: duplicatedPerceptronLayer,
         );
       } else {
@@ -73,15 +70,15 @@ class GENNEntityServiceHelper {
         final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
         // Remove PerceptronLayer from Entity
-        updatedChild = await perceptronLayerMutationService
+        child = await perceptronLayerMutationService
             .removePerceptronLayerFromEntity(
-          entity: updatedChild,
+          entity: child,
           targetLayer: targetLayer,
         );
       }
     }
 
-    return updatedChild;
+    return child;
   }
 
   /// Adds or removes a [GENNPerceptron] to a random [GENNPerceptronLayer]
@@ -89,10 +86,7 @@ class GENNEntityServiceHelper {
   Future<GENNEntity> mutatePerceptronsWithinLayer({
     required GENNEntity child,
   }) async {
-    // TODO: Is the copywith necessary?
-    var updatedChild = child.copyWith();
-
-    final numLayers = updatedChild.maxLayerNum + 1;
+    final numLayers = child.maxLayerNum + 1;
     final randNumber = numberGenerator.nextDouble;
 
     // Add or Remove a Perceptron from a PerceptronLayer if there is more than
@@ -104,26 +98,24 @@ class GENNEntityServiceHelper {
       final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
       // Calculate the number of Genes in the target layer
-      final numGenesInTargetLayer = updatedChild.dna.genes
+      final numGenesInTargetLayer = child.dna.genes
           .where((gene) => gene.value.layer == targetLayer)
           .length;
 
       // Cannot remove from a layer that only has 1 perceptron
       if ((numGenesInTargetLayer == 1) || numberGenerator.nextBool) {
-        updatedChild =
-            await perceptronLayerMutationService.addPerceptronToLayer(
-          entity: updatedChild,
+        child = await perceptronLayerMutationService.addPerceptronToLayer(
+          entity: child,
           targetLayer: targetLayer,
         );
       } else {
-        updatedChild =
-            await perceptronLayerMutationService.removePerceptronFromLayer(
-          entity: updatedChild,
+        child = await perceptronLayerMutationService.removePerceptronFromLayer(
+          entity: child,
           targetLayer: targetLayer,
         );
       }
     }
 
-    return updatedChild;
+    return child;
   }
 }
