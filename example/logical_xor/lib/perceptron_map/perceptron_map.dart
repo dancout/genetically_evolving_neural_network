@@ -189,13 +189,31 @@ class PerceptronMap extends StatelessWidget {
       Row(
         children: [
           if (showLabels)
-            const Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('a'),
-                Text('b'),
-                Text('c'),
-              ],
+              children: List.generate(
+                numInputs,
+                (index) {
+                  const lowercaseAindex = 97;
+                  final numLettersToShow = (index / 26).floor() + 1;
+                  final asciiIndex = (index % 26) + lowercaseAindex;
+
+                  final letter = String.fromCharCode(asciiIndex);
+                  String label = '';
+                  for (int i = 0; i < numLettersToShow; i++) {
+                    label += letter;
+                  }
+                  return SizedBox(
+                    height: totalPerceptronSize,
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           Stack(
             children: weightsChildren,

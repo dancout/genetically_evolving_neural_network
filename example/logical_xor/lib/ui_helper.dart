@@ -34,7 +34,7 @@ class UIHelper {
       children: [
         const Text('Logical Inputs'),
         const Text(
-          'a, b, c',
+          'a, b, c...',
           style: TextStyle(
             fontStyle: FontStyle.italic,
           ),
