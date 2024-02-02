@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/diagram_key.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
-import 'package:logical_xor/logical_xor_fitness_service.dart';
+import 'package:logical_xor/number_classifier/number_classifier_fitness_service.dart';
 import 'package:logical_xor/ui_helper.dart';
 
 void main() {
+  // TODO: It seems that the input layer all have an activation threshold of 1.
+  /// This is fine for logical inputs, where it will be a 0 or a 1, but what
+  /// about for things where a partial value *does matter*?! We should probably
+  /// make the activation threshold either 0 or the most negative value it can
+  /// be, so that all inputs are respected.
   runApp(const MyApp());
 }
 
@@ -31,19 +36,16 @@ class _MyAppState extends State<MyApp> {
   /// The first wave to contain an Entity that reached the target fitness score.
   int? waveTargetFound;
 
-  /// The number of inputs being fed into the Neural Network.
-  static const numInitialInputs = 3;
-
   /// This represents the time to wait between waves shown on screen during
   /// continuous play.
-  static const waitTimeBetweenWaves = 400;
+  static const waitTimeBetweenWaves = 0;
 
   /// Whether to continuously play on through generations, or only increment by
   /// a single generation after each "play" click.
   bool continuousPlay = true;
 
   final GENNVisualizationExampleFitnessService gennExampleFitnessService =
-      LogicalXORFitnessService();
+      NumberClassifierFitnessService();
 
   /// Used to build components of this example file's UI that are not related to
   /// understanding how the GENN class works.
@@ -53,19 +55,19 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // Define your UIHelper based on your gennExampleFitnessService
     uiHelper = UIHelper(
-      numInitialInputs: numInitialInputs,
       gennExampleFitnessService: gennExampleFitnessService,
     );
 
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
-      populationSize: 40,
-      numOutputs: 1,
+      populationSize: 250,
+      numOutputs: gennExampleFitnessService.numOutputs,
       mutationRate: 0.05,
-      numInitialInputs: numInitialInputs,
-      layerMutationRate: 0.10,
-      perceptronMutationRate: 0.2,
+      numInitialInputs: gennExampleFitnessService.numInitialInputs,
+      layerMutationRate: 0.2,
+      perceptronMutationRate: 0.4,
       trackParents: true,
+      // TODO: Test that trackMutatedWaves works well.
       // We only care about tracking the parents of the current generation to
       // show on-screen
       generationsToTrack: 1,
@@ -130,7 +132,6 @@ class _MyAppState extends State<MyApp> {
           child: Row(
             children: [
               DiagramKey(
-                numInitialInputs: numInitialInputs,
                 gennExampleFitnessService: gennExampleFitnessService,
               ),
               SizedBox(
@@ -190,7 +191,13 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                     if (waveTargetFound != null)
-                      Text('Target reached at Generation: $waveTargetFound'),
+                      Text(
+                        'Target reached at Generation: $waveTargetFound',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     const SizedBox(height: 24),
                     Text(
                       'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
@@ -204,10 +211,9 @@ class _MyAppState extends State<MyApp> {
                       child: ListView.separated(
                         itemBuilder: (context, index) =>
                             uiHelper.showPerceptronMapWithScore(
-                          entity: generation.population.sortedEntities[index],
+                          entity: generation.population.entities[index],
                         ),
                         itemCount: generation.population.entities.length,
-                        // itemCount: 16,
                         separatorBuilder: (context, index) =>
                             uiHelper.perceptronMapDivider,
                       ),

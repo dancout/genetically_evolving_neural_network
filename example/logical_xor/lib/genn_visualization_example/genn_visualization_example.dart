@@ -36,4 +36,10 @@ abstract class GENNVisualizationExample {
   List<List<double>> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   });
+
+  /// The number of inputs being fed into the Neural Network.
+  int get numInitialInputs;
+
+  /// The number of outputs expected from the Neural Network.
+  int get numOutputs;
 }

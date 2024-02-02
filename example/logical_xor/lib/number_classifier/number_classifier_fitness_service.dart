@@ -85,4 +85,10 @@ class NumberClassifierFitnessService
     }
     return NaturalNumberExtension.parse(number: index);
   }
+
+  @override
+  int get numInitialInputs => NaturalNumberExtension.numPixels;
+
+  @override
+  int get numOutputs => NaturalNumber.values.length;
 }

@@ -6,11 +6,8 @@ import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
 class UIHelper {
   UIHelper({
-    required this.numInitialInputs,
     required this.gennExampleFitnessService,
   });
-
-  final int numInitialInputs;
 
   final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
@@ -148,7 +145,7 @@ class UIHelper {
                 entity: GENNEntity.fromEntity(
                   entity: entity,
                 ),
-                numInputs: numInitialInputs,
+                numInputs: gennExampleFitnessService.numInitialInputs,
                 showLabels: showLabels,
               ),
               if (!showLabels)
