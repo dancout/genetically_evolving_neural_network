@@ -40,8 +40,6 @@ class UIHelper {
           ),
         ),
         ...gennExampleFitnessService.readableInputList
-            .map((e) => Text(e))
-            .toList()
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// This class implements functions to help visualize the [GENN] class in
@@ -8,8 +9,8 @@ abstract class GENNVisualizationExample {
   List<List<double>> get inputsList;
 
   /// The [GENNVisualizationExample.inputsList] converted into a List of more
-  /// human readable Strings.
-  List<String> get readableInputList;
+  /// human readable Widgets.
+  List<Widget> get readableInputList;
 
   /// The list of outputs, or guesses, for your Neural Network. These are the
   /// expected outputs respective to the logical inputs.

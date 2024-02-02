@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example.dart';
 
@@ -39,7 +40,7 @@ abstract class GENNVisualizationExampleFitnessService extends GENNFitnessService
   List<List<double>> get inputsList;
 
   @override
-  List<String> get readableInputList;
+  List<Widget> get readableInputList;
 
   @override
   List<String> get readableTargetList;

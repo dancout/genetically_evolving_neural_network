@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/number_classifier/natural_number.dart';
@@ -11,7 +12,11 @@ class NumberClassifierFitnessService
     extends GENNVisualizationExampleFitnessService {
   @override
   String convertToReadableString(List<double> valueList) {
-    return determineBestGuess(guess: valueList).name;
+    return NaturalNumber.values
+        .indexOf(
+          determineBestGuess(guess: valueList),
+        )
+        .toString();
   }
 
   // TODO: Documentation of this file?
@@ -52,8 +57,38 @@ class NumberClassifierFitnessService
       NaturalNumber.values.map((e) => e.asPixels()).toList();
 
   @override
-  List<String> get readableInputList {
-    return NaturalNumber.values.map((e) => e.name).toList();
+  List<Widget> get readableInputList {
+    const tileSideLength = 3.4; // Hardcoded to look nice on the page
+
+    // Creates a Grid View representation of the Natural Number to input
+    return inputsList.map((logicalInput) {
+      return Padding(
+        padding: const EdgeInsets.all(1.5),
+        child: Container(
+          color: Colors.blue.withOpacity(0.2),
+          child: SizedBox(
+            width: tileSideLength * 3,
+            height: tileSideLength * 5,
+            child: Padding(
+              padding: const EdgeInsets.all(0.5),
+              child: GridView.count(
+                crossAxisSpacing: 1.0,
+                mainAxisSpacing: 1.0,
+                crossAxisCount: 3,
+                children: List.generate(
+                  logicalInput.length,
+                  (index) => Container(
+                    color: Colors.black.withOpacity(logicalInput[index]),
+                    height: tileSideLength,
+                    width: tileSideLength,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList();
   }
 
   @override

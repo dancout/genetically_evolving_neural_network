@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 
@@ -59,8 +60,8 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
   ];
 
   @override
-  List<String> get readableInputList =>
-      inputsList.map((e) => convertToReadableString(e)).toList();
+  List<Widget> get readableInputList =>
+      inputsList.map((e) => Text(convertToReadableString(e))).toList();
 
   @override
   List<List<double>> targetOutputsList = [
