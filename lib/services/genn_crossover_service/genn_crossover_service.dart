@@ -4,50 +4,16 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
   /// Crosses over parents to create a child.
   GENNCrossoverService({
-    /// Used to mutate the [GENNPerceptronLayer]s.
-    required PerceptronLayerMutationService? perceptronLayerMutationService,
     required super.geneMutationService,
-    required this.numOutputs,
-    required this.layerPerceptronAlignmentHelper,
-    GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
+    required this.gennCrossoverServiceAlignmentHelper,
     super.random,
     NumberGenerator? numberGenerator,
-    GENNCrossoverServiceAlignmentHelper? gennCrossoverServiceAlignmentHelper,
-  }) {
-    if (gennCrossoverServiceAlignmentHelper != null) {
-      this.gennCrossoverServiceAlignmentHelper =
-          gennCrossoverServiceAlignmentHelper;
-    } else {
-      if (perceptronLayerMutationService != null) {
-        this.gennCrossoverServiceAlignmentHelper =
-            GENNCrossoverServiceAlignmentHelper(
-          numOutputs: numOutputs,
-          perceptronLayerMutationService: perceptronLayerMutationService,
-          numberGenerator: numberGenerator,
-          gennCrossoverServiceHelper: gennCrossoverServiceHelper,
-          // TODO: We are only passing layerPerceptronAlignmentHelper in case
-          /// gennCrossoverServiceAlignmentHelper was null. Should we make
-          /// gennCrossoverServiceAlignmentHelper required?
-          layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
-        );
-      } else {
-        throw Exception(
-          'Cannot have both null PerceptronLayerMutationService AND null '
-          'GENNCrossoverServiceAlignmentHelper',
-        );
-      }
-    }
-  }
-
-  /// The number of expected outputs for this NeuralNetwork
-  final int numOutputs;
+  });
 
   // TODO: Documentation for all values.
 
   late final GENNCrossoverServiceAlignmentHelper
       gennCrossoverServiceAlignmentHelper;
-
-  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
 
   @override
   Future<List<Gene<GENNPerceptron>>> crossover({

@@ -95,10 +95,12 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     );
 
     final crossoverService = GENNCrossoverService(
-      perceptronLayerMutationService: perceptronLayerMutationService,
+      gennCrossoverServiceAlignmentHelper: GENNCrossoverServiceAlignmentHelper(
+        numOutputs: config.numGenes,
+        perceptronLayerMutationService: perceptronLayerMutationService,
+        layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
+      ),
       geneMutationService: geneMutationService,
-      numOutputs: config.numGenes,
-      layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
     );
 
     final numberGenerator = NumberGenerator(

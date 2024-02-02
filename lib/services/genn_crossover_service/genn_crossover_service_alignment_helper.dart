@@ -1,7 +1,12 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-// TODO: Documentation
+/// Responsible for ensuring that there is the proper number of
+/// [GENNPerceptronLayer] objects present within a [GENNEntity] as well as
+/// [GENNPerceptron] objects within a [GENNPerceptronLayer].
 class GENNCrossoverServiceAlignmentHelper {
+  /// Responsible for ensuring that there is the proper number of
+  /// [GENNPerceptronLayer] objects present within a [GENNEntity] as well as
+  /// [GENNPerceptron] objects within a [GENNPerceptronLayer].
   GENNCrossoverServiceAlignmentHelper({
     required this.numOutputs,
     // TODO: Should this be required? Re-evaluate all the parameters here if
@@ -25,9 +30,12 @@ class GENNCrossoverServiceAlignmentHelper {
             );
   }
 
+  /// Updates the [GENNPerceptron] and [GENNPerceptronLayer] objects within a
+  /// [GENNEntity].
   late final GENNCrossoverServiceAlignmentPerceptronHelper
       gennCrossoverServiceAlignmentPerceptronHelper;
 
+  /// Updates the [GENNPerceptron] objects within a [GENNPerceptronLayer].
   final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
 
   /// The number of expected outputs for this NeuralNetwork
@@ -36,6 +44,8 @@ class GENNCrossoverServiceAlignmentHelper {
   /// Used to mutate the [GENNPerceptronLayer]s.
   final PerceptronLayerMutationService perceptronLayerMutationService;
 
+  /// Updates the incoming [parents] so that they have the same number of
+  /// internal Perceptron Layers.
   Future<List<GENNEntity>> alignNumLayersForParents({
     required List<GENNEntity> parents,
   }) async {
@@ -77,7 +87,8 @@ class GENNCrossoverServiceAlignmentHelper {
     return copiedParents;
   }
 
-  // TODO: Documentation of this file
+  /// Ensures the incoming [parents] all have the same number of Perceptrons
+  /// (Genes) within each internal Perceptron Layer.
   Future<List<GENNEntity>> alignGenesWithinLayersForParents({
     required List<GENNEntity> parents,
   }) async {

@@ -6,7 +6,6 @@ import 'package:mocktail/mocktail.dart';
 import '../../mocks.dart';
 
 void main() {
-  const numOutputs = 2;
   const fitnessScore = 1.0;
   const wave = 0;
   final gennGenes = <GENNGene>[];
@@ -23,39 +22,10 @@ void main() {
     mockGennCrossoverServiceAlignmentHelper =
         MockGENNCrossoverServiceAlignmentHelper();
     testObject = GENNCrossoverService(
-      perceptronLayerMutationService: MockPerceptronLayerMutationService(),
       geneMutationService: mockGeneMutationService,
-      numOutputs: numOutputs,
       gennCrossoverServiceAlignmentHelper:
           mockGennCrossoverServiceAlignmentHelper,
     );
-  });
-
-  group('constructor', () {
-    test(
-        'throws exception if both PerceptronLayerMutationService is null AND GENNCrossoverServiceAlignmentHelper is null',
-        () async {
-      expect(
-        () => testObject = GENNCrossoverService(
-          perceptronLayerMutationService: null,
-          geneMutationService: mockGeneMutationService,
-          gennCrossoverServiceAlignmentHelper: null,
-          numOutputs: numOutputs,
-        ),
-        throwsException,
-      );
-    });
-
-    test(
-        'does not throw exception if PerceptronLayerMutationService is not null AND GENNCrossoverServiceAlignmentHelper is null',
-        () async {
-      testObject = GENNCrossoverService(
-        perceptronLayerMutationService: MockPerceptronLayerMutationService(),
-        geneMutationService: mockGeneMutationService,
-        gennCrossoverServiceAlignmentHelper: null,
-        numOutputs: numOutputs,
-      );
-    });
   });
 
   group('crossover', () {
