@@ -56,8 +56,10 @@ class LayerPerceptronAlignmentHelper {
     }
 
     // Declare the updated FitnessScore from your updated DNA
-    final updatedFitnessScore =
-        await fitnessService.calculateScore(dna: updatedDNA);
+    final updatedFitnessScore = diff > 0
+        ? await fitnessService.calculateScore(dna: updatedDNA)
+        // No need to update fitness score, as nothing changed
+        : null;
 
     // Update the entity with its updated DNA and updated Fitness Score.
     updatedEntity = updatedEntity.copyWith(

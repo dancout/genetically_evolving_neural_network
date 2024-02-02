@@ -84,7 +84,6 @@ void main() {
     thirdLayerGennEntity,
   ];
   const numOutputs = 3;
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
   late GENNCrossoverServiceHelper mockGennCrossoverServiceHelper;
   late GENNCrossoverServiceAlignmentPerceptronHelper
       mockGennCrossoverServiceAlignmentPerceptronHelper;
@@ -93,7 +92,6 @@ void main() {
   late GENNCrossoverServiceAlignmentHelper testObject;
 
   setUp(() async {
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
     mockGennCrossoverServiceHelper = MockGennCrossoverServiceHelper();
     mockGennCrossoverServiceAlignmentPerceptronHelper =
         MockGennCrossoverServiceAlignmentPerceptronHelper();
@@ -102,7 +100,6 @@ void main() {
     testObject = GENNCrossoverServiceAlignmentHelper(
       layerPerceptronAlignmentHelper: mockLayerPerceptronAlignmentHelper,
       numOutputs: numOutputs,
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
       gennCrossoverServiceAlignmentPerceptronHelper:
           mockGennCrossoverServiceAlignmentPerceptronHelper,
     );

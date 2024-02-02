@@ -9,26 +9,9 @@ class GENNCrossoverServiceAlignmentHelper {
   /// [GENNPerceptron] objects within a [GENNPerceptronLayer].
   GENNCrossoverServiceAlignmentHelper({
     required this.numOutputs,
-    // TODO: Should this be required? Re-evaluate all the parameters here if
-    /// they're necessary.
-    required this.perceptronLayerMutationService,
     required this.layerPerceptronAlignmentHelper,
-    GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
-    GENNCrossoverServiceAlignmentPerceptronHelper?
-        gennCrossoverServiceAlignmentPerceptronHelper,
-    NumberGenerator? numberGenerator,
-  }) {
-    final myGennCrossoverServiceHelper = gennCrossoverServiceHelper ??
-        GENNCrossoverServiceHelper(
-          numberGenerator: numberGenerator,
-        );
-    this.gennCrossoverServiceAlignmentPerceptronHelper =
-        gennCrossoverServiceAlignmentPerceptronHelper ??
-            GENNCrossoverServiceAlignmentPerceptronHelper(
-              perceptronLayerMutationService: perceptronLayerMutationService,
-              gennCrossoverServiceHelper: myGennCrossoverServiceHelper,
-            );
-  }
+    required this.gennCrossoverServiceAlignmentPerceptronHelper,
+  });
 
   /// Updates the [GENNPerceptron] and [GENNPerceptronLayer] objects within a
   /// [GENNEntity].
@@ -40,9 +23,6 @@ class GENNCrossoverServiceAlignmentHelper {
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
-
-  /// Used to mutate the [GENNPerceptronLayer]s.
-  final PerceptronLayerMutationService perceptronLayerMutationService;
 
   /// Updates the incoming [parents] so that they have the same number of
   /// internal Perceptron Layers.

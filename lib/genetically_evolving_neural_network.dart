@@ -65,6 +65,10 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           random: config.random,
         );
 
+    final numberGenerator = NumberGenerator(
+      random: config.random,
+    );
+
     final geneMutationService = GENNGeneMutationService(
       trackMutatedWaves: config.trackMutatedWaves,
       mutationRate: config.mutationRate,
@@ -94,17 +98,22 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       numOutputs: config.numGenes,
     );
 
+    final gennCrossoverServiceHelper = GENNCrossoverServiceHelper(
+      numberGenerator: numberGenerator,
+    );
+    final gennCrossoverServiceAlignmentPerceptronHelper =
+        GENNCrossoverServiceAlignmentPerceptronHelper(
+      perceptronLayerMutationService: perceptronLayerMutationService,
+      gennCrossoverServiceHelper: gennCrossoverServiceHelper,
+    );
     final crossoverService = GENNCrossoverService(
       gennCrossoverServiceAlignmentHelper: GENNCrossoverServiceAlignmentHelper(
+        gennCrossoverServiceAlignmentPerceptronHelper:
+            gennCrossoverServiceAlignmentPerceptronHelper,
         numOutputs: config.numGenes,
-        perceptronLayerMutationService: perceptronLayerMutationService,
         layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
       ),
       geneMutationService: geneMutationService,
-    );
-
-    final numberGenerator = NumberGenerator(
-      random: config.random,
     );
 
     final entityParentManinpulator = EntityParentManinpulator<GENNPerceptron>(
