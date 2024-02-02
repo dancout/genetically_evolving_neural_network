@@ -10,11 +10,13 @@ class PerceptronMap extends StatelessWidget {
     super.key,
     required this.entity,
     required this.numInputs,
+    required this.numOutputs,
     this.showLabels = false,
   });
 
   final GENNEntity entity;
   final int numInputs;
+  final int numOutputs;
   final bool showLabels;
 
   @override
@@ -98,19 +100,48 @@ class PerceptronMap extends StatelessWidget {
     }
 
     // Add final output passthrough weight
-    rows.addAll([
-      CustomPaint(
-        painter: WeightLinePainter(
-          leftX: 0,
-          leftY: (totalPerceptronSize / 2),
-          rightX: weightsColumnWidth,
-          rightY: (totalPerceptronSize / 2),
-          weight: 1.0,
+    rows.addAll(
+      [
+        Column(
+          children: List.generate(
+            numOutputs,
+            (index) => CustomPaint(
+              painter: WeightLinePainter(
+                leftX: 0,
+                leftY:
+                    (index * totalPerceptronSize) + (totalPerceptronSize / 2),
+                rightX: weightsColumnWidth,
+                rightY:
+                    (index * totalPerceptronSize) + (totalPerceptronSize / 2),
+                weight: 1.0,
+              ),
+            ),
+          ),
         ),
-      ),
-      if (showLabels) const SizedBox(width: weightsColumnWidth),
-      if (showLabels) const Text('guess')
-    ]);
+        Column(
+          children: List.generate(
+            numOutputs,
+            (index) => const SizedBox(width: weightsColumnWidth),
+          ),
+        ),
+        Column(
+          children: List.generate(
+            numOutputs,
+            (index) => (showLabels)
+                ? SizedBox(
+                    height: totalPerceptronSize,
+                    child: Text(
+                      'output - ${index + 1}',
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+          ),
+        ),
+      ],
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,15 +225,7 @@ class PerceptronMap extends StatelessWidget {
               children: List.generate(
                 numInputs,
                 (index) {
-                  const lowercaseAindex = 97;
-                  final numLettersToShow = (index / 26).floor() + 1;
-                  final asciiIndex = (index % 26) + lowercaseAindex;
-
-                  final letter = String.fromCharCode(asciiIndex);
-                  String label = '';
-                  for (int i = 0; i < numLettersToShow; i++) {
-                    label += letter;
-                  }
+                  String label = _generateLabel(index);
                   return SizedBox(
                     height: totalPerceptronSize,
                     child: Text(
@@ -221,5 +244,18 @@ class PerceptronMap extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _generateLabel(int index) {
+    const lowercaseAindex = 97;
+    final numLettersToShow = (index / 26).floor() + 1;
+    final asciiIndex = (index % 26) + lowercaseAindex;
+
+    final letter = String.fromCharCode(asciiIndex);
+    String label = '';
+    for (int i = 0; i < numLettersToShow; i++) {
+      label += letter;
+    }
+    return label;
   }
 }

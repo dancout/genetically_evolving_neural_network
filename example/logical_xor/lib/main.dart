@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       numOutputs: gennExampleFitnessService.numOutputs,
       mutationRate: 0.15,
       numInitialInputs: gennExampleFitnessService.numInitialInputs,
-      layerMutationRate: 0.4,
+      layerMutationRate: 0.2,
       perceptronMutationRate: 0.4,
       trackParents: true,
       // We only care about tracking the parents of the current generation to
@@ -156,13 +156,21 @@ class _MyAppState extends State<MyApp> {
                     Text(
                       'Generation: ${generation.wave.toString()}',
                     ),
+                    if (gennExampleFitnessService.targetFitnessScore != null)
+                      Text(
+                        '(Target Score: ${gennExampleFitnessService.targetFitnessScore})',
+                      ),
                     uiHelper.showPerceptronMapWithScore(
                       entity: generation.population.topScoringEntity,
                       showLabels: true,
                     ),
-                    if (gennExampleFitnessService.targetFitnessScore != null)
+                    if (waveTargetFound != null)
                       Text(
-                        'Target Score: ${gennExampleFitnessService.targetFitnessScore}',
+                        'Target reached at Generation: $waveTargetFound',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -184,14 +192,6 @@ class _MyAppState extends State<MyApp> {
                         ),
                       ],
                     ),
-                    if (waveTargetFound != null)
-                      Text(
-                        'Target reached at Generation: $waveTargetFound',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
                     const SizedBox(height: 24),
                     Text(
                       'Entire Population of Neural Networks (${generation.population.entities.length} in total)',

@@ -85,8 +85,6 @@ class UIHelper {
     required GENNEntity entity,
     bool showLabels = false,
   }) {
-    const textWidth = 150.0;
-
     final veritcalDivider = Container(
       height: 48.0,
       width: circleDiameter,
@@ -96,7 +94,7 @@ class UIHelper {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: weightsColumnWidth + 9 + circleDiameter,
+          width: weightsColumnWidth + 13 + circleDiameter,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -115,13 +113,13 @@ class UIHelper {
         ),
         const Spacer(),
         SizedBox(
-          width: weightsColumnWidth + 53,
+          width: weightsColumnWidth + 84,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               veritcalDivider,
               const Text(
-                'Output',
+                'Output(s)',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: 12.0),
@@ -134,6 +132,12 @@ class UIHelper {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(
+            child: Text(
+              'Score: ${entity.fitnessScore.toString()}',
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           if (showLabels) row,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -144,26 +148,11 @@ class UIHelper {
                   entity: entity,
                 ),
                 numInputs: gennExampleFitnessService.numInitialInputs,
+                numOutputs: gennExampleFitnessService.numOutputs,
                 showLabels: showLabels,
               ),
-              if (!showLabels)
-                SizedBox(
-                  width: textWidth,
-                  child: Text(
-                    'Score: ${entity.fitnessScore.toString()}',
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
             ],
           ),
-          if (showLabels)
-            SizedBox(
-              width: textWidth,
-              child: Text(
-                'Score: ${entity.fitnessScore.toString()}',
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
         ],
       ),
     );
