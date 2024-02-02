@@ -22,20 +22,17 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
     required GENNEntity gennEntity,
     required int targetNumLayers,
   }) async {
-    // TODO: Is this copywith necessary?
-    var updatedEntity = gennEntity.copyWith();
-
-    if (updatedEntity.maxLayerNum < targetNumLayers) {
+    if (gennEntity.maxLayerNum < targetNumLayers) {
       // We need to add layers to the entity
 
-      final diff = targetNumLayers - updatedEntity.maxLayerNum;
+      final diff = targetNumLayers - gennEntity.maxLayerNum;
 
       for (int i = 0; i < diff; i++) {
-        final lastLayerNum = updatedEntity.maxLayerNum;
+        final lastLayerNum = gennEntity.maxLayerNum;
 
         // Extract the last PeceptronLayer on the entity
         final lastPerceptronLayer = GENNPerceptronLayer(
-          perceptrons: updatedEntity.dna.genes
+          perceptrons: gennEntity.dna.genes
               .where((gennGene) => gennGene.value.layer == lastLayerNum)
               .map((gennGene) => gennGene.value)
               .toList(),
@@ -48,27 +45,27 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
         );
 
         // Add PerceptronLayer into Entity
-        updatedEntity =
+        gennEntity =
             await perceptronLayerMutationService.addPerceptronLayerToEntity(
-          entity: updatedEntity,
+          entity: gennEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         );
       }
-    } else if (updatedEntity.maxLayerNum > targetNumLayers) {
+    } else if (gennEntity.maxLayerNum > targetNumLayers) {
       // We need to remove layers from the entity
-      final diff = updatedEntity.maxLayerNum - targetNumLayers;
+      final diff = gennEntity.maxLayerNum - targetNumLayers;
 
       for (int i = 0; i < diff; i++) {
         // Remove the last PerceptronLayer from Entity
-        updatedEntity = await perceptronLayerMutationService
+        gennEntity = await perceptronLayerMutationService
             .removePerceptronLayerFromEntity(
-          entity: updatedEntity,
-          targetLayer: updatedEntity.maxLayerNum,
+          entity: gennEntity,
+          targetLayer: gennEntity.maxLayerNum,
         );
       }
     }
 
-    return updatedEntity;
+    return gennEntity;
   }
 
   /// Returns an [int] between the max and min number of perceptrons within the

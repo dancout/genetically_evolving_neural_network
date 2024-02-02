@@ -7,11 +7,10 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
     required super.geneMutationService,
     required this.gennCrossoverServiceAlignmentHelper,
     super.random,
-    NumberGenerator? numberGenerator,
   });
 
-  // TODO: Documentation for all values.
-
+  /// Responsbile for ensuring the correct number of Perceptrons and Perceptron
+  /// Layers exist within a [GENNEntity].
   late final GENNCrossoverServiceAlignmentHelper
       gennCrossoverServiceAlignmentHelper;
 

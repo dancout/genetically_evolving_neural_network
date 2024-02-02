@@ -188,7 +188,7 @@ void main() {
 
       when(() => mockNumberGenerator.nextInt(3)).thenReturn(0);
 
-      final actual = await testObject.removePerceptronFromDNA(
+      final actual = testObject.removePerceptronFromDNA(
         dna: originalDNA,
         targetLayer: targetLayer,
       );
