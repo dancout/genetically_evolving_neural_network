@@ -34,17 +34,25 @@ class PerceptronMap extends StatelessWidget {
       showLabels: showLabels,
     );
 
+    // This represents the visualization of the input layer as perceptrons
+    final visualizedPerceptron = VisualizedPerceptron(
+      // We've given a border thickness so that they are aesthetically pleasing,
+      // but it would be more accurate to put a threshold of 0 and a bias of 0
+      // because we should respect all inputs for exactly the value they
+      // represent.
+      biasColor: positiveColor.withOpacity(0.1),
+      borderThickness: maxBorderThickness,
+    );
     rows.add(
       Column(
         children: List.generate(
           numInputs,
-          (index) => const Padding(
-            padding: EdgeInsets.symmetric(vertical: extraSidePadding),
-            child: VisualizedPerceptron(
-              biasColor: Colors.transparent,
-              borderThickness: maxBorderThickness,
-            ),
-          ),
+          (index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: extraSidePadding),
+              child: visualizedPerceptron,
+            );
+          },
         ),
       ),
     );
