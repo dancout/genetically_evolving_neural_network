@@ -42,3 +42,9 @@ class MockEntityParentManipulator<T> extends Mock
 
 class MockGENNEntityServiceHelper extends Mock
     implements GENNEntityServiceHelper {}
+
+class MockDNAManipulationService extends Mock
+    implements DNAManipulationService {}
+
+class MockLayerPerceptronAlignmentHelper extends Mock
+    implements LayerPerceptronAlignmentHelper {}

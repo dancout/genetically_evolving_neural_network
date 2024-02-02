@@ -7,9 +7,11 @@ import '../mocks.dart';
 void main() {
   const layer = 0;
   const bias = 0.1;
+  const numOutputs = 1;
   const threshold = 0.2;
   const weights = [0.1];
   const fitnessScore = 1.0;
+  const updatedFitnessScore = 2.0;
   const gennPerceptron = GENNPerceptron(
     layer: layer,
     bias: bias,
@@ -17,18 +19,22 @@ void main() {
     weights: weights,
   );
 
-  late GennGeneServiceHelper mockGeneServiceHelper;
   late GENNFitnessService mockFitnessService;
   late NumberGenerator mockNumberGenerator;
+  late DNAManipulationService mockDnaManipulationService;
+  late LayerPerceptronAlignmentHelper mockLayerPerceptronAlignmentHelper;
   late PerceptronLayerMutationService testObject;
 
   setUp(() async {
-    mockGeneServiceHelper = MockGennGeneServiceHelper();
     mockFitnessService = MockGENNFitnessService();
     mockNumberGenerator = MockNumberGenerator();
+    mockDnaManipulationService = MockDNAManipulationService();
+    mockLayerPerceptronAlignmentHelper = MockLayerPerceptronAlignmentHelper();
 
     testObject = PerceptronLayerMutationService(
-      gennGeneServiceHelper: mockGeneServiceHelper,
+      numOutputs: numOutputs,
+      dnaManipulationService: mockDnaManipulationService,
+      layerPerceptronAlignmentHelper: mockLayerPerceptronAlignmentHelper,
       fitnessService: mockFitnessService,
       numberGenerator: mockNumberGenerator,
     );
@@ -73,7 +79,7 @@ void main() {
     });
   });
 
-  group('addPerceptronLayer', () {
+  group('addPerceptronLayerToEntity', () {
     test('properly inserts PerceptronLayer into Entity', () async {
       final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
       final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
@@ -81,7 +87,6 @@ void main() {
       final perceptronLayer = GENNPerceptronLayer(
         perceptrons: [secondGennPerceptron],
       );
-
       final entity = GENNEntity(
         dna: GENNDNA(
           genes: [
@@ -99,31 +104,35 @@ void main() {
         fitnessScore: fitnessScore,
       );
 
+      final updatedDNA = GENNDNA(
+        genes: [
+          const GENNGene(
+            value: gennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron.copyWith(
+              layer: secondGennPerceptron.layer + 1,
+            ),
+          ),
+          GENNGene(
+            value: thirdGennPerceptron.copyWith(
+              layer: thirdGennPerceptron.layer + 1,
+            ),
+          ),
+        ],
+      );
       final expected = GENNEntity(
-        dna: GENNDNA(
-          genes: [
-            const GENNGene(
-              value: gennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron.copyWith(
-                layer: secondGennPerceptron.layer + 1,
-              ),
-            ),
-            GENNGene(
-              value: thirdGennPerceptron.copyWith(
-                layer: thirdGennPerceptron.layer + 1,
-              ),
-            ),
-          ],
-        ),
-        fitnessScore: fitnessScore,
+        dna: updatedDNA,
+        fitnessScore: updatedFitnessScore,
       );
 
-      final actual = testObject.addPerceptronLayerToEntity(
+      when(() => mockFitnessService.calculateScore(dna: updatedDNA))
+          .thenAnswer((_) async => updatedFitnessScore);
+
+      final actual = await testObject.addPerceptronLayerToEntity(
         entity: entity,
         perceptronLayer: perceptronLayer,
       );
@@ -152,7 +161,7 @@ void main() {
         ],
       );
       when(() => mockFitnessService.calculateScore(dna: updatedDna))
-          .thenAnswer((_) async => fitnessScore);
+          .thenAnswer((_) async => updatedFitnessScore);
       when(() => mockNumberGenerator.randomNegOneToPosOne)
           .thenReturn(randNegOneToPosOne);
 
@@ -175,7 +184,7 @@ void main() {
 
       final expected = GENNEntity(
         dna: updatedDna,
-        fitnessScore: fitnessScore,
+        fitnessScore: updatedFitnessScore,
       );
 
       final actual = await testObject.removePerceptronLayerFromEntity(
@@ -185,14 +194,23 @@ void main() {
 
       expect(actual, expected);
     });
-  });
 
-  group('addPerceptronToLayer', () {
-    test('throws assertion error when targetLayer is last perceptron layer',
+    test('calls to align genes within layer when targetLayer is last layer',
         () async {
       final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
       final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
       const targetLayer = 2;
+      const randNegOneToPosOne = -0.5;
+      final updatedDna = GENNDNA(
+        genes: [
+          const GENNGene(
+            value: gennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron,
+          ),
+        ],
+      );
 
       final entity = GENNEntity(
         dna: GENNDNA(
@@ -211,15 +229,33 @@ void main() {
         fitnessScore: fitnessScore,
       );
 
-      expect(
-        () => testObject.addPerceptronToLayer(
-          entity: entity,
-          targetLayer: targetLayer,
-        ),
-        throwsAssertionError,
+      final expected = GENNEntity(
+        dna: updatedDna,
+        fitnessScore: updatedFitnessScore,
       );
-    });
 
+      when(() => mockFitnessService.calculateScore(dna: updatedDna))
+          .thenAnswer((_) async => updatedFitnessScore);
+      when(() => mockNumberGenerator.randomNegOneToPosOne)
+          .thenReturn(randNegOneToPosOne);
+      when(
+        () => mockLayerPerceptronAlignmentHelper.alignGenesWithinLayer(
+          entity: entity.copyWith(dna: updatedDna),
+          targetLayer: targetLayer - 1,
+          targetGeneNum: numOutputs,
+        ),
+      ).thenAnswer((invocation) async => entity.copyWith(dna: updatedDna));
+
+      final actual = await testObject.removePerceptronLayerFromEntity(
+        entity: entity,
+        targetLayer: targetLayer,
+      );
+
+      expect(actual, expected);
+    });
+  });
+
+  group('addPerceptronToLayer', () {
     test('properly adds Perceptron to PerceptronLayer', () async {
       final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
       final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
@@ -254,39 +290,32 @@ void main() {
           ),
         ],
       );
+      final originalDNA = GENNDNA(
+        genes: [
+          const GENNGene(
+            value: gennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron,
+          ),
+          GENNGene(
+            value: thirdGennPerceptron,
+          ),
+        ],
+      );
       final entity = GENNEntity(
-        dna: GENNDNA(
-          genes: [
-            const GENNGene(
-              value: gennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: thirdGennPerceptron,
-            ),
-          ],
-        ),
+        dna: originalDNA,
         fitnessScore: fitnessScore,
       );
 
-      when(
-        () => mockGeneServiceHelper.randomPerceptron(
-          numWeights: 1,
-          layer: targetLayer,
-        ),
-      ).thenReturn(
-        randomPerceptron,
-      );
-      when(() => mockNumberGenerator.randomNegOneToPosOne)
-          .thenReturn(randNegOneToPosOne);
+      when(() => mockDnaManipulationService.addPerceptronToDNA(
+          dna: originalDNA, targetLayer: targetLayer)).thenReturn(updatedDna);
       when(() => mockFitnessService.calculateScore(dna: updatedDna))
-          .thenAnswer((_) async => fitnessScore);
+          .thenAnswer((_) async => updatedFitnessScore);
 
       final expected = GENNEntity(
         dna: updatedDna,
-        fitnessScore: fitnessScore,
+        fitnessScore: updatedFitnessScore,
       );
 
       final actual = await testObject.addPerceptronToLayer(
@@ -299,65 +328,35 @@ void main() {
   });
 
   group('removePerceptronFromLayer', () {
-    test(
-        'throws assertion error if you try to remove the only perceptron in a given layer',
-        () async {
-      final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
-      final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
-      const targetLayer = 1;
-
-      final entity = GENNEntity(
-        dna: GENNDNA(
-          genes: [
-            const GENNGene(
-              value: gennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: thirdGennPerceptron,
-            ),
-          ],
-        ),
-        fitnessScore: fitnessScore,
-      );
-
-      expect(
-        () => testObject.removePerceptronFromLayer(
-            entity: entity, targetLayer: targetLayer),
-        throwsAssertionError,
-      );
-    });
-
     test('properly removed Perceptron from target layer', () async {
       final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
       final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
       const targetLayer = 1;
       const updatedBias = 0.99;
 
+      final originalDNA = GENNDNA(
+        genes: [
+          const GENNGene(
+            value: gennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron,
+          ),
+          GENNGene(
+            value: secondGennPerceptron.copyWith(
+              bias: updatedBias,
+            ),
+          ),
+          GENNGene(
+            value: secondGennPerceptron,
+          ),
+          GENNGene(
+            value: thirdGennPerceptron,
+          ),
+        ],
+      );
       final entity = GENNEntity(
-        dna: GENNDNA(
-          genes: [
-            const GENNGene(
-              value: gennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron.copyWith(
-                bias: updatedBias,
-              ),
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: thirdGennPerceptron,
-            ),
-          ],
-        ),
+        dna: originalDNA,
         fitnessScore: fitnessScore,
       );
 
@@ -382,13 +381,16 @@ void main() {
         ],
       );
 
+      when(() => mockDnaManipulationService.removePerceptronFromDNA(
+            dna: originalDNA,
+            targetLayer: targetLayer,
+          )).thenReturn(updatedDna);
       when(() => mockFitnessService.calculateScore(dna: updatedDna))
-          .thenAnswer((_) async => fitnessScore);
-      when(() => mockNumberGenerator.nextInt(3)).thenReturn(0);
+          .thenAnswer((_) async => updatedFitnessScore);
 
       final expected = GENNEntity(
         dna: updatedDna,
-        fitnessScore: fitnessScore,
+        fitnessScore: updatedFitnessScore,
       );
 
       final actual = await testObject.removePerceptronFromLayer(

@@ -66,21 +66,21 @@ class PerceptronLayerMutationService {
 
   /// Returns a copy of the given [entity] with the given [perceptronLayer]
   /// inserted.
-  GENNEntity addPerceptronLayerToEntity({
+  Future<GENNEntity> addPerceptronLayerToEntity({
     required GENNEntity entity,
     required GENNPerceptronLayer perceptronLayer,
-  }) {
+  }) async {
     final duplicationLayer = perceptronLayer.perceptrons.first.layer - 1;
 
     // Increment all layers after duplicationLayer
-    final genes = entity.dna.genes.map((gene) {
+    final genes = List<GENNGene>.from(entity.dna.genes.map((gene) {
       if (gene.value.layer > duplicationLayer) {
         return gene.copyWith(
           value: gene.value.copyWith(layer: gene.value.layer + 1),
         );
       }
       return gene;
-    }).toList();
+    }).toList());
 
     // Add duplicated layer to genes
     genes.addAll(
@@ -91,8 +91,13 @@ class PerceptronLayerMutationService {
       ),
     );
 
+    final updatedFitnessScore = await fitnessService.calculateScore(
+      dna: GENNDNA(genes: genes),
+    );
+
     return entity.copyWith(
       dna: GENNDNA(genes: genes),
+      fitnessScore: updatedFitnessScore,
     );
   }
 
@@ -106,10 +111,8 @@ class PerceptronLayerMutationService {
     // Entity.
     final bool isLastLayer = targetLayer == entity.maxLayerNum;
 
-    // TODO: Do we need to be creating a brand new list here, or is it just an
-    // inefficiency?
     // Grab the genes from the given Entity
-    final gennGenes = List<GENNGene>.from(entity.dna.genes);
+    final gennGenes = entity.dna.genes;
 
     final numWeightsOfTargetLayer = entity.dna.genes
         .firstWhere((gennGene) => gennGene.value.layer == targetLayer)

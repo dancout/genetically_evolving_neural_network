@@ -49,7 +49,7 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
 
         // Add PerceptronLayer into Entity
         updatedEntity =
-            perceptronLayerMutationService.addPerceptronLayerToEntity(
+            await perceptronLayerMutationService.addPerceptronLayerToEntity(
           entity: updatedEntity,
           perceptronLayer: duplicatedPerceptronLayer,
         );
