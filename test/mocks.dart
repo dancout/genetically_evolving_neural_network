@@ -46,5 +46,5 @@ class MockGENNEntityServiceHelper extends Mock
 class MockDNAManipulationService extends Mock
     implements DNAManipulationService {}
 
-class MockLayerPerceptronAlignmentHelper extends Mock
-    implements LayerPerceptronAlignmentHelper {}
+class MockPerceptronLayerAlignmentHelper extends Mock
+    implements PerceptronLayerAlignmentHelper {}

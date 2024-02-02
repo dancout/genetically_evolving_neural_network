@@ -28,7 +28,7 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_mutation_se
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
-part 'package:genetically_evolving_neural_network/services/layer_perceptron_alignment_helper.dart';
+part 'package:genetically_evolving_neural_network/services/perceptron_layer_alignment_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
@@ -85,7 +85,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       gennGeneServiceHelper: gennGeneService.gennGeneServiceHelper,
     );
 
-    final layerPerceptronAlignmentHelper = LayerPerceptronAlignmentHelper(
+    final perceptronLayerAlignmentHelper = PerceptronLayerAlignmentHelper(
       fitnessService: fitnessService,
       dnaManipulationService: dnaManipulationService,
     );
@@ -94,7 +94,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       fitnessService: fitnessService,
       random: config.random,
       dnaManipulationService: dnaManipulationService,
-      layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
+      perceptronLayerAlignmentHelper: perceptronLayerAlignmentHelper,
       numOutputs: config.numGenes,
     );
 
@@ -111,7 +111,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
         gennCrossoverServiceAlignmentPerceptronHelper:
             gennCrossoverServiceAlignmentPerceptronHelper,
         numOutputs: config.numGenes,
-        layerPerceptronAlignmentHelper: layerPerceptronAlignmentHelper,
+        perceptronLayerAlignmentHelper: perceptronLayerAlignmentHelper,
       ),
       geneMutationService: geneMutationService,
     );

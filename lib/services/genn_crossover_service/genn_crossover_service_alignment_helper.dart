@@ -9,7 +9,7 @@ class GENNCrossoverServiceAlignmentHelper {
   /// [GENNPerceptron] objects within a [GENNPerceptronLayer].
   GENNCrossoverServiceAlignmentHelper({
     required this.numOutputs,
-    required this.layerPerceptronAlignmentHelper,
+    required this.perceptronLayerAlignmentHelper,
     required this.gennCrossoverServiceAlignmentPerceptronHelper,
   });
 
@@ -19,7 +19,7 @@ class GENNCrossoverServiceAlignmentHelper {
       gennCrossoverServiceAlignmentPerceptronHelper;
 
   /// Updates the [GENNPerceptron] objects within a [GENNPerceptronLayer].
-  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
+  final PerceptronLayerAlignmentHelper perceptronLayerAlignmentHelper;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
@@ -119,7 +119,7 @@ class GENNCrossoverServiceAlignmentHelper {
         // Make the number of Genes within the current layer match the
         // targetNumPerceptrons.
         copiedParents[x] =
-            await layerPerceptronAlignmentHelper.alignGenesWithinLayer(
+            await perceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: copiedParents[x],
           targetLayer: currLayer,
           targetGeneNum: targetNumPerceptrons,

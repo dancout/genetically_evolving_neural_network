@@ -22,19 +22,19 @@ void main() {
   late GENNFitnessService mockFitnessService;
   late NumberGenerator mockNumberGenerator;
   late DNAManipulationService mockDnaManipulationService;
-  late LayerPerceptronAlignmentHelper mockLayerPerceptronAlignmentHelper;
+  late PerceptronLayerAlignmentHelper mockPerceptronLayerAlignmentHelper;
   late PerceptronLayerMutationService testObject;
 
   setUp(() async {
     mockFitnessService = MockGENNFitnessService();
     mockNumberGenerator = MockNumberGenerator();
     mockDnaManipulationService = MockDNAManipulationService();
-    mockLayerPerceptronAlignmentHelper = MockLayerPerceptronAlignmentHelper();
+    mockPerceptronLayerAlignmentHelper = MockPerceptronLayerAlignmentHelper();
 
     testObject = PerceptronLayerMutationService(
       numOutputs: numOutputs,
       dnaManipulationService: mockDnaManipulationService,
-      layerPerceptronAlignmentHelper: mockLayerPerceptronAlignmentHelper,
+      perceptronLayerAlignmentHelper: mockPerceptronLayerAlignmentHelper,
       fitnessService: mockFitnessService,
       numberGenerator: mockNumberGenerator,
     );
@@ -239,7 +239,7 @@ void main() {
       when(() => mockNumberGenerator.randomNegOneToPosOne)
           .thenReturn(randNegOneToPosOne);
       when(
-        () => mockLayerPerceptronAlignmentHelper.alignGenesWithinLayer(
+        () => mockPerceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: entity.copyWith(dna: updatedDna),
           targetLayer: targetLayer - 1,
           targetGeneNum: numOutputs,

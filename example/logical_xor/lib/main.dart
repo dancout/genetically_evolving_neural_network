@@ -60,11 +60,11 @@ class _MyAppState extends State<MyApp> {
 
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
-      populationSize: 250,
+      populationSize: 100,
       numOutputs: gennExampleFitnessService.numOutputs,
-      mutationRate: 0.05,
+      mutationRate: 0.15,
       numInitialInputs: gennExampleFitnessService.numInitialInputs,
-      layerMutationRate: 0.2,
+      layerMutationRate: 0.4,
       perceptronMutationRate: 0.4,
       trackParents: true,
       // TODO: Test that trackMutatedWaves works well.
@@ -211,7 +211,7 @@ class _MyAppState extends State<MyApp> {
                       child: ListView.separated(
                         itemBuilder: (context, index) =>
                             uiHelper.showPerceptronMapWithScore(
-                          entity: generation.population.entities[index],
+                          entity: generation.population.sortedEntities[index],
                         ),
                         itemCount: generation.population.entities.length,
                         separatorBuilder: (context, index) =>

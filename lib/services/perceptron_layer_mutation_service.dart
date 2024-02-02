@@ -6,7 +6,7 @@ class PerceptronLayerMutationService {
   PerceptronLayerMutationService({
     required this.numOutputs,
     required this.dnaManipulationService,
-    required this.layerPerceptronAlignmentHelper,
+    required this.perceptronLayerAlignmentHelper,
     required this.fitnessService,
     Random? random,
     NumberGenerator? numberGenerator,
@@ -19,7 +19,7 @@ class PerceptronLayerMutationService {
   final int numOutputs;
 
   /// Assists with updating the number of perceptrons within a Perceptron Layer.
-  final LayerPerceptronAlignmentHelper layerPerceptronAlignmentHelper;
+  final PerceptronLayerAlignmentHelper perceptronLayerAlignmentHelper;
 
   /// Assists with adding and removing Genes from DNA.
   DNAManipulationService dnaManipulationService;
@@ -166,7 +166,7 @@ class PerceptronLayerMutationService {
       // If so, we need to ensure that there are the correct number of
       // perceptrons in the output layer.
       copiedEntityNewDna =
-          await layerPerceptronAlignmentHelper.alignGenesWithinLayer(
+          await perceptronLayerAlignmentHelper.alignGenesWithinLayer(
         entity: copiedEntityNewDna,
         targetLayer: copiedEntityNewDna.maxLayerNum,
         targetGeneNum: numOutputs,

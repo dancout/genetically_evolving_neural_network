@@ -1,16 +1,19 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-// TODO: Documentation & reconsider class name
-/// Maybe name it PerceptronLayerAlignmentHelper?
-
-class LayerPerceptronAlignmentHelper {
-  LayerPerceptronAlignmentHelper({
+/// Responsible for ensuring the correct number of [GENNPerceptron] objects
+/// exist within a [GENNPerceptronLayer].
+class PerceptronLayerAlignmentHelper {
+  /// Responsible for ensuring the correct number of [GENNPerceptron] objects
+  /// exist within a [GENNPerceptronLayer].
+  PerceptronLayerAlignmentHelper({
     required this.dnaManipulationService,
     required this.fitnessService,
   });
 
+  /// Responsible for updating [GENNDNA] objects.
   final DNAManipulationService dnaManipulationService;
 
+  /// Responsible for calculating the fitness score for a [GENNEntity].
   final GENNFitnessService fitnessService;
 
   /// Returns an updated [entity] that now has [targetGeneNum] genes within the
@@ -20,11 +23,8 @@ class LayerPerceptronAlignmentHelper {
     required int targetLayer,
     required int targetGeneNum,
   }) async {
-    // TODO: Is this copywith necessary?
-    var updatedEntity = entity.copyWith();
-
     // Get how many current genes there are within the target layer.
-    final genesWithinTargetLayer = updatedEntity.dna.genes
+    final genesWithinTargetLayer = entity.dna.genes
         .where((gennGene) => gennGene.value.layer == targetLayer)
         .length;
 
@@ -44,7 +44,7 @@ class LayerPerceptronAlignmentHelper {
     final diff = (genesWithinTargetLayer - targetGeneNum).abs();
 
     // Declare a copy of the updated Entity's DNA.
-    var updatedDNA = updatedEntity.dna;
+    var updatedDNA = entity.dna;
 
     // Add or Remove as many genes as necessary to match the targetGeneNum
     for (int i = 0; i < diff; i++) {
@@ -62,12 +62,12 @@ class LayerPerceptronAlignmentHelper {
         : null;
 
     // Update the entity with its updated DNA and updated Fitness Score.
-    updatedEntity = updatedEntity.copyWith(
+    entity = entity.copyWith(
       dna: updatedDNA,
       fitnessScore: updatedFitnessScore,
     );
 
     // Return the potentially updated entity
-    return updatedEntity;
+    return entity;
   }
 }

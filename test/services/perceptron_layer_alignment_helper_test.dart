@@ -33,13 +33,13 @@ void main() {
   late DNAManipulationService mockDNAManipulationService;
   late GENNFitnessService mockFitnessService;
 
-  late LayerPerceptronAlignmentHelper testObject;
+  late PerceptronLayerAlignmentHelper testObject;
 
   setUp(() async {
     mockDNAManipulationService = MockDNAManipulationService();
     mockFitnessService = MockGENNFitnessService();
 
-    testObject = LayerPerceptronAlignmentHelper(
+    testObject = PerceptronLayerAlignmentHelper(
       dnaManipulationService: mockDNAManipulationService,
       fitnessService: mockFitnessService,
     );
