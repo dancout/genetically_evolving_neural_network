@@ -5,7 +5,6 @@ class DNAManipulationService {
   /// This class is used to manipulate and return new copies of [GENNDNA].
   DNAManipulationService({
     required this.gennGeneServiceHelper,
-    required this.fitnessService,
     Random? random,
     NumberGenerator? numberGenerator,
   }) : numberGenerator = numberGenerator ??
@@ -16,9 +15,6 @@ class DNAManipulationService {
   /// Used to generate a random [GENNPerceptron].
   final GennGeneServiceHelper gennGeneServiceHelper;
 
-  /// Used to calculate the fitness score of an entity.
-  final GENNFitnessService fitnessService;
-
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
 
@@ -28,7 +24,7 @@ class DNAManipulationService {
     required GENNDNA dna,
     required int targetLayer,
   }) {
-    final genes = dna.genes;
+    final genes = List<GENNGene>.from(dna.genes);
 
     // Grab the number of weights necessary from another gene from the
     // targetLayer.
@@ -64,8 +60,6 @@ class DNAManipulationService {
     return GENNDNA(genes: genes);
   }
 
-  // TODO: Tests for this function.
-
   /// Removes a random perceptron from within the [targetLayer] of the incoming
   /// [dna] and returns an new [GENNDNA] object.
   GENNDNA removePerceptronFromDNA({
@@ -81,13 +75,11 @@ class DNAManipulationService {
     );
 
     // Declare the genes from the incoming DNA.
-    var genes = dna.genes;
+    var genes = List<GENNGene>.from(dna.genes);
 
-    // TODO: Investigate this List.from. Is it necessary?
     // Declare the list of genes within the targetLayer.
-    final targetLayerGenes = List.from(
-      genes.where((gene) => gene.value.layer == targetLayer).toList(),
-    );
+    final targetLayerGenes =
+        genes.where((gene) => gene.value.layer == targetLayer).toList();
 
     // Declare a random index, representing the perceptron to remove.
     final randIndex = numberGenerator.nextInt(targetLayerGenes.length);
@@ -104,7 +96,6 @@ class DNAManipulationService {
       // Check if the gene is in the layer after the target layer, because the
       // weights point backwards.
       if (gene.value.layer == targetLayer + 1) {
-        // TODO: Investigate if we need to do a List from here.
         final weights = List<double>.from(gene.value.weights);
         // Remove the weight connected to the removed perceptron
         weights.removeAt(randIndex);

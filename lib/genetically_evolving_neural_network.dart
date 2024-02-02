@@ -79,7 +79,6 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
 
     final dnaManipulationService = DNAManipulationService(
       gennGeneServiceHelper: gennGeneService.gennGeneServiceHelper,
-      fitnessService: fitnessService,
     );
 
     final layerPerceptronAlignmentHelper = LayerPerceptronAlignmentHelper(
