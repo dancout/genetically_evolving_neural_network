@@ -8,6 +8,9 @@ import 'package:logical_xor/number_classifier/natural_number.dart';
 // TODO: could we make this class typed (like NumberClassifierFitnessService<T>)
 /// so that we can convert an input list of List<T>, and then we can use
 /// NaturalNum directly?
+
+/// This class will be used to score a Number Classifier in tandem with a
+/// Neural Network.
 class NumberClassifierFitnessService
     extends GENNVisualizationExampleFitnessService {
   @override
@@ -19,10 +22,15 @@ class NumberClassifierFitnessService
         .toString();
   }
 
-  // TODO: Documentation of this file?
+  /// Returns a score that proportional to how many correct guesses this Neural
+  /// Network has made across all integers from 0 to 9.
+  ///
+  /// The scoring function is as follows:
+  /// 4 ^ (correct number of guesses)
   @override
-  Future<double> gennScoringFunction(
-      {required GENNNeuralNetwork neuralNetwork}) async {
+  Future<double> gennScoringFunction({
+    required GENNNeuralNetwork neuralNetwork,
+  }) async {
     // Collect all the guesses from this NeuralNetwork
     final guesses = getNeuralNetworkGuesses(neuralNetwork: neuralNetwork);
 
@@ -56,6 +64,7 @@ class NumberClassifierFitnessService
   List<List<double>> get inputsList =>
       NaturalNumber.values.map((e) => e.asPixels()).toList();
 
+  /// Returns a list of the integers 0 to 9 represented as pixels on a grid.
   @override
   List<Widget> get readableInputList {
     const tileSideLength = 3.4; // Hardcoded to look nice on the page
