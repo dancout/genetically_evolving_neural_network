@@ -53,9 +53,8 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required GENNGeneticEvolutionConfig config,
     required GENNFitnessService fitnessService,
     GENNGeneService? geneService,
-    // TODO: Reconsider these for visibleForTesting. Maybe they should be open? Unsure.
-    @visibleForTesting GENNEntityService? entityService,
-    @visibleForTesting PopulationService<GENNPerceptron>? populationService,
+    GENNEntityService? entityService,
+    PopulationService<GENNPerceptron>? populationService,
   }) {
     // Use the geneService passed in if any customizations are necessary.
     final gennGeneService = geneService ??
