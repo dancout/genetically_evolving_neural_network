@@ -12,7 +12,7 @@ class GENNEntityServiceHelper {
     NumberGenerator? numberGenerator,
     required this.layerMutationRate,
     required this.perceptronMutationRate,
-    required this.perceptronLayerMutationService,
+    required this.entityManipulationService,
   }) : numberGenerator = numberGenerator ?? NumberGenerator(random: random);
 
   /// Used to generate random numbers and bools.
@@ -26,8 +26,8 @@ class GENNEntityServiceHelper {
   /// PerceptronLayer.
   final double perceptronMutationRate;
 
-  /// Used for mutating Perceptron Layers on the Entities.
-  late final PerceptronLayerMutationService perceptronLayerMutationService;
+  /// Used for mutating [GENNEntity] objects;
+  final EntityManipulationService entityManipulationService;
 
   /// Adds or removes a [GENNPerceptronLayer] to the input [child].
   Future<GENNEntity> mutatePerceptronLayersWithinEntity({
@@ -44,24 +44,11 @@ class GENNEntityServiceHelper {
         // Randomly pick a layer to duplicate
         final targetLayer = numberGenerator.nextInt(numLayers);
 
-        // Declare the PerceptronLayer to duplicate
-        final duplicationLayer = GENNPerceptronLayer(
-          perceptrons: child.dna.genes
-              .where((gene) => gene.value.layer == targetLayer)
-              .map((gene) => gene.value)
-              .toList(),
-        );
-
-        // Extract the duplicated PerceptronLayer
-        final duplicatedPerceptronLayer =
-            perceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: duplicationLayer,
-        );
-
-        // Add PerceptronLayer into Entity
-        child = await perceptronLayerMutationService.addPerceptronLayerToEntity(
+        // Duplicate the PerceptronLayer within the entity
+        child = await entityManipulationService
+            .duplicatePerceptronLayerWithinEntity(
           entity: child,
-          perceptronLayer: duplicatedPerceptronLayer,
+          targetLayer: targetLayer,
         );
       } else {
         // NOTE:  Cannot remove last layer, hence the -1. This is because the
@@ -70,8 +57,7 @@ class GENNEntityServiceHelper {
         final targetLayer = numberGenerator.nextInt(numLayers - 1);
 
         // Remove PerceptronLayer from Entity
-        child = await perceptronLayerMutationService
-            .removePerceptronLayerFromEntity(
+        child = await entityManipulationService.removePerceptronLayerFromEntity(
           entity: child,
           targetLayer: targetLayer,
         );
@@ -104,12 +90,12 @@ class GENNEntityServiceHelper {
 
       // Cannot remove from a layer that only has 1 perceptron
       if ((numGenesInTargetLayer == 1) || numberGenerator.nextBool) {
-        child = await perceptronLayerMutationService.addPerceptronToLayer(
+        child = await entityManipulationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
         );
       } else {
-        child = await perceptronLayerMutationService.removePerceptronFromLayer(
+        child = await entityManipulationService.removePerceptronFromLayer(
           entity: child,
           targetLayer: targetLayer,
         );

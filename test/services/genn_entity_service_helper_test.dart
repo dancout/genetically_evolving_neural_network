@@ -47,20 +47,8 @@ void main() {
     ),
   );
 
-  final duplicatedPerceptronLayer = GENNPerceptronLayer(
-    perceptrons: [
-      gene.value.copyWith(layer: gene.value.layer + 1),
-    ],
-  );
-
-  final originalPerceptronLayer = GENNPerceptronLayer(
-    perceptrons: [
-      gene.value,
-    ],
-  );
-
   late NumberGenerator mockNumberGenerator;
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
+  late EntityManipulationService mockEntityManipulationService;
   late GENNEntityServiceHelper testObject;
 
   setUp(() async {
@@ -77,13 +65,13 @@ void main() {
       ),
     );
 
+    mockEntityManipulationService = MockEntityManipulationService();
     mockNumberGenerator = MockNumberGenerator();
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
     testObject = GENNEntityServiceHelper(
       numberGenerator: mockNumberGenerator,
       layerMutationRate: layerMutationRate,
       perceptronMutationRate: perceptronMutationRate,
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
+      entityManipulationService: mockEntityManipulationService,
     );
   });
 
@@ -102,7 +90,7 @@ void main() {
 
       verify(() => mockNumberGenerator.nextDouble);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
+      verifyZeroInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -115,13 +103,10 @@ void main() {
       when(() =>
               mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum + 1))
           .thenReturn(targetLayer);
-      when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-            gennPerceptronLayer: originalPerceptronLayer,
-          )).thenReturn(duplicatedPerceptronLayer);
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+      when(() =>
+          mockEntityManipulationService.duplicatePerceptronLayerWithinEntity(
               entity: superCrossoverEntity,
-              perceptronLayer: duplicatedPerceptronLayer))
-          .thenAnswer((_) async => updatedEntity);
+              targetLayer: targetLayer)).thenAnswer((_) async => updatedEntity);
 
       final actual = await testObject.mutatePerceptronLayersWithinEntity(
         child: superCrossoverEntity,
@@ -132,16 +117,12 @@ void main() {
       verifyInOrder([
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum + 1),
-        () => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-              gennPerceptronLayer: originalPerceptronLayer,
-            ),
-        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
-              entity: superCrossoverEntity,
-              perceptronLayer: duplicatedPerceptronLayer,
-            ),
+        () =>
+            mockEntityManipulationService.duplicatePerceptronLayerWithinEntity(
+                entity: superCrossoverEntity, targetLayer: targetLayer),
       ]);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -184,13 +165,10 @@ void main() {
       when(() =>
               mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum + 1))
           .thenReturn(targetLayer);
-      when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-            gennPerceptronLayer: originalPerceptronLayer,
-          )).thenReturn(duplicatedPerceptronLayer);
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
-              entity: superCrossoverEntity,
-              perceptronLayer: duplicatedPerceptronLayer))
-          .thenAnswer((_) async => updatedEntity);
+      when(() => mockEntityManipulationService
+              .duplicatePerceptronLayerWithinEntity(
+                  entity: superCrossoverEntity, targetLayer: targetLayer))
+          .thenAnswer((invocation) async => updatedEntity);
 
       final actual = await testObject.mutatePerceptronLayersWithinEntity(
         child: superCrossoverEntity,
@@ -202,16 +180,12 @@ void main() {
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextBool,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum + 1),
-        () => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-              gennPerceptronLayer: originalPerceptronLayer,
-            ),
-        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
-              entity: superCrossoverEntity,
-              perceptronLayer: duplicatedPerceptronLayer,
-            ),
+        () =>
+            mockEntityManipulationService.duplicatePerceptronLayerWithinEntity(
+                entity: superCrossoverEntity, targetLayer: targetLayer),
       ]);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -253,8 +227,7 @@ void main() {
       const targetLayer = 0;
       when(() => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum))
           .thenReturn(targetLayer);
-      when(() =>
-          mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+      when(() => mockEntityManipulationService.removePerceptronLayerFromEntity(
             entity: superCrossoverEntity,
             targetLayer: targetLayer,
           )).thenAnswer((_) async => updatedEntity);
@@ -269,14 +242,13 @@ void main() {
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextBool,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
               entity: superCrossoverEntity,
               targetLayer: targetLayer,
             ),
       ]);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
   });
 
@@ -295,7 +267,7 @@ void main() {
 
       verify(() => mockNumberGenerator.nextDouble);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
+      verifyZeroInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -312,7 +284,7 @@ void main() {
 
       verify(() => mockNumberGenerator.nextDouble);
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
+      verifyZeroInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -354,7 +326,7 @@ void main() {
       when(
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
       ).thenReturn(targetLayer);
-      when(() => mockPerceptronLayerMutationService.addPerceptronToLayer(
+      when(() => mockEntityManipulationService.addPerceptronToLayer(
           entity: superCrossoverEntity,
           targetLayer: targetLayer)).thenAnswer((_) async => updatedEntity);
 
@@ -367,12 +339,12 @@ void main() {
       verifyInOrder([
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
+        () => mockEntityManipulationService.addPerceptronToLayer(
             entity: superCrossoverEntity, targetLayer: targetLayer),
       ]);
 
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -423,7 +395,7 @@ void main() {
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
       ).thenReturn(targetLayer);
       when(() => mockNumberGenerator.nextBool).thenReturn(true);
-      when(() => mockPerceptronLayerMutationService.addPerceptronToLayer(
+      when(() => mockEntityManipulationService.addPerceptronToLayer(
           entity: superCrossoverEntity,
           targetLayer: targetLayer)).thenAnswer((_) async => updatedEntity);
 
@@ -437,12 +409,12 @@ void main() {
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
         () => mockNumberGenerator.nextBool,
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
+        () => mockEntityManipulationService.addPerceptronToLayer(
             entity: superCrossoverEntity, targetLayer: targetLayer),
       ]);
 
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -493,7 +465,7 @@ void main() {
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
       ).thenReturn(targetLayer);
       when(() => mockNumberGenerator.nextBool).thenReturn(false);
-      when(() => mockPerceptronLayerMutationService.removePerceptronFromLayer(
+      when(() => mockEntityManipulationService.removePerceptronFromLayer(
             entity: superCrossoverEntity,
             targetLayer: targetLayer,
           )).thenAnswer((_) async => updatedEntity);
@@ -508,12 +480,12 @@ void main() {
         () => mockNumberGenerator.nextDouble,
         () => mockNumberGenerator.nextInt(superCrossoverEntity.maxLayerNum),
         () => mockNumberGenerator.nextBool,
-        () => mockPerceptronLayerMutationService.removePerceptronFromLayer(
+        () => mockEntityManipulationService.removePerceptronFromLayer(
             entity: superCrossoverEntity, targetLayer: targetLayer),
       ]);
 
       verifyNoMoreInteractions(mockNumberGenerator);
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
   });
 }

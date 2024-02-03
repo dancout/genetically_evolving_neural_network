@@ -23,121 +23,120 @@ void main() {
   late NumberGenerator mockNumberGenerator;
   late DNAManipulationService mockDnaManipulationService;
   late PerceptronLayerAlignmentHelper mockPerceptronLayerAlignmentHelper;
-  late PerceptronLayerMutationService testObject;
+  late EntityManipulationServiceAdditionHelper
+      mockEntityManipulationServiceAdditionHelper;
+  late EntityManipulationService testObject;
 
   setUp(() async {
     mockFitnessService = MockGENNFitnessService();
     mockNumberGenerator = MockNumberGenerator();
     mockDnaManipulationService = MockDNAManipulationService();
     mockPerceptronLayerAlignmentHelper = MockPerceptronLayerAlignmentHelper();
+    mockEntityManipulationServiceAdditionHelper =
+        MockEntityManipulationServiceAdditionHelper();
 
-    testObject = PerceptronLayerMutationService(
+    testObject = EntityManipulationService(
       numOutputs: numOutputs,
       dnaManipulationService: mockDnaManipulationService,
       perceptronLayerAlignmentHelper: mockPerceptronLayerAlignmentHelper,
       fitnessService: mockFitnessService,
       numberGenerator: mockNumberGenerator,
+      entitymanipulationServiceAdditionHelper:
+          mockEntityManipulationServiceAdditionHelper,
     );
   });
 
-  group('duplicatePerceptronLayer', () {
-    test(
-        'returns PerceptronLayer with duplicated perceptrons and proper weights',
-        () async {
+  group('duplicatePerceptronLayerWithinEntity', () {
+    test('properly duplicates targetLayer within entity', () async {
+      final targetLayer = gennPerceptron.layer;
+
       final gennPerceptrons = [
         gennPerceptron,
         gennPerceptron,
         gennPerceptron,
       ];
+      final genes = gennPerceptrons
+          .map((perceptron) => GENNGene(value: perceptron))
+          .toList();
+
       final gennPerceptronLayer = GENNPerceptronLayer(
         perceptrons: gennPerceptrons,
       );
 
-      final actual = testObject.duplicatePerceptronLayer(
-        gennPerceptronLayer: gennPerceptronLayer,
-      );
-
-      expect(
-        actual,
-        GENNPerceptronLayer(
-          perceptrons: [
-            gennPerceptron.copyWith(
-              weights: [1.0, 0.0, 0.0],
-              layer: 1,
-            ),
-            gennPerceptron.copyWith(
-              weights: [0.0, 1.0, 0.0],
-              layer: 1,
-            ),
-            gennPerceptron.copyWith(
-              weights: [0.0, 0.0, 1.0],
-              layer: 1,
-            ),
-          ],
+      final duplicatedPerceptrons = [
+        gennPerceptron.copyWith(
+          weights: [1.0, 0.0, 0.0],
+          layer: 1,
         ),
+        gennPerceptron.copyWith(
+          weights: [0.0, 1.0, 0.0],
+          layer: 1,
+        ),
+        gennPerceptron.copyWith(
+          weights: [0.0, 0.0, 1.0],
+          layer: 1,
+        ),
+      ];
+      final duplicatedPerceptronLayer = GENNPerceptronLayer(
+        perceptrons: duplicatedPerceptrons,
       );
-    });
-  });
+      final duplicatedGenes = duplicatedPerceptrons
+          .map((perceptron) => GENNGene(value: perceptron))
+          .toList();
 
-  group('addPerceptronLayerToEntity', () {
-    test('properly inserts PerceptronLayer into Entity', () async {
-      final secondGennPerceptron = gennPerceptron.copyWith(layer: layer + 1);
-      final thirdGennPerceptron = gennPerceptron.copyWith(layer: layer + 2);
-
-      final perceptronLayer = GENNPerceptronLayer(
-        perceptrons: [secondGennPerceptron],
-      );
       final entity = GENNEntity(
         dna: GENNDNA(
+          genes: genes,
+        ),
+        fitnessScore: fitnessScore,
+      );
+
+      final expected = GENNEntity(
+        dna: GENNDNA(
           genes: [
-            const GENNGene(
-              value: gennPerceptron,
-            ),
-            GENNGene(
-              value: secondGennPerceptron,
-            ),
-            GENNGene(
-              value: thirdGennPerceptron,
-            ),
+            ...genes,
+            ...duplicatedGenes,
           ],
         ),
         fitnessScore: fitnessScore,
       );
 
-      final updatedDNA = GENNDNA(
-        genes: [
-          const GENNGene(
-            value: gennPerceptron,
-          ),
-          GENNGene(
-            value: secondGennPerceptron,
-          ),
-          GENNGene(
-            value: secondGennPerceptron.copyWith(
-              layer: secondGennPerceptron.layer + 1,
-            ),
-          ),
-          GENNGene(
-            value: thirdGennPerceptron.copyWith(
-              layer: thirdGennPerceptron.layer + 1,
-            ),
-          ),
-        ],
-      );
-      final expected = GENNEntity(
-        dna: updatedDNA,
-        fitnessScore: updatedFitnessScore,
-      );
+      when(
+        () => mockEntityManipulationServiceAdditionHelper
+            .duplicatePerceptronLayer(
+          gennPerceptronLayer: gennPerceptronLayer,
+        ),
+      ).thenReturn(duplicatedPerceptronLayer);
 
-      when(() => mockFitnessService.calculateScore(dna: updatedDNA))
-          .thenAnswer((_) async => updatedFitnessScore);
+      when(
+        () => mockEntityManipulationServiceAdditionHelper
+            .addPerceptronLayerToEntity(
+          entity: entity,
+          perceptronLayer: duplicatedPerceptronLayer,
+        ),
+      ).thenAnswer((_) async => expected);
 
-      final actual = await testObject.addPerceptronLayerToEntity(
+      final actual = await testObject.duplicatePerceptronLayerWithinEntity(
         entity: entity,
-        perceptronLayer: perceptronLayer,
+        targetLayer: targetLayer,
       );
 
       expect(actual, expected);
+
+      verify(
+        () => mockEntityManipulationServiceAdditionHelper
+            .duplicatePerceptronLayer(gennPerceptronLayer: gennPerceptronLayer),
+      );
+      verify(
+        () => mockEntityManipulationServiceAdditionHelper
+            .addPerceptronLayerToEntity(
+                entity: entity, perceptronLayer: duplicatedPerceptronLayer),
+      );
+      verifyNoMoreInteractions(mockEntityManipulationServiceAdditionHelper);
+      verifyZeroInteractions(mockFitnessService);
+      verifyZeroInteractions(mockDnaManipulationService);
+      verifyZeroInteractions(mockNumberGenerator);
+      verifyZeroInteractions(mockPerceptronLayerAlignmentHelper);
     });
   });
 

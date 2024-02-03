@@ -67,7 +67,6 @@ void main() {
   late DNAService<GENNPerceptron> mockDnaService;
   late FitnessService mockFitnessService;
   late GeneMutationService<GENNPerceptron> mockGeneMutationService;
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
   late EntityParentManinpulator<GENNPerceptron> mockEntityParentManinpulator;
   late GENNEntityServiceHelper mockGENNEntityServiceHelper;
   late CrossoverService<GENNPerceptron> mockCrossoverService;
@@ -78,7 +77,6 @@ void main() {
     mockDnaService = MockDNAService();
     mockFitnessService = MockGENNFitnessService();
     mockGeneMutationService = MockGeneMutationService();
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
     mockEntityParentManinpulator = MockEntityParentManipulator();
     mockGENNEntityServiceHelper = MockGENNEntityServiceHelper();
     mockCrossoverService = MockCrossoverService();
@@ -87,7 +85,6 @@ void main() {
       dnaService: mockDnaService,
       fitnessService: mockFitnessService,
       geneMutationService: mockGeneMutationService,
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
       entityParentManinpulator: mockEntityParentManinpulator,
       gennEntityServiceHelper: mockGENNEntityServiceHelper,
       crossoverService: mockCrossoverService,

@@ -11,9 +11,6 @@ class MockGennGeneServiceMutationHelper extends Mock
 
 class MockNumberGenerator extends Mock implements NumberGenerator {}
 
-class MockPerceptronLayerMutationService extends Mock
-    implements PerceptronLayerMutationService {}
-
 class MockGeneMutationService<T> extends Mock
     implements GeneMutationService<T> {}
 
@@ -48,3 +45,9 @@ class MockDNAManipulationService extends Mock
 
 class MockPerceptronLayerAlignmentHelper extends Mock
     implements PerceptronLayerAlignmentHelper {}
+
+class MockEntityManipulationService extends Mock
+    implements EntityManipulationService {}
+
+class MockEntityManipulationServiceAdditionHelper extends Mock
+    implements EntityManipulationServiceAdditionHelper {}

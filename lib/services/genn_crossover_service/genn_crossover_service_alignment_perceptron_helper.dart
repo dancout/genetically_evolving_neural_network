@@ -6,12 +6,12 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
   /// Used to update the number of [Gene] objects within a [PerceptronLayer],
   /// and the number of [PerceptronLayer] objects within a [GENNEntity].
   GENNCrossoverServiceAlignmentPerceptronHelper({
-    required this.perceptronLayerMutationService,
     required this.gennCrossoverServiceHelper,
+    required this.entityManipulationService,
   });
 
-  /// Used for mutating Perceptron Layers on the Entities.
-  final PerceptronLayerMutationService perceptronLayerMutationService;
+  /// Used for mutating [GENNEntity] objects;
+  final EntityManipulationService entityManipulationService;
 
   /// Used to assist with cross-breeding Entities.
   final GENNCrossoverServiceHelper gennCrossoverServiceHelper;
@@ -28,27 +28,11 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
       final diff = targetNumLayers - gennEntity.maxLayerNum;
 
       for (int i = 0; i < diff; i++) {
-        final lastLayerNum = gennEntity.maxLayerNum;
-
-        // Extract the last PeceptronLayer on the entity
-        final lastPerceptronLayer = GENNPerceptronLayer(
-          perceptrons: gennEntity.dna.genes
-              .where((gennGene) => gennGene.value.layer == lastLayerNum)
-              .map((gennGene) => gennGene.value)
-              .toList(),
-        );
-
-        // Duplicate the last PerceptronLayer
-        final duplicatedPerceptronLayer =
-            perceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: lastPerceptronLayer,
-        );
-
         // Add PerceptronLayer into Entity
-        gennEntity =
-            await perceptronLayerMutationService.addPerceptronLayerToEntity(
+        gennEntity = await entityManipulationService
+            .duplicatePerceptronLayerWithinEntity(
           entity: gennEntity,
-          perceptronLayer: duplicatedPerceptronLayer,
+          targetLayer: gennEntity.maxLayerNum,
         );
       }
     } else if (gennEntity.maxLayerNum > targetNumLayers) {
@@ -57,8 +41,8 @@ class GENNCrossoverServiceAlignmentPerceptronHelper {
 
       for (int i = 0; i < diff; i++) {
         // Remove the last PerceptronLayer from Entity
-        gennEntity = await perceptronLayerMutationService
-            .removePerceptronLayerFromEntity(
+        gennEntity =
+            await entityManipulationService.removePerceptronLayerFromEntity(
           entity: gennEntity,
           targetLayer: gennEntity.maxLayerNum,
         );

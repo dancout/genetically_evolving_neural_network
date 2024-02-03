@@ -16,6 +16,8 @@ part 'package:genetically_evolving_neural_network/models/genn_perceptron.dart';
 part 'package:genetically_evolving_neural_network/models/genn_perceptron_layer.dart';
 part 'package:genetically_evolving_neural_network/models/genn_population.dart';
 part 'package:genetically_evolving_neural_network/services/dna_manipulation_service.dart';
+part 'package:genetically_evolving_neural_network/services/entity_manipulation_service.dart';
+part 'package:genetically_evolving_neural_network/services/entity_manipulation_service_addition_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_crossover_service/genn_crossover_service_alignment_perceptron_helper.dart';
@@ -29,7 +31,6 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_service/gen
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_alignment_helper.dart';
-part 'package:genetically_evolving_neural_network/services/perceptron_layer_mutation_service.dart';
 part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
 /// Represents a Genetically Evolving Neural Network.
@@ -89,7 +90,12 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       dnaManipulationService: dnaManipulationService,
     );
 
-    final perceptronLayerMutationService = PerceptronLayerMutationService(
+    final entityManipulationServiceHelper =
+        EntityManipulationServiceAdditionHelper(
+      fitnessService: fitnessService,
+    );
+    final entityManipulationService = EntityManipulationService(
+      entitymanipulationServiceAdditionHelper: entityManipulationServiceHelper,
       fitnessService: fitnessService,
       random: config.random,
       dnaManipulationService: dnaManipulationService,
@@ -102,7 +108,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     );
     final gennCrossoverServiceAlignmentPerceptronHelper =
         GENNCrossoverServiceAlignmentPerceptronHelper(
-      perceptronLayerMutationService: perceptronLayerMutationService,
+      entityManipulationService: entityManipulationService,
       gennCrossoverServiceHelper: gennCrossoverServiceHelper,
     );
     final crossoverService = GENNCrossoverService(
@@ -128,13 +134,12 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           fitnessService: fitnessService,
           geneMutationService: geneMutationService,
           crossoverService: crossoverService,
-          perceptronLayerMutationService: perceptronLayerMutationService,
           entityParentManinpulator: entityParentManinpulator,
           gennEntityServiceHelper: GENNEntityServiceHelper(
+            entityManipulationService: entityManipulationService,
             numberGenerator: numberGenerator,
             layerMutationRate: config.layerMutationRate,
             perceptronMutationRate: config.perceptronMutationRate,
-            perceptronLayerMutationService: perceptronLayerMutationService,
           ),
         );
 

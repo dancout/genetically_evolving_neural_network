@@ -1,19 +1,31 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-/// Mutates the Perceptron Layers within a Neural Network.
-class PerceptronLayerMutationService {
-  /// Mutates the Perceptron Layers within a Neural Network.
-  PerceptronLayerMutationService({
+/// Responsible for manipulating [GENNEntity] objects;
+class EntityManipulationService {
+  /// Responsible for manipulating [GENNEntity] objects;
+  EntityManipulationService({
+    @visibleForTesting
+    EntityManipulationServiceAdditionHelper?
+        entitymanipulationServiceAdditionHelper,
     required this.numOutputs,
     required this.dnaManipulationService,
     required this.perceptronLayerAlignmentHelper,
     required this.fitnessService,
     Random? random,
     NumberGenerator? numberGenerator,
-  }) : numberGenerator = numberGenerator ??
+  })  : entityManipulationServiceAdditionHelper =
+            entitymanipulationServiceAdditionHelper ??
+                EntityManipulationServiceAdditionHelper(
+                  fitnessService: fitnessService,
+                ),
+        numberGenerator = numberGenerator ??
             NumberGenerator(
               random: random ?? Random(),
             );
+
+  /// Assists with adding a PerceptronLayer to the [GENNEntity] object.
+  final EntityManipulationServiceAdditionHelper
+      entityManipulationServiceAdditionHelper;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
@@ -30,75 +42,34 @@ class PerceptronLayerMutationService {
   /// Used to generate random numbers and bools.
   final NumberGenerator numberGenerator;
 
-  /// Returns a [GENNPerceptronLayer] that is duplicated from the input
-  /// [gennPerceptronLayer] with the weights adjusted so the [GENNPerceptron]
-  /// objects will only receive input from their adjacent, previous neighbor.
-  GENNPerceptronLayer duplicatePerceptronLayer({
-    required GENNPerceptronLayer gennPerceptronLayer,
-  }) {
-    final duplicatedPerceptrons = <GENNPerceptron>[];
-
-    final perceptrons = gennPerceptronLayer.perceptrons;
-    for (int i = 0; i < perceptrons.length; i++) {
-      // Set all weights to 0 so they ignore input
-      final weights = List<double>.generate(perceptrons.length, (index) => 0.0);
-
-      // Set this perceptron's adjacent, previous weight to 1.0. This will
-      // effectively pass through the previous perceptron's value forward.
-      weights[i] = 1.0;
-
-      duplicatedPerceptrons.add(
-        GENNPerceptron(
-          bias: perceptrons[i].bias,
-          threshold: perceptrons[i].threshold,
-          weights: weights,
-          layer: perceptrons[i].layer + 1,
-        ),
-      );
-    }
-
-    return GENNPerceptronLayer(perceptrons: duplicatedPerceptrons);
-  }
-
-  // TODO: Consider breaking off another class, like EntityMutationService, that
-  /// will house all the functions that return an Entity, and this class will be
-  /// only for the PerceptronLayer returning functions.
-
-  /// Returns a copy of the given [entity] with the given [perceptronLayer]
-  /// inserted.
-  Future<GENNEntity> addPerceptronLayerToEntity({
+  /// Returns a copy of the given [entity] with the given [targetLayer]
+  /// PerceptronLayer duplicated.
+  Future<GENNEntity> duplicatePerceptronLayerWithinEntity({
     required GENNEntity entity,
-    required GENNPerceptronLayer perceptronLayer,
+    required int targetLayer,
   }) async {
-    final duplicationLayer = perceptronLayer.perceptrons.first.layer - 1;
-
-    // Increment all layers after duplicationLayer
-    final genes = List<GENNGene>.from(entity.dna.genes.map((gene) {
-      if (gene.value.layer > duplicationLayer) {
-        return gene.copyWith(
-          value: gene.value.copyWith(layer: gene.value.layer + 1),
-        );
-      }
-      return gene;
-    }).toList());
-
-    // Add duplicated layer to genes
-    genes.addAll(
-      perceptronLayer.perceptrons.map(
-        (perceptron) => GENNGene(
-          value: perceptron,
-        ),
-      ),
+    // Extract the target PeceptronLayer on the entity
+    final targetPerceptronLayer = GENNPerceptronLayer(
+      perceptrons: entity.dna.genes
+          .where((gennGene) => gennGene.value.layer == targetLayer)
+          .map((gennGene) => gennGene.value)
+          .toList(),
     );
 
-    final updatedFitnessScore = await fitnessService.calculateScore(
-      dna: GENNDNA(genes: genes),
+    // Duplicate the target PerceptronLayer
+    final duplicatedPerceptronLayer =
+        entityManipulationServiceAdditionHelper.duplicatePerceptronLayer(
+      gennPerceptronLayer: targetPerceptronLayer,
     );
 
-    return entity.copyWith(
-      dna: GENNDNA(genes: genes),
-      fitnessScore: updatedFitnessScore,
+    // Add PerceptronLayer into Entity
+    entity = await entityManipulationServiceAdditionHelper
+        .addPerceptronLayerToEntity(
+      entity: entity,
+      perceptronLayer: duplicatedPerceptronLayer,
     );
+
+    return entity;
   }
 
   /// Returns a copy of the given [entity] after removing the [PerceptronLayer]
@@ -214,14 +185,20 @@ class PerceptronLayerMutationService {
     required GENNEntity entity,
     required int targetLayer,
   }) async {
+    // Add a perceptron to the entity
     final updatedDNA = dnaManipulationService.addPerceptronToDNA(
       dna: entity.dna,
       targetLayer: targetLayer,
     );
-    final fitnessScore = await fitnessService.calculateScore(dna: updatedDNA);
+
+    // Recalculate the fitness score
+    final updatedFitnessScore =
+        await fitnessService.calculateScore(dna: updatedDNA);
+
+    // Return a new, updated entity
     return entity.copyWith(
       dna: updatedDNA,
-      fitnessScore: fitnessScore,
+      fitnessScore: updatedFitnessScore,
     );
   }
 }

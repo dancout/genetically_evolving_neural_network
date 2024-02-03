@@ -8,7 +8,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
     required super.fitnessService,
     required super.geneMutationService,
     @visibleForTesting super.crossoverService,
-    required this.perceptronLayerMutationService,
     required super.entityParentManinpulator,
     required this.gennEntityServiceHelper,
     @visibleForTesting
@@ -24,9 +23,6 @@ class GENNEntityService extends EntityService<GENNPerceptron> {
   /// Assists with updating the [GENNPerceptron] objects or
   /// [GENNPerceptronLayer] objects within a [GENNEntity].
   final GENNEntityServiceHelper gennEntityServiceHelper;
-
-  /// Used for mutating Perceptron Layers on the Entities.
-  late final PerceptronLayerMutationService perceptronLayerMutationService;
 
   /// Represents the super.crossover function call.
   ///

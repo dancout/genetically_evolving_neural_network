@@ -30,15 +30,15 @@ void main() {
     fitnessScore: updatedFitnessScore,
   );
 
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
+  late EntityManipulationService mockEntityManipulationService;
   late GENNCrossoverServiceHelper mockGennCrossoverServiceHelper;
   late GENNCrossoverServiceAlignmentPerceptronHelper testObject;
 
   setUp(() async {
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
+    mockEntityManipulationService = MockEntityManipulationService();
     mockGennCrossoverServiceHelper = MockGennCrossoverServiceHelper();
     testObject = GENNCrossoverServiceAlignmentPerceptronHelper(
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
+      entityManipulationService: mockEntityManipulationService,
       gennCrossoverServiceHelper: mockGennCrossoverServiceHelper,
     );
   });
@@ -49,16 +49,10 @@ void main() {
         () async {
       const targetNumLayers = 1;
 
-      final gennPerceptronLayer =
-          GENNPerceptronLayer(perceptrons: [gennPerceptron]);
-
-      when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-              gennPerceptronLayer: gennPerceptronLayer))
-          .thenReturn(gennPerceptronLayer);
-
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
-              entity: gennEntity, perceptronLayer: gennPerceptronLayer))
-          .thenAnswer((_) async => updatedGennEntity);
+      when(() => mockEntityManipulationService
+              .duplicatePerceptronLayerWithinEntity(
+                  entity: gennEntity, targetLayer: gennEntity.maxLayerNum))
+          .thenAnswer((invocation) async => updatedGennEntity);
 
       final actual = await testObject.alignPerceptronLayersWithinEntity(
         gennEntity: gennEntity,
@@ -68,18 +62,14 @@ void main() {
       expect(actual, updatedGennEntity);
 
       verify(
-        () => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: gennPerceptronLayer,
-        ),
-      );
-      verify(
-        () => mockPerceptronLayerMutationService.addPerceptronLayerToEntity(
+        () =>
+            mockEntityManipulationService.duplicatePerceptronLayerWithinEntity(
           entity: gennEntity,
-          perceptronLayer: gennPerceptronLayer,
+          targetLayer: gennEntity.maxLayerNum,
         ),
       );
 
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -94,7 +84,7 @@ void main() {
 
       expect(actual, gennEntity);
 
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
+      verifyZeroInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -131,8 +121,7 @@ void main() {
       );
 
       when(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: thirdLayerGennEntity,
           targetLayer: thirdLayer,
         ),
@@ -140,8 +129,7 @@ void main() {
         (_) async => secondLayerGennEntity,
       );
       when(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: secondLayerGennEntity,
           targetLayer: secondLayer,
         ),
@@ -157,22 +145,20 @@ void main() {
       expect(actual, gennEntity);
 
       verify(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: secondLayerGennEntity,
           targetLayer: secondLayer,
         ),
       );
 
       verify(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: thirdLayerGennEntity,
           targetLayer: thirdLayer,
         ),
       );
 
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
   });
 
