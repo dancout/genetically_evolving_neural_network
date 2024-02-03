@@ -113,21 +113,33 @@ class NumberClassifierFitnessService
           .toList();
 
   /// Returns the index of the guess with the highest confidence.
+  ///
+
   // TODO: Should this go in a separate class, or the enum extension?
-  NaturalNumber determineBestGuess({required List<double> guess}) {
-    int index = 0;
+  NaturalNumber determineBestGuess({
+    required List<double> guess,
+  }) {
+    final List<int> listOfHighestConfidenceIndices = [0];
     double confidence = 0;
     for (int i = 0; i < guess.length; i++) {
-      // TODO: What to do about ties? We could add them all to a list and
-      /// randomly pick one?
-
       if (guess[i] > confidence) {
         // If the current guess has a higher confidence, set it accordingly
         confidence = guess[i];
-        index = i;
+        listOfHighestConfidenceIndices.clear();
+        listOfHighestConfidenceIndices.add(i);
+      } else if (guess[i] == confidence) {
+        // If the current guess has the same confidence as the current highest
+        listOfHighestConfidenceIndices.add(i);
       }
     }
-    return NaturalNumberExtension.parse(number: index);
+
+    // Choose an index if there were any ties.
+    int highestConfidenceIndex = accountForGuessTies(
+      listOfHighestConfidenceIndices: listOfHighestConfidenceIndices,
+    );
+    return NaturalNumberExtension.parse(
+      number: highestConfidenceIndex,
+    );
   }
 
   @override
