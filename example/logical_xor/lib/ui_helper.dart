@@ -21,12 +21,6 @@ class UIHelper<I, O> {
         const Text('Correct Answers'),
         const Text('   '),
         ...gennExampleFitnessService.readableTargetList
-            .map(
-              (targetValue) => Text(
-                targetValue,
-              ),
-            )
-            .toList()
       ],
     );
   }

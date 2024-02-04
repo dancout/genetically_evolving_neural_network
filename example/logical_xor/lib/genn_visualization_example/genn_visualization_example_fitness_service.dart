@@ -72,7 +72,7 @@ abstract class GENNVisualizationExampleFitnessService<I, O>
   List<Widget> get readableInputList;
 
   @override
-  List<String> get readableTargetList;
+  List<Widget> get readableTargetList;
 
   @override
   double? get targetFitnessScore => (highestPossibleScore != null)

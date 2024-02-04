@@ -19,12 +19,9 @@ abstract class GENNVisualizationExample<I, O> {
   /// [GENNVisualizationExample.inputList].
   List<O> get targetOutputsList;
 
-  // TODO: Could we make readableTargetList also a list of Widgets to be
-  /// more flexible for future services?
-
   /// The [GENNVisualizationExample.targetOutputsList] converted into a List of
-  /// more human readable Strings.
-  List<String> get readableTargetList;
+  /// more human readable Widgets.
+  List<Widget> get readableTargetList;
 
   /// The function used to convert a Neural Network output of Type <O> to be
   /// more human readable.

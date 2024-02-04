@@ -89,9 +89,11 @@ class LogicalXORFitnessService
   ];
 
   @override
-  List<String> get readableTargetList => targetOutputsList
+  List<Widget> get readableTargetList => targetOutputsList
       .map(
-        (e) => convertToReadableString(e),
+        (targetOutput) => Text(
+          convertToReadableString(targetOutput),
+        ),
       )
       .toList();
 

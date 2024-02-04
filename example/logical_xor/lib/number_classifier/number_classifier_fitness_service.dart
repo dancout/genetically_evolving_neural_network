@@ -13,7 +13,7 @@ class NumberClassifierFitnessService
         NaturalNumber> {
   @override
   String convertToReadableString(NaturalNumber value) {
-    return value.name;
+    return NaturalNumber.values.indexOf(value).toString();
   }
 
   /// Returns a score that proportional to how many correct guesses this Neural
@@ -95,8 +95,12 @@ class NumberClassifierFitnessService
   }
 
   @override
-  List<String> get readableTargetList => targetOutputsList
-      .map((targetOutput) => convertToReadableString(targetOutput))
+  List<Widget> get readableTargetList => targetOutputsList
+      .map(
+        (targetOutput) => Text(
+          convertToReadableString(targetOutput),
+        ),
+      )
       .toList();
 
   @override
