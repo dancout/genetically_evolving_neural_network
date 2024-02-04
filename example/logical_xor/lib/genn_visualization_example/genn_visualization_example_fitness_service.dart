@@ -6,26 +6,37 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 
 /// Represents a wrapper class that extends [GENNFitnessService] and implements
 /// [GENNVisualizationExample].
-abstract class GENNVisualizationExampleFitnessService<T>
-    extends GENNFitnessService implements GENNVisualizationExample<T> {
+///
+/// The input and output types of the Neural Network can be represented by the
+/// types <I, O> respectively.
+abstract class GENNVisualizationExampleFitnessService<I, O>
+    extends GENNFitnessService implements GENNVisualizationExample<I, O> {
   @override
   Future<double> gennScoringFunction(
       {required GENNNeuralNetwork neuralNetwork});
 
   @override
-  List<T> getNeuralNetworkGuesses({
+  List<O> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   }) {
     // Declare a list of guesses
-    List<T> guesses = [];
+    List<O> guesses = [];
 
     // Cycle through each input
-    for (int i = 0; i < inputsList.length; i++) {
+    for (int i = 0; i < inputList.length; i++) {
       // Declare this run's set of inputs
-      final inputs = inputsList[i];
+      final input = inputList[i];
+
+      // Convert this class's Input type into a List of doubles to be fed into
+      // the Neural Network.
+      final logicalInputs = convertInputToNeuralNetworkInput(
+        input: input,
+      );
 
       // Make a guess using the NeuralNetwork
-      final guess = neuralNetwork.guess(inputs: inputs);
+      final guess = neuralNetwork.guess(
+        inputs: logicalInputs,
+      );
 
       // Add this guess to the list of guesses
       guesses.add(
@@ -40,16 +51,22 @@ abstract class GENNVisualizationExampleFitnessService<T>
   }
 
   /// Converts the input [guess] (which is expected to the be output from a
-  /// Nueral Network) into the expected Output Type <T> from this class.
-  T convertGuessToOutputType({
+  /// Nueral Network) into the expected Output Type <O> from this class.
+  O convertGuessToOutputType({
     required List<double> guess,
+  });
+
+  /// Converts this class's Input type <I> into a List<double> that can be fed
+  /// into the Neural Network.
+  List<double> convertInputToNeuralNetworkInput({
+    required I input,
   });
 
   @override
   double? get highestPossibleScore;
 
   @override
-  List<List<double>> get inputsList;
+  List<I> get inputList;
 
   @override
   List<Widget> get readableInputList;
@@ -63,10 +80,10 @@ abstract class GENNVisualizationExampleFitnessService<T>
       : null;
 
   @override
-  List<T> get targetOutputsList;
+  List<O> get targetOutputsList;
 
   @override
-  String convertToReadableString(T value);
+  String convertToReadableString(O value);
 
   /// This function will account for ties in guesses by randomly choosing an
   /// index of one of the guesses that tied for highest confidence. For example,

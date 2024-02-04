@@ -3,29 +3,32 @@ import 'package:genetically_evolving_neural_network/genetically_evolving_neural_
 
 /// This class implements functions to help visualize the [GENN] class in
 /// action.
-abstract class GENNVisualizationExample<T> {
-  /// The list of inputs for your Neural Network. The values can range from
-  /// -1 to 1.
-  // TODO: If I really wanted to, I could make the input list be a type <I> and
-  /// then specify that to be slightly more readable, too. As in, the input is a
-  /// King of spades (if we're doing a card game), instead of a list of doubles
-  List<List<double>> get inputsList;
+///
+/// The input and output types of the Neural Network can be represented by the
+/// types <I, O>, respectively.
+abstract class GENNVisualizationExample<I, O> {
+  /// The list of inputs for your Neural Network.
+  List<I> get inputList;
 
-  /// The [GENNVisualizationExample.inputsList] converted into a List of more
+  /// The [GENNVisualizationExample.inputList] converted into a List of more
   /// human readable Widgets.
   List<Widget> get readableInputList;
 
   /// The list of outputs, or guesses, for your Neural Network. These are the
-  /// expected outputs respective to the inputs.
-  List<T> get targetOutputsList;
+  /// expected outputs respective to the inputs from
+  /// [GENNVisualizationExample.inputList].
+  List<O> get targetOutputsList;
+
+  // TODO: Could we make readableTargetList also a list of Widgets to be
+  /// more flexible for future services?
 
   /// The [GENNVisualizationExample.targetOutputsList] converted into a List of
   /// more human readable Strings.
   List<String> get readableTargetList;
 
-  /// The function used to convert a Neural Network output of Type <T> to be
+  /// The function used to convert a Neural Network output of Type <O> to be
   /// more human readable.
-  String convertToReadableString(T value) {
+  String convertToReadableString(O value) {
     throw UnimplementedError();
   }
 
@@ -36,8 +39,8 @@ abstract class GENNVisualizationExample<T> {
   double? get targetFitnessScore;
 
   /// Returns the list of guesses (or outputs) from the input [neuralNetwork]
-  /// based on [GENNVisualizationExample.inputsList].
-  List<T> getNeuralNetworkGuesses({
+  /// based on [GENNVisualizationExample.inputList].
+  List<O> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   });
 

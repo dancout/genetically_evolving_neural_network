@@ -10,14 +10,14 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 /// correct guesses that a NeuralNetwork makes, the higher its fitness score
 /// will be.
 class LogicalXORFitnessService
-    extends GENNVisualizationExampleFitnessService<double> {
+    extends GENNVisualizationExampleFitnessService<List<double>, double> {
 // ================== GENNFitnessService Overrides ========================
 
   // TODO: Could change the output type of this class to be an enum of False,
   /// Unsure, True. Then instead of comparing 1 vs 1, it'd be true vs true.
 
   /// This function will calculate a fitness score after guessing with every
-  /// input within [LogicalXORFitnessService.inputsList] on the input
+  /// input within [LogicalXORFitnessService.inputList] on the input
   /// [neuralNetwork].
   @override
   Future<double> gennScoringFunction({
@@ -41,7 +41,7 @@ class LogicalXORFitnessService
     // Calculate the difference between a perfect score (8) and the total
     // errors. A perfect score would mean zero errors with 8 correct answers,
     // meaning a perfect score would be 8.
-    final diff = inputsList.length - errorSum;
+    final diff = inputList.length - errorSum;
 
     // To make the better performing Entities stand out more in this population,
     // use the following equation to calculate the FitnessScore.
@@ -52,7 +52,7 @@ class LogicalXORFitnessService
 
   // ================== GENNVisualizationExample Overrides ===================
   @override
-  List<List<double>> inputsList = [
+  List<List<double>> inputList = [
     [0.0, 0.0, 0.0],
     [0.0, 0.0, 1.0],
     [0.0, 1.0, 0.0],
@@ -64,7 +64,7 @@ class LogicalXORFitnessService
   ];
 
   @override
-  List<Widget> get readableInputList => inputsList
+  List<Widget> get readableInputList => inputList
       .map(
         (inputs) => Text(
           inputs
@@ -116,5 +116,12 @@ class LogicalXORFitnessService
     // There will always be 1 output to this neural network, so return the first
     // item in the list.
     return guess[0];
+  }
+
+  @override
+  List<double> convertInputToNeuralNetworkInput({
+    required List<double> input,
+  }) {
+    return input;
   }
 }

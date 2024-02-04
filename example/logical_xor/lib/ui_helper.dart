@@ -4,14 +4,16 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
-class UIHelper<T> {
+/// Responsible for showing various parts of the Example UI that aren't related
+/// to how the Genetically Evolving Neural Network works.
+class UIHelper<I, O> {
   UIHelper({
     required this.gennExampleFitnessService,
   });
 
   final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
-  final GENNVisualizationExampleFitnessService<T> gennExampleFitnessService;
+  final GENNVisualizationExampleFitnessService<I, O> gennExampleFitnessService;
 
   Widget showCorrectAnswers() {
     return Column(
