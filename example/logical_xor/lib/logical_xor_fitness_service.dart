@@ -9,12 +9,9 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 /// values are 0.0. There should be one exclusive positive value! The more
 /// correct guesses that a NeuralNetwork makes, the higher its fitness score
 /// will be.
-class LogicalXORFitnessService
-    extends GENNVisualizationExampleFitnessService<List<double>, double> {
+class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService<
+    List<double>, LogicalXorOutput> {
 // ================== GENNFitnessService Overrides ========================
-
-  // TODO: Could change the output type of this class to be an enum of False,
-  /// Unsure, True. Then instead of comparing 1 vs 1, it'd be true vs true.
 
   /// This function will calculate a fitness score after guessing with every
   /// input within [LogicalXORFitnessService.inputList] on the input
@@ -32,7 +29,7 @@ class LogicalXORFitnessService
     // Cycle through each guess to check its validity
     for (int i = 0; i < guesses.length; i++) {
       // Calculate the error from this guess
-      final error = (targetOutputsList[i] - guesses[i]).abs();
+      final error = (targetOutputsList[i] == guesses[i]) ? 0 : 1;
 
       // Add this error to the errorSum
       errorSum += error;
@@ -69,7 +66,7 @@ class LogicalXORFitnessService
         (inputs) => Text(
           inputs
               .map(
-                (input) => convertToReadableString(input),
+                (input) => input.toString(),
               )
               .join(', '),
         ),
@@ -77,15 +74,15 @@ class LogicalXORFitnessService
       .toList();
 
   @override
-  List<double> targetOutputsList = [
-    0.0,
-    1.0,
-    1.0,
-    0.0,
-    1.0,
-    0.0,
-    0.0,
-    0.0,
+  List<LogicalXorOutput> targetOutputsList = [
+    LogicalXorOutput.no,
+    LogicalXorOutput.yes,
+    LogicalXorOutput.yes,
+    LogicalXorOutput.no,
+    LogicalXorOutput.yes,
+    LogicalXorOutput.no,
+    LogicalXorOutput.no,
+    LogicalXorOutput.no,
   ];
 
   @override
@@ -98,8 +95,8 @@ class LogicalXORFitnessService
       .toList();
 
   @override
-  String convertToReadableString(double value) {
-    return value.toString();
+  String convertToReadableString(LogicalXorOutput value) {
+    return value.name;
   }
 
   @override
@@ -112,12 +109,21 @@ class LogicalXORFitnessService
   int get numOutputs => 1;
 
   @override
-  double convertGuessToOutputType({
+  LogicalXorOutput convertGuessToOutputType({
     required List<double> guess,
   }) {
-    // There will always be 1 output to this neural network, so return the first
+    // There will always be 1 output to this neural network, so choose the first
     // item in the list.
-    return guess[0];
+    final value = guess[0];
+    if (value == 0.0) {
+      // Zero means we are sure it is not satisfied
+      return LogicalXorOutput.no;
+    } else if (value == 1.0) {
+      // One means we are sure it is satisfied
+      return LogicalXorOutput.yes;
+    }
+    // Anything in between means we are not sure it is not satisfied
+    return LogicalXorOutput.unsure;
   }
 
   @override
@@ -126,4 +132,10 @@ class LogicalXORFitnessService
   }) {
     return input;
   }
+}
+
+enum LogicalXorOutput {
+  yes,
+  no,
+  unsure,
 }
