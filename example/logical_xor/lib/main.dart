@@ -39,12 +39,17 @@ class _MyAppState extends State<MyApp> {
   /// a single generation after each "play" click.
   bool continuousPlay = true;
 
+  /// Represents the FitnessService used to drive this GENN example.
   final GENNVisualizationExampleFitnessService gennExampleFitnessService =
+      // LogicalXORFitnessService();
       NumberClassifierFitnessService();
 
   /// Used to build components of this example file's UI that are not related to
   /// understanding how the GENN class works.
   late final UIHelper uiHelper;
+
+  /// Determines whether or not to show the Diagram Key on screen.
+  bool showDiagramKey = false;
 
   @override
   void initState() {
@@ -55,7 +60,7 @@ class _MyAppState extends State<MyApp> {
 
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
-      populationSize: 100,
+      populationSize: 250,
       numOutputs: gennExampleFitnessService.numOutputs,
       mutationRate: 0.15,
       numInitialInputs: gennExampleFitnessService.numInitialInputs,
@@ -125,11 +130,13 @@ class _MyAppState extends State<MyApp> {
         body: SafeArea(
           child: Row(
             children: [
-              DiagramKey(
-                gennExampleFitnessService: gennExampleFitnessService,
-              ),
+              if (showDiagramKey)
+                DiagramKey(
+                  gennExampleFitnessService: gennExampleFitnessService,
+                ),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width /
+                    (showDiagramKey ? 2.0 : 1.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -222,6 +229,15 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Text('${showDiagramKey ? 'Hide' : 'Show'} Diagram Key'),
+            Switch.adaptive(
+              value: showDiagramKey,
+              onChanged: (value) {
+                setState(() {
+                  showDiagramKey = value;
+                });
+              },
+            ),
             Text('ContinuousPlay: ${continuousPlay ? 'On' : 'Off'}'),
             Switch.adaptive(
                 value: continuousPlay,
