@@ -4,14 +4,14 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 import 'package:logical_xor/perceptron_map/consts.dart';
 import 'package:logical_xor/perceptron_map/perceptron_map.dart';
 
-class UIHelper {
+class UIHelper<T> {
   UIHelper({
     required this.gennExampleFitnessService,
   });
 
   final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
-  final GENNVisualizationExampleFitnessService gennExampleFitnessService;
+  final GENNVisualizationExampleFitnessService<T> gennExampleFitnessService;
 
   Widget showCorrectAnswers() {
     return Column(

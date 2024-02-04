@@ -9,8 +9,12 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 /// values are 0.0. There should be one exclusive positive value! The more
 /// correct guesses that a NeuralNetwork makes, the higher its fitness score
 /// will be.
-class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
+class LogicalXORFitnessService
+    extends GENNVisualizationExampleFitnessService<double> {
 // ================== GENNFitnessService Overrides ========================
+
+  // TODO: Could change the output type of this class to be an enum of False,
+  /// Unsure, True. Then instead of comparing 1 vs 1, it'd be true vs true.
 
   /// This function will calculate a fitness score after guessing with every
   /// input within [LogicalXORFitnessService.inputsList] on the input
@@ -28,7 +32,7 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
     // Cycle through each guess to check its validity
     for (int i = 0; i < guesses.length; i++) {
       // Calculate the error from this guess
-      final error = (targetOutputsList[i][0] - guesses[i][0]).abs();
+      final error = (targetOutputsList[i] - guesses[i]).abs();
 
       // Add this error to the errorSum
       errorSum += error;
@@ -60,19 +64,28 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
   ];
 
   @override
-  List<Widget> get readableInputList =>
-      inputsList.map((e) => Text(convertToReadableString(e))).toList();
+  List<Widget> get readableInputList => inputsList
+      .map(
+        (inputs) => Text(
+          inputs
+              .map(
+                (input) => convertToReadableString(input),
+              )
+              .join(', '),
+        ),
+      )
+      .toList();
 
   @override
-  List<List<double>> targetOutputsList = [
-    [0.0],
-    [1.0],
-    [1.0],
-    [0.0],
-    [1.0],
-    [0.0],
-    [0.0],
-    [0.0],
+  List<double> targetOutputsList = [
+    0.0,
+    1.0,
+    1.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
   ];
 
   @override
@@ -83,8 +96,8 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
       .toList();
 
   @override
-  String convertToReadableString(List<double> valueList) {
-    return valueList.toString();
+  String convertToReadableString(double value) {
+    return value.toString();
   }
 
   @override
@@ -95,4 +108,13 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService {
 
   @override
   int get numOutputs => 1;
+
+  @override
+  double convertGuessToOutputType({
+    required List<double> guess,
+  }) {
+    // There will always be 1 output to this neural network, so return the first
+    // item in the list.
+    return guess[0];
+  }
 }

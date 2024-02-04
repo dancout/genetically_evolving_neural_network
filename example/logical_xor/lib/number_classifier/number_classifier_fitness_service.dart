@@ -5,21 +5,13 @@ import 'package:genetically_evolving_neural_network/genetically_evolving_neural_
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:logical_xor/number_classifier/natural_number.dart';
 
-// TODO: could we make this class typed (like NumberClassifierFitnessService<T>)
-/// so that we can convert an input list of List<T>, and then we can use
-/// NaturalNum directly?
-
 /// This class will be used to score a Number Classifier in tandem with a
 /// Neural Network.
 class NumberClassifierFitnessService
-    extends GENNVisualizationExampleFitnessService {
+    extends GENNVisualizationExampleFitnessService<NaturalNumber> {
   @override
-  String convertToReadableString(List<double> valueList) {
-    return NaturalNumber.values
-        .indexOf(
-          determineBestGuess(guess: valueList),
-        )
-        .toString();
+  String convertToReadableString(NaturalNumber value) {
+    return value.name;
   }
 
   /// Returns a score that proportional to how many correct guesses this Neural
@@ -39,10 +31,9 @@ class NumberClassifierFitnessService
 
     // Cycle through each guess to check its validity
     for (int i = 0; i < guesses.length; i++) {
-      final NaturalNumber targetOutput =
-          determineBestGuess(guess: targetOutputsList[i]);
+      final NaturalNumber targetOutput = targetOutputsList[i];
 
-      final NaturalNumber guessOutput = determineBestGuess(guess: guesses[i]);
+      final NaturalNumber guessOutput = guesses[i];
 
       if (targetOutput == guessOutput) {
         // Guessing correctly will give you a point.
@@ -58,7 +49,8 @@ class NumberClassifierFitnessService
   }
 
   @override
-  double? get highestPossibleScore => pow(4, 10).toDouble();
+  double? get highestPossibleScore =>
+      pow(4, NaturalNumber.values.length).toDouble();
 
   @override
   List<List<double>> get inputsList =>
@@ -106,25 +98,31 @@ class NumberClassifierFitnessService
       .toList();
 
   @override
-  List<List<double>> get targetOutputsList =>
-      // Convert each NaturalNumber to its "correctGuess" form
-      NaturalNumber.values
-          .map((naturalNum) => naturalNum.asCorrectGuess)
-          .toList();
+  List<NaturalNumber> get targetOutputsList => NaturalNumber.values;
+
+  @override
+  int get numInitialInputs => NaturalNumberExtension.numPixels;
+
+  @override
+  int get numOutputs => NaturalNumber.values.length;
 
   /// Returns the index of the guess with the highest confidence.
   ///
+  @override
+  NaturalNumber convertGuessToOutputType({required List<double> guess}) {
+    // Declare a list to hold the indices of the highest confidence guesses
+    final List<int> listOfHighestConfidenceIndices = [];
 
-  // TODO: Should this go in a separate class, or the enum extension?
-  NaturalNumber determineBestGuess({
-    required List<double> guess,
-  }) {
-    final List<int> listOfHighestConfidenceIndices = [0];
+    // Declare our initial confidence of 0, because we're not confident in
+    // anything yet.
     double confidence = 0;
+
+    // Loop through each guess
     for (int i = 0; i < guess.length; i++) {
       if (guess[i] > confidence) {
         // If the current guess has a higher confidence, set it accordingly
         confidence = guess[i];
+        // Clear any previous indicies of highest confidence
         listOfHighestConfidenceIndices.clear();
         listOfHighestConfidenceIndices.add(i);
       } else if (guess[i] == confidence) {
@@ -137,14 +135,9 @@ class NumberClassifierFitnessService
     int highestConfidenceIndex = accountForGuessTies(
       listOfHighestConfidenceIndices: listOfHighestConfidenceIndices,
     );
+
     return NaturalNumberExtension.parse(
       number: highestConfidenceIndex,
     );
   }
-
-  @override
-  int get numInitialInputs => NaturalNumberExtension.numPixels;
-
-  @override
-  int get numOutputs => NaturalNumber.values.length;
 }

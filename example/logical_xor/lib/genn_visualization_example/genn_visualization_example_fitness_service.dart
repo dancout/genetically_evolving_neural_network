@@ -6,18 +6,18 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 
 /// Represents a wrapper class that extends [GENNFitnessService] and implements
 /// [GENNVisualizationExample].
-abstract class GENNVisualizationExampleFitnessService extends GENNFitnessService
-    implements GENNVisualizationExample {
+abstract class GENNVisualizationExampleFitnessService<T>
+    extends GENNFitnessService implements GENNVisualizationExample<T> {
   @override
   Future<double> gennScoringFunction(
       {required GENNNeuralNetwork neuralNetwork});
 
   @override
-  List<List<double>> getNeuralNetworkGuesses({
+  List<T> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   }) {
     // Declare a list of guesses
-    List<List<double>> guesses = [];
+    List<T> guesses = [];
 
     // Cycle through each input
     for (int i = 0; i < inputsList.length; i++) {
@@ -28,12 +28,22 @@ abstract class GENNVisualizationExampleFitnessService extends GENNFitnessService
       final guess = neuralNetwork.guess(inputs: inputs);
 
       // Add this guess to the list of guesses
-      guesses.add(guess);
+      guesses.add(
+        convertGuessToOutputType(
+          guess: guess,
+        ),
+      );
     }
 
     // Return the list of guesses
     return guesses;
   }
+
+  /// Converts the input [guess] (which is expected to the be output from a
+  /// Nueral Network) into the expected Output Type <T> from this class.
+  T convertGuessToOutputType({
+    required List<double> guess,
+  });
 
   @override
   double? get highestPossibleScore;
@@ -53,10 +63,10 @@ abstract class GENNVisualizationExampleFitnessService extends GENNFitnessService
       : null;
 
   @override
-  List<List<double>> get targetOutputsList;
+  List<T> get targetOutputsList;
 
   @override
-  String convertToReadableString(List<double> valueList);
+  String convertToReadableString(T value);
 
   /// This function will account for ties in guesses by randomly choosing an
   /// index of one of the guesses that tied for highest confidence. For example,
