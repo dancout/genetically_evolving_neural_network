@@ -1,3 +1,4 @@
+/// Represents the natural numbers from 0 to 9, inclusively.
 enum NaturalNumber {
   zero,
   one,
@@ -23,62 +24,57 @@ extension NaturalNumberExtension on NaturalNumber {
         'number: $number is out the 0-${NaturalNumber.values.length - 1} (inclusive) range');
   }
 
-  List<double> get asCorrectGuess {
-    return List.generate(NaturalNumber.values.length, (index) {
-      if (this == NaturalNumber.values[index]) {
-        // Return a 1, implying that we have 100% confidence that this is the
-        // correct guess.
-        return 1;
-      }
-
-      // Return a 0, implying that we have a 0% confidence that this is the
-      //correct guess.
-      return 0;
-    });
-  }
-
   static const numPixels = 15;
 
-  List<double> asPixels() {
-    late List<double> val;
+  PixelImage asPixelImage() {
+    late List<double> pixels;
 
     switch (this) {
       case NaturalNumber.zero:
-        val = [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1];
+        pixels = [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1];
         break;
       case NaturalNumber.one:
-        val = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+        pixels = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
         break;
       case NaturalNumber.two:
-        val = [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1];
+        pixels = [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1];
         break;
       case NaturalNumber.three:
-        val = [1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1];
+        pixels = [1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1];
         break;
       case NaturalNumber.four:
-        val = [1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1];
+        pixels = [1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1];
         break;
       case NaturalNumber.five:
-        val = [1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1];
+        pixels = [1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1];
         break;
       case NaturalNumber.six:
-        val = [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1];
+        pixels = [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1];
         break;
       case NaturalNumber.seven:
-        val = [1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+        pixels = [1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
         break;
       case NaturalNumber.eight:
-        val = [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1];
+        pixels = [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1];
         break;
       case NaturalNumber.nine:
-        val = [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1];
+        pixels = [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1];
         break;
     }
 
     assert(
-      val.length == numPixels,
+      pixels.length == numPixels,
       'The NaturalNumber asPixels must be 15 characters',
     );
-    return val;
+    return PixelImage(pixels: pixels);
   }
+}
+
+/// Represents an Image as a list of pixels.
+class PixelImage {
+  /// Represents an Image as a list of pixels.
+  const PixelImage({
+    required this.pixels,
+  });
+  final List<double> pixels;
 }

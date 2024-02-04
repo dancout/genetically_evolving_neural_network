@@ -8,9 +8,7 @@ import 'package:logical_xor/number_classifier/natural_number.dart';
 /// This class will be used to score a Number Classifier in tandem with a
 /// Neural Network.
 class NumberClassifierFitnessService
-    // TODO: We could have PixelImage be the input instead of List<double>
-    extends GENNVisualizationExampleFitnessService<List<double>,
-        NaturalNumber> {
+    extends GENNVisualizationExampleFitnessService<PixelImage, NaturalNumber> {
   @override
   String convertToReadableString(NaturalNumber value) {
     return NaturalNumber.values.indexOf(value).toString();
@@ -55,8 +53,11 @@ class NumberClassifierFitnessService
       pow(4, NaturalNumber.values.length).toDouble();
 
   @override
-  List<List<double>> get inputList =>
-      NaturalNumber.values.map((e) => e.asPixels()).toList();
+  List<PixelImage> get inputList => NaturalNumber.values
+      .map(
+        (naturalNumber) => naturalNumber.asPixelImage(),
+      )
+      .toList();
 
   /// Returns a list of the integers 0 to 9 represented as pixels on a grid.
   @override
@@ -79,9 +80,11 @@ class NumberClassifierFitnessService
                 mainAxisSpacing: 1.0,
                 crossAxisCount: 3,
                 children: List.generate(
-                  logicalInput.length,
+                  logicalInput.pixels.length,
                   (index) => Container(
-                    color: Colors.black.withOpacity(logicalInput[index]),
+                    color: Colors.black.withOpacity(
+                      logicalInput.pixels[index],
+                    ),
                     height: tileSideLength,
                     width: tileSideLength,
                   ),
@@ -149,8 +152,8 @@ class NumberClassifierFitnessService
 
   @override
   List<double> convertInputToNeuralNetworkInput({
-    required List<double> input,
+    required PixelImage input,
   }) {
-    return input;
+    return input.pixels;
   }
 }
