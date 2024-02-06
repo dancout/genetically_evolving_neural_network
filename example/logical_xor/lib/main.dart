@@ -20,14 +20,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  /// Whether the example is currently playing forward.
-  bool isPlaying = false;
-
   /// The Genetically Evolving Neural Network object.
   late final GENN genn;
 
   /// The current generation of Neural Networks.
   GENNGeneration? generation;
+
+  /// Whether the example is currently playing forward.
+  bool isPlaying = false;
 
   /// The first wave to contain an Entity that reached the target fitness score.
   int? waveTargetFound;
@@ -57,9 +57,13 @@ class _MyAppState extends State<MyApp> {
   /// Determines whether or not to show the Diagram Key on screen.
   bool showDiagramKey = false;
 
+  /// The direction in which to layout the parents of the top performing entity.
   Axis topPerformingDisplayAxis = Axis.horizontal;
+
+  /// The GlobalKey for the top performing entity.
   final topPerformerKey = GlobalKey();
 
+  /// The GlobalKeys for the parents of the top performing entity.
   late final List<GlobalKey> parentKeys;
 
   @override
@@ -83,8 +87,6 @@ class _MyAppState extends State<MyApp> {
       generationsToTrack: 1,
     );
 
-    parentKeys = List.generate(config.numParents, (index) => GlobalKey());
-
     // Create your Genetically Evolving Neural Network object.
     genn = GENN.create(
       config: config,
@@ -98,6 +100,8 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
+    // Set the keys for the parents of the top performing entity.
+    parentKeys = List.generate(config.numParents, (index) => GlobalKey());
     super.initState();
   }
 
@@ -105,9 +109,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // Run after the widget has completed building
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final updatedAxis = _determineUpdatedTopPerformingDisplayAxis(
+      final updatedAxis = uiHelper.determineUpdatedTopPerformingDisplayAxis(
         topPerformerKey: topPerformerKey,
         topPerformingDisplayAxis: topPerformingDisplayAxis,
+        parentKeys: parentKeys,
       );
 
       // Determine whether the axis needs to updated
@@ -177,20 +182,11 @@ class _MyAppState extends State<MyApp> {
                           Text(
                             '(Target Score: ${gennExampleFitnessService.targetFitnessScore})',
                           ),
-                        Flex(
-                          direction: topPerformingDisplayAxis,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (topPerformingDisplayAxis == Axis.vertical)
-                              const SizedBox(height: 24.0),
-                            _showTopScoringParentsSection(),
-                            if (topPerformingDisplayAxis == Axis.vertical)
-                              const SizedBox(height: 12.0),
-                            if (topPerformingDisplayAxis == Axis.horizontal)
-                              const SizedBox(width: 24.0),
-                            _showTopPerformerSection(
-                                generation.population.topScoringEntity),
-                          ],
+                        uiHelper.showTopPerformerAndParentsSection(
+                          generation: generation,
+                          parentKeys: parentKeys,
+                          topPerformerKey: topPerformerKey,
+                          topPerformingDisplayAxis: topPerformingDisplayAxis,
                         ),
                         if (waveTargetFound != null)
                           Text(
@@ -200,10 +196,14 @@ class _MyAppState extends State<MyApp> {
                               fontSize: 16,
                             ),
                           ),
-                        _showInputsAnswersAndGuesses(
-                            generation.population.topScoringEntity),
+                        uiHelper.showInputsAnswersAndGuesses(
+                          generation.population.topScoringEntity,
+                        ),
                         const SizedBox(height: 24),
-                        ..._showPopulationPerceptronMaps(mediaQuerySize),
+                        ...uiHelper.showPopulationPerceptronMaps(
+                          mediaQuerySize: mediaQuerySize,
+                          generation: generation,
+                        ),
                       ],
                     ),
                   ),
@@ -261,146 +261,5 @@ class _MyAppState extends State<MyApp> {
         const SizedBox(height: 12.0),
       ],
     );
-  }
-
-  Axis _determineUpdatedTopPerformingDisplayAxis({
-    required Axis topPerformingDisplayAxis,
-    required GlobalKey topPerformerKey,
-  }) {
-    final List<Size> parentSizes = [];
-
-    for (final globalKey in parentKeys) {
-      final size = globalKey.currentContext?.size;
-      if (size != null) {
-        parentSizes.add(size);
-      }
-    }
-
-    final double maxHeight = [
-      topPerformerKey.currentContext?.size?.height,
-      ...parentSizes.map((parentSize) => parentSize.height),
-    ].fold(0, (previousValue, element) {
-      final currValue = (element ?? 0);
-      return (previousValue > currValue) ? previousValue : currValue;
-    });
-
-    final double maxWidth = [
-      topPerformerKey.currentContext?.size?.width,
-      ...parentSizes.map((parentSize) => parentSize.width),
-    ].fold(0, (previousValue, element) {
-      final currValue = (element ?? 0);
-      return (previousValue > currValue) ? previousValue : currValue;
-    });
-
-    if (maxHeight > maxWidth) {
-      return Axis.horizontal;
-    } else {
-      return Axis.vertical;
-    }
-  }
-
-  Column _showTopPerformerSection(GENNEntity entity) {
-    return Column(
-      children: [
-        const Text(
-          ' Top Performing Neural Network',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        uiHelper.showPerceptronMapWithScore(
-          entity: entity,
-          showLabels: true,
-          key: topPerformerKey,
-        ),
-      ],
-    );
-  }
-
-  Widget _showTopScoringParentsSection() {
-    final topScoringParents = generation?.population.topScoringEntity.parents;
-
-    // TODO: TRY TO CLEAN ALL THIS UP
-
-    final parentsOfTopPerformerChildren = <Widget>[];
-    if (topScoringParents != null) {
-      final spaceBetween = (topPerformingDisplayAxis == Axis.vertical)
-          ? const SizedBox(
-              height: 12.0,
-            )
-          : const SizedBox(
-              width: 12.0,
-            );
-
-      for (int i = 0; i < parentKeys.length; i++) {
-        parentsOfTopPerformerChildren.add(
-          uiHelper.showPerceptronMapWithScore(
-            entity: topScoringParents[i],
-            showLabels: true,
-            key: parentKeys[i],
-          ),
-        );
-        parentsOfTopPerformerChildren.add(spaceBetween);
-      }
-      // We don't want the last spacebetween object
-      parentsOfTopPerformerChildren.removeLast();
-    }
-
-    final parentsOfTopPerformer = Flex(
-      direction: topPerformingDisplayAxis,
-      children: parentsOfTopPerformerChildren,
-    );
-    final parentsOfTopPerformerWrapper = Column(
-      children: [
-        if (topScoringParents != null)
-          const Text(
-            'Parents of Top Performing Neural Network',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        parentsOfTopPerformer,
-      ],
-    );
-    return parentsOfTopPerformerWrapper;
-  }
-
-  Widget _showInputsAnswersAndGuesses(GENNEntity entity) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        uiHelper.showLogicalInputs(),
-        const SizedBox(width: 12),
-        uiHelper.showCorrectAnswers(),
-        const SizedBox(width: 12),
-        uiHelper.showNeuralNetworkGuesses(
-          entity,
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _showPopulationPerceptronMaps(Size mediaQuerySize) {
-    final generation = this.generation;
-    if (generation == null) {
-      return [];
-    }
-
-    return [
-      Text(
-        'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
-      ),
-      const Text(
-        'These are chosen as parents to breed the next generation',
-        style: TextStyle(fontStyle: FontStyle.italic),
-      ),
-      uiHelper.perceptronMapDivider,
-      SizedBox(
-        height: mediaQuerySize.height,
-        child: ListView.separated(
-          itemBuilder: (_, index) => uiHelper.showPerceptronMapWithScore(
-            entity: generation.population.entities[index],
-          ),
-          itemCount: generation.population.entities.length,
-          separatorBuilder: (_, __) => uiHelper.perceptronMapDivider,
-        ),
-      ),
-    ];
   }
 }

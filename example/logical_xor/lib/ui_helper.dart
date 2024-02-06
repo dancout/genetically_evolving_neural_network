@@ -155,4 +155,176 @@ class UIHelper<I, O> {
       ),
     );
   }
+
+  Axis determineUpdatedTopPerformingDisplayAxis({
+    required Axis topPerformingDisplayAxis,
+    required GlobalKey topPerformerKey,
+    required List<GlobalKey> parentKeys,
+  }) {
+    final List<Size> parentSizes = [];
+
+    for (final globalKey in parentKeys) {
+      final size = globalKey.currentContext?.size;
+      if (size != null) {
+        parentSizes.add(size);
+      }
+    }
+
+    final double maxHeight = [
+      topPerformerKey.currentContext?.size?.height,
+      ...parentSizes.map((parentSize) => parentSize.height),
+    ].fold(0, (previousValue, element) {
+      final currValue = (element ?? 0);
+      return (previousValue > currValue) ? previousValue : currValue;
+    });
+
+    final double maxWidth = [
+      topPerformerKey.currentContext?.size?.width,
+      ...parentSizes.map((parentSize) => parentSize.width),
+    ].fold(0, (previousValue, element) {
+      final currValue = (element ?? 0);
+      return (previousValue > currValue) ? previousValue : currValue;
+    });
+
+    if (maxHeight > maxWidth) {
+      return Axis.horizontal;
+    } else {
+      return Axis.vertical;
+    }
+  }
+
+  Column showTopPerformerSection({
+    required GENNEntity topScoringEntity,
+    required GlobalKey topPerformerKey,
+  }) {
+    return Column(
+      children: [
+        const Text(
+          ' Top Performing Neural Network',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        showPerceptronMapWithScore(
+          entity: topScoringEntity,
+          showLabels: true,
+          key: topPerformerKey,
+        ),
+      ],
+    );
+  }
+
+  Widget showTopScoringParentsSection({
+    required List<GENNEntity>? topScoringParents,
+    required Axis topPerformingDisplayAxis,
+    required List<GlobalKey> parentKeys,
+  }) {
+    if (topScoringParents == null) {
+      return const SizedBox();
+    }
+
+    final parentsOfTopPerformer = <Widget>[];
+    final separator = SizedBox(
+      height: (topPerformingDisplayAxis == Axis.vertical) ? 12.0 : 0.0,
+      width: (topPerformingDisplayAxis == Axis.vertical) ? 0.0 : 12.0,
+    );
+
+    for (int i = 0; i < parentKeys.length; i++) {
+      parentsOfTopPerformer.add(
+        showPerceptronMapWithScore(
+          entity: topScoringParents[i],
+          showLabels: true,
+          key: parentKeys[i],
+        ),
+      );
+      parentsOfTopPerformer.add(separator);
+    }
+    // We don't want the last spacebetween object
+    parentsOfTopPerformer.removeLast();
+
+    return Column(
+      children: [
+        const Text(
+          'Parents of Top Performing Neural Network',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Flex(
+          direction: topPerformingDisplayAxis,
+          children: parentsOfTopPerformer,
+        ),
+      ],
+    );
+  }
+
+  Widget showInputsAnswersAndGuesses(GENNEntity entity) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        showLogicalInputs(),
+        const SizedBox(width: 12),
+        showCorrectAnswers(),
+        const SizedBox(width: 12),
+        showNeuralNetworkGuesses(
+          entity,
+        ),
+      ],
+    );
+  }
+
+  List<Widget> showPopulationPerceptronMaps({
+    required Size mediaQuerySize,
+    required GENNGeneration? generation,
+  }) {
+    if (generation == null) {
+      return [];
+    }
+
+    return [
+      Text(
+        'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
+      ),
+      const Text(
+        'These are chosen as parents to breed the next generation',
+        style: TextStyle(fontStyle: FontStyle.italic),
+      ),
+      perceptronMapDivider,
+      SizedBox(
+        height: mediaQuerySize.height,
+        child: ListView.separated(
+          itemBuilder: (_, index) => showPerceptronMapWithScore(
+            entity: generation.population.entities[index],
+          ),
+          itemCount: generation.population.entities.length,
+          separatorBuilder: (_, __) => perceptronMapDivider,
+        ),
+      ),
+    ];
+  }
+
+  Widget showTopPerformerAndParentsSection({
+    required GENNGeneration generation,
+    required Axis topPerformingDisplayAxis,
+    required List<GlobalKey> parentKeys,
+    required GlobalKey topPerformerKey,
+  }) {
+    return Flex(
+      direction: topPerformingDisplayAxis,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (topPerformingDisplayAxis == Axis.vertical)
+          const SizedBox(height: 24.0),
+        showTopScoringParentsSection(
+          topScoringParents: generation.population.topScoringEntity.parents,
+          topPerformingDisplayAxis: topPerformingDisplayAxis,
+          parentKeys: parentKeys,
+        ),
+        if (topPerformingDisplayAxis == Axis.vertical)
+          const SizedBox(height: 12.0),
+        if (topPerformingDisplayAxis == Axis.horizontal)
+          const SizedBox(width: 24.0),
+        showTopPerformerSection(
+          topScoringEntity: generation.population.topScoringEntity,
+          topPerformerKey: topPerformerKey,
+        ),
+      ],
+    );
+  }
 }
