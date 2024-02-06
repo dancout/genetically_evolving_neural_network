@@ -53,15 +53,11 @@ class _MyAppState extends State<MyApp> {
 
   Axis topPerformingDisplayAxis = Axis.horizontal;
   final topPerformerKey = GlobalKey();
-  final parent1Key = GlobalKey();
-  final parent2Key = GlobalKey();
   double? topPerformerHeight;
   double? topPerformerWidth;
 
-  double? parent1Height;
-  double? parent1Width;
-  double? parent2Height;
-  double? parent2Width;
+  late final List<GlobalKey> parentKeys;
+  final List<Size> parentSizes = [];
 
   @override
   void initState() {
@@ -83,6 +79,8 @@ class _MyAppState extends State<MyApp> {
       // show on-screen
       generationsToTrack: 1,
     );
+
+    parentKeys = List.generate(config.numParents, (index) => GlobalKey());
 
     // Create your Genetically Evolving Neural Network object.
     genn = GENN.create(
@@ -111,15 +109,18 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       topPerformerHeight = topPerformerKey.currentContext?.size?.height;
       topPerformerWidth = topPerformerKey.currentContext?.size?.width;
-      parent1Height = parent1Key.currentContext?.size?.height;
-      parent1Width = parent1Key.currentContext?.size?.width;
-      parent2Height = parent2Key.currentContext?.size?.height;
-      parent2Width = parent2Key.currentContext?.size?.width;
+
+      parentSizes.clear();
+      for (final globalKey in parentKeys) {
+        final size = globalKey.currentContext?.size;
+        if (size != null) {
+          parentSizes.add(size);
+        }
+      }
 
       final double maxHeight = [
         topPerformerHeight,
-        parent1Height,
-        parent2Height
+        ...parentSizes.map((parentSize) => parentSize.height),
       ].fold(0, (previousValue, element) {
         final currValue = (element ?? 0);
         return (previousValue > currValue) ? previousValue : currValue;
@@ -127,8 +128,7 @@ class _MyAppState extends State<MyApp> {
 
       final double maxWidth = [
         topPerformerWidth,
-        parent1Width,
-        parent2Width,
+        ...parentSizes.map((parentSize) => parentSize.width),
       ].fold(0, (previousValue, element) {
         final currValue = (element ?? 0);
         return (previousValue > currValue) ? previousValue : currValue;
@@ -137,24 +137,16 @@ class _MyAppState extends State<MyApp> {
       if (maxHeight > maxWidth) {
         if (topPerformingDisplayAxis != Axis.horizontal) {
           setState(() {
-            print('------ FLIPPED TO HORIZONTAL!');
             topPerformingDisplayAxis = Axis.horizontal;
           });
         }
       } else {
         if (topPerformingDisplayAxis != Axis.vertical) {
           setState(() {
-            print('------ FLIPPED TO VERTICAL!');
             topPerformingDisplayAxis = Axis.vertical;
           });
         }
       }
-
-      // print([topPerformerHeight, parent1Height, parent2Height]);
-      // print('maxHeight: $maxHeight');
-
-      print([topPerformerWidth, parent1Width, parent2Width]);
-      print('maxHeight: $maxWidth');
 
       if (isPlaying) {
         // Sleep for [waitTimeBetweenWaves] during continuous play so that the
@@ -180,26 +172,33 @@ class _MyAppState extends State<MyApp> {
 
     final topScoringParents = generation.population.topScoringEntity.parents;
 
+    final parentsOfTopPerformerChildren = <Widget>[];
+    if (topScoringParents != null) {
+      final spaceBetween = (topPerformingDisplayAxis == Axis.vertical)
+          ? const SizedBox(
+              height: 12.0,
+            )
+          : const SizedBox(
+              width: 12.0,
+            );
+
+      for (int i = 0; i < parentKeys.length; i++) {
+        parentsOfTopPerformerChildren.add(
+          uiHelper.showPerceptronMapWithScore(
+            entity: topScoringParents[i],
+            showLabels: true,
+            key: parentKeys[i],
+          ),
+        );
+        parentsOfTopPerformerChildren.add(spaceBetween);
+      }
+      // We don't want the last spacebetween object
+      parentsOfTopPerformerChildren.removeLast();
+    }
+
     final parentsOfTopPerformer = Flex(
       direction: topPerformingDisplayAxis,
-      children: (topScoringParents != null)
-          ? [
-              uiHelper.showPerceptronMapWithScore(
-                entity: topScoringParents[0],
-                showLabels: true,
-                key: parent1Key,
-              ),
-              const SizedBox(
-                width: 12.0,
-                height: 12.0,
-              ),
-              uiHelper.showPerceptronMapWithScore(
-                entity: topScoringParents[1],
-                showLabels: true,
-                key: parent2Key,
-              ),
-            ]
-          : [],
+      children: parentsOfTopPerformerChildren,
     );
     final parentsOfTopPerformerWrapper = Column(
       children: [
@@ -212,19 +211,17 @@ class _MyAppState extends State<MyApp> {
       ],
     );
 
-    final topPerformer = uiHelper.showPerceptronMapWithScore(
-      entity: generation.population.topScoringEntity,
-      showLabels: true,
-      key: topPerformerKey,
-    );
-
     final topPerformerWrapper = Column(
       children: [
         const Text(
           ' Top Performing Neural Network',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        topPerformer,
+        uiHelper.showPerceptronMapWithScore(
+          entity: generation.population.topScoringEntity,
+          showLabels: true,
+          key: topPerformerKey,
+        ),
       ],
     );
     return MaterialApp(
