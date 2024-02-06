@@ -224,6 +224,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
     );
+    final mediaQuerySize = MediaQuery.of(context).size;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -232,89 +233,94 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         body: SafeArea(
-          child: Row(
+          child: ListView(
             children: [
-              if (showDiagramKey)
-                DiagramKey(
-                  gennExampleFitnessService: gennExampleFitnessService,
-                ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width /
-                    (showDiagramKey ? 2.0 : 1.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Generation: ${generation.wave.toString()}',
+              Row(
+                children: [
+                  if (showDiagramKey)
+                    DiagramKey(
+                      gennExampleFitnessService: gennExampleFitnessService,
                     ),
-                    if (gennExampleFitnessService.targetFitnessScore != null)
-                      Text(
-                        '(Target Score: ${gennExampleFitnessService.targetFitnessScore})',
-                      ),
-                    Flex(
-                      direction: topPerformingDisplayAxis,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  SizedBox(
+                    width: mediaQuerySize.width / (showDiagramKey ? 2.0 : 1.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if (topPerformingDisplayAxis == Axis.vertical)
-                          const SizedBox(height: 24.0),
-                        parentsOfTopPerformerWrapper,
-                        if (topPerformingDisplayAxis == Axis.vertical)
-                          const SizedBox(height: 12.0),
-                        if (topPerformingDisplayAxis == Axis.horizontal)
-                          const SizedBox(width: 24.0),
-                        topPerformerWrapper,
-                      ],
-                    ),
-                    if (waveTargetFound != null)
-                      Text(
-                        'Target reached at Generation: $waveTargetFound',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        Text(
+                          'Generation: ${generation.wave.toString()}',
                         ),
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                        if (gennExampleFitnessService.targetFitnessScore !=
+                            null)
+                          Text(
+                            '(Target Score: ${gennExampleFitnessService.targetFitnessScore})',
+                          ),
+                        Flex(
+                          direction: topPerformingDisplayAxis,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Row(
+                            if (topPerformingDisplayAxis == Axis.vertical)
+                              const SizedBox(height: 24.0),
+                            parentsOfTopPerformerWrapper,
+                            if (topPerformingDisplayAxis == Axis.vertical)
+                              const SizedBox(height: 12.0),
+                            if (topPerformingDisplayAxis == Axis.horizontal)
+                              const SizedBox(width: 24.0),
+                            topPerformerWrapper,
+                          ],
+                        ),
+                        if (waveTargetFound != null)
+                          Text(
+                            'Target reached at Generation: $waveTargetFound',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
                               children: [
-                                uiHelper.showLogicalInputs(),
-                                const SizedBox(width: 12),
-                                uiHelper.showCorrectAnswers(),
-                                const SizedBox(width: 12),
-                                uiHelper.showNeuralNetworkGuesses(
-                                  generation.population.topScoringEntity,
+                                Row(
+                                  children: [
+                                    uiHelper.showLogicalInputs(),
+                                    const SizedBox(width: 12),
+                                    uiHelper.showCorrectAnswers(),
+                                    const SizedBox(width: 12),
+                                    uiHelper.showNeuralNetworkGuesses(
+                                      generation.population.topScoringEntity,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
+                        const SizedBox(height: 24),
+                        Text(
+                          'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
+                        ),
+                        const Text(
+                          'These are chosen as parents to breed the next generation',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        uiHelper.perceptronMapDivider,
+                        SizedBox(
+                          height: mediaQuerySize.height,
+                          child: ListView.separated(
+                            itemBuilder: (_, index) =>
+                                uiHelper.showPerceptronMapWithScore(
+                              entity: generation.population.entities[index],
+                            ),
+                            itemCount: generation.population.entities.length,
+                            separatorBuilder: (_, __) =>
+                                uiHelper.perceptronMapDivider,
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Entire Population of Neural Networks (${generation.population.entities.length} in total)',
-                    ),
-                    const Text(
-                      'These are chosen as parents to breed the next generation',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                    uiHelper.perceptronMapDivider,
-                    Flexible(
-                      child: ListView.separated(
-                        itemBuilder: (context, index) =>
-                            uiHelper.showPerceptronMapWithScore(
-                          entity: generation.population.entities[index],
-                        ),
-                        itemCount: generation.population.entities.length,
-                        separatorBuilder: (context, index) =>
-                            uiHelper.perceptronMapDivider,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
