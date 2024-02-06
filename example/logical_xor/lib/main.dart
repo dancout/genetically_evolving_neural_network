@@ -20,11 +20,45 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  /// The Genetically Evolving Neural Network object.
-  late final GENN genn;
-
+  // ================== START OF GENN EXAMPLE RELATED CONTENT =============================
   /// The current generation of Neural Networks.
   GENNGeneration? generation;
+
+  static final LogicalXORFitnessService logicalXORFitnessService =
+      LogicalXORFitnessService();
+  static final NumberClassifierFitnessService numberClassifierFitnessService =
+      NumberClassifierFitnessService();
+
+  /// Represents the FitnessService used to drive this GENN example.
+  static final GENNVisualizationExampleFitnessService
+      gennExampleFitnessService = logicalXORFitnessService;
+  // numberClassifierFitnessService;
+
+  /// Sets the generation value to the next generation on the [GENN] object.
+  Future<void> _setNextGeneration() async {
+    generation = await genn.nextGeneration();
+    setState(() {});
+  }
+
+  // Declare a config with specific mutation rates.
+  static final config = GENNGeneticEvolutionConfig(
+    numOutputs: gennExampleFitnessService.numOutputs,
+    mutationRate: 0.15,
+    numInitialInputs: gennExampleFitnessService.numInitialInputs,
+    layerMutationRate: 0.2,
+    perceptronMutationRate: 0.4,
+    trackParents: true,
+    // We only care about tracking the parents of the current generation to
+    // show on-screen
+    generationsToTrack: 1,
+  );
+
+  /// The Genetically Evolving Neural Network object.
+  final GENN genn = GENN.create(
+    config: config,
+    fitnessService: gennExampleFitnessService,
+  );
+  // ==================== END OF GENN EXAMPLE RELATED CONTENT =============================
 
   /// Whether the example is currently playing forward.
   bool isPlaying = false;
@@ -39,16 +73,6 @@ class _MyAppState extends State<MyApp> {
   /// Whether to continuously play on through generations, or only increment by
   /// a single generation after each "play" click.
   bool continuousPlay = true;
-
-  static final LogicalXORFitnessService logicalXORFitnessService =
-      LogicalXORFitnessService();
-  static final NumberClassifierFitnessService numberClassifierFitnessService =
-      NumberClassifierFitnessService();
-
-  /// Represents the FitnessService used to drive this GENN example.
-  final GENNVisualizationExampleFitnessService gennExampleFitnessService =
-      logicalXORFitnessService;
-  // numberClassifierFitnessService;
 
   /// Used to build components of this example file's UI that are not related to
   /// understanding how the GENN class works.
@@ -68,37 +92,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    // ================== START OF GENN EXAMPLE RELATED CONTENT ===========================
+    // Initialize the first generation
+    _setNextGeneration();
+    // ==================== END OF GENN EXAMPLE RELATED CONTENT ===========================
+
     // Define your UIHelper based on your gennExampleFitnessService
     uiHelper = UIHelper(
       gennExampleFitnessService: gennExampleFitnessService,
     );
-
-    // Declare a config with specific mutation rates.
-    final config = GENNGeneticEvolutionConfig(
-      populationSize: 250,
-      numOutputs: gennExampleFitnessService.numOutputs,
-      mutationRate: 0.15,
-      numInitialInputs: gennExampleFitnessService.numInitialInputs,
-      layerMutationRate: 0.2,
-      perceptronMutationRate: 0.4,
-      trackParents: true,
-      // We only care about tracking the parents of the current generation to
-      // show on-screen
-      generationsToTrack: 1,
-    );
-
-    // Create your Genetically Evolving Neural Network object.
-    genn = GENN.create(
-      config: config,
-      fitnessService: gennExampleFitnessService,
-    );
-
-    // Initialize the first generation
-    genn.nextGeneration().then((value) {
-      setState(() {
-        generation = value;
-      });
-    });
 
     // Set the keys for the parents of the top performing entity.
     parentKeys = List.generate(config.numParents, (index) => GlobalKey());
@@ -117,23 +119,23 @@ class _MyAppState extends State<MyApp> {
 
       // Determine whether the axis needs to updated
       bool requiresUpdate = updatedAxis == topPerformingDisplayAxis;
-      // Declare the potential next generation
-      GENNGeneration? nextGen;
+
       if (isPlaying) {
         // Sleep for [waitTimeBetweenWaves] during continuous play so that the
         // gradual evolution changes are easier to see.
         await Future.delayed(
             const Duration(milliseconds: waitTimeBetweenWaves));
 
-        // Create and set the next Generation to be displayed
-        nextGen = await genn.nextGeneration();
-      }
+        // To avoid multiple set states, update the axis with the latest value.
+        topPerformingDisplayAxis = updatedAxis;
 
-      // Check if something has changed
-      if (isPlaying || requiresUpdate) {
+        // ================== START OF GENN EXAMPLE RELATED CONTENT =======================
+        // Set the next Generation to be displayed
+        _setNextGeneration();
+        // ================== END OF GENN EXAMPLE RELATED CONTENT =========================
+      } else if (requiresUpdate) {
         setState(() {
           topPerformingDisplayAxis = updatedAxis;
-          this.generation = nextGen ?? this.generation;
         });
       }
     });
@@ -241,17 +243,13 @@ class _MyAppState extends State<MyApp> {
               });
             }),
         FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             if (continuousPlay) {
               setState(() {
                 isPlaying = !isPlaying;
               });
             } else {
-              genn.nextGeneration().then((value) {
-                setState(() {
-                  generation = value;
-                });
-              });
+              await _setNextGeneration();
             }
           },
           child: (!continuousPlay || !isPlaying)
