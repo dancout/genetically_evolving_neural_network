@@ -80,6 +80,7 @@ class UIHelper<I, O> {
   Widget showPerceptronMapWithScore({
     required GENNEntity entity,
     bool showLabels = false,
+    Key? key,
   }) {
     final veritcalDivider = Container(
       height: 48.0,
@@ -125,6 +126,7 @@ class UIHelper<I, O> {
       ],
     );
     return IntrinsicWidth(
+      key: key,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

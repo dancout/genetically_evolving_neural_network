@@ -51,6 +51,18 @@ class _MyAppState extends State<MyApp> {
   /// Determines whether or not to show the Diagram Key on screen.
   bool showDiagramKey = false;
 
+  Axis topPerformingDisplayAxis = Axis.horizontal;
+  final topPerformerKey = GlobalKey();
+  final parent1Key = GlobalKey();
+  final parent2Key = GlobalKey();
+  double? topPerformerHeight;
+  double? topPerformerWidth;
+
+  double? parent1Height;
+  double? parent1Width;
+  double? parent2Height;
+  double? parent2Width;
+
   @override
   void initState() {
     // Define your UIHelper based on your gennExampleFitnessService
@@ -97,6 +109,53 @@ class _MyAppState extends State<MyApp> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      topPerformerHeight = topPerformerKey.currentContext?.size?.height;
+      topPerformerWidth = topPerformerKey.currentContext?.size?.width;
+      parent1Height = parent1Key.currentContext?.size?.height;
+      parent1Width = parent1Key.currentContext?.size?.width;
+      parent2Height = parent2Key.currentContext?.size?.height;
+      parent2Width = parent2Key.currentContext?.size?.width;
+
+      final double maxHeight = [
+        topPerformerHeight,
+        parent1Height,
+        parent2Height
+      ].fold(0, (previousValue, element) {
+        final currValue = (element ?? 0);
+        return (previousValue > currValue) ? previousValue : currValue;
+      });
+
+      final double maxWidth = [
+        topPerformerWidth,
+        parent1Width,
+        parent2Width,
+      ].fold(0, (previousValue, element) {
+        final currValue = (element ?? 0);
+        return (previousValue > currValue) ? previousValue : currValue;
+      });
+
+      if (maxHeight > maxWidth) {
+        if (topPerformingDisplayAxis != Axis.horizontal) {
+          setState(() {
+            print('------ FLIPPED TO HORIZONTAL!');
+            topPerformingDisplayAxis = Axis.horizontal;
+          });
+        }
+      } else {
+        if (topPerformingDisplayAxis != Axis.vertical) {
+          setState(() {
+            print('------ FLIPPED TO VERTICAL!');
+            topPerformingDisplayAxis = Axis.vertical;
+          });
+        }
+      }
+
+      // print([topPerformerHeight, parent1Height, parent2Height]);
+      // print('maxHeight: $maxHeight');
+
+      print([topPerformerWidth, parent1Width, parent2Width]);
+      print('maxHeight: $maxWidth');
+
       if (isPlaying) {
         // Sleep for [waitTimeBetweenWaves] during continuous play so that the
         // gradual evolution changes are easier to see.
@@ -120,6 +179,54 @@ class _MyAppState extends State<MyApp> {
     }
 
     final topScoringParents = generation.population.topScoringEntity.parents;
+
+    final parentsOfTopPerformer = Flex(
+      direction: topPerformingDisplayAxis,
+      children: (topScoringParents != null)
+          ? [
+              uiHelper.showPerceptronMapWithScore(
+                entity: topScoringParents[0],
+                showLabels: true,
+                key: parent1Key,
+              ),
+              const SizedBox(
+                width: 12.0,
+                height: 12.0,
+              ),
+              uiHelper.showPerceptronMapWithScore(
+                entity: topScoringParents[1],
+                showLabels: true,
+                key: parent2Key,
+              ),
+            ]
+          : [],
+    );
+    final parentsOfTopPerformerWrapper = Column(
+      children: [
+        if (topScoringParents != null)
+          const Text(
+            'Parents of Top Performing Neural Network',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        parentsOfTopPerformer,
+      ],
+    );
+
+    final topPerformer = uiHelper.showPerceptronMapWithScore(
+      entity: generation.population.topScoringEntity,
+      showLabels: true,
+      key: topPerformerKey,
+    );
+
+    final topPerformerWrapper = Column(
+      children: [
+        const Text(
+          ' Top Performing Neural Network',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        topPerformer,
+      ],
+    );
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -140,26 +247,6 @@ class _MyAppState extends State<MyApp> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 24.0),
-                    if (topScoringParents != null)
-                      const Text(
-                        'Parents of Top Performing Neural Network',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    if (topScoringParents != null)
-                      Column(
-                        children: [
-                          uiHelper.showPerceptronMapWithScore(
-                              entity: topScoringParents[0]),
-                          uiHelper.showPerceptronMapWithScore(
-                              entity: topScoringParents[1]),
-                        ],
-                      ),
-                    const SizedBox(height: 12.0),
-                    const Text(
-                      ' Top Performing Neural Network',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
                     Text(
                       'Generation: ${generation.wave.toString()}',
                     ),
@@ -167,9 +254,19 @@ class _MyAppState extends State<MyApp> {
                       Text(
                         '(Target Score: ${gennExampleFitnessService.targetFitnessScore})',
                       ),
-                    uiHelper.showPerceptronMapWithScore(
-                      entity: generation.population.topScoringEntity,
-                      showLabels: true,
+                    Flex(
+                      direction: topPerformingDisplayAxis,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (topPerformingDisplayAxis == Axis.vertical)
+                          const SizedBox(height: 24.0),
+                        parentsOfTopPerformerWrapper,
+                        if (topPerformingDisplayAxis == Axis.vertical)
+                          const SizedBox(height: 12.0),
+                        if (topPerformingDisplayAxis == Axis.horizontal)
+                          const SizedBox(width: 24.0),
+                        topPerformerWrapper,
+                      ],
                     ),
                     if (waveTargetFound != null)
                       Text(
