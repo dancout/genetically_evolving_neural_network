@@ -1,6 +1,6 @@
 {
-    "name": "logical_xor",
-    "short_name": "logical_xor",
+    "name": "full_visual_example",
+    "short_name": "full_visual_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

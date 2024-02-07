@@ -1,4 +1,4 @@
-package com.example.logical_xor
+package com.example.full_visual_example
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-# logical_xor
+# full_visual_example
 
 A new Flutter project.
 
