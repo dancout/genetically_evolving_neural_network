@@ -224,6 +224,7 @@ class DiagramKey extends StatelessWidget {
                   gennExampleFitnessService: gennExampleFitnessService,
                 ).perceptronMapDivider,
                 const SizedBox(height: 12.0),
+                // TODO: This needs to come from gennExampleFitnessService
                 const Text(
                   'Logical XOR Description',
                   style: TextStyle(fontWeight: FontWeight.bold),
