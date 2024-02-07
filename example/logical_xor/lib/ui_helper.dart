@@ -15,6 +15,8 @@ class UIHelper<I, O> {
 
   final GENNVisualizationExampleFitnessService<I, O> gennExampleFitnessService;
 
+  /// Shows a Column of the correct answers built from
+  /// [GENNExampleFitnessService.readableTargetList].
   Widget showCorrectAnswers() {
     return Column(
       children: [
@@ -25,6 +27,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Shows a Column of the inputs to the Neural Network built from
+  /// [GENNExampleFitnessService.readableInputList].
   Widget showLogicalInputs() {
     return Column(
       children: [
@@ -40,6 +44,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Shows a Column of readable Text Widgets build from the outputs of the
+  /// Neural Network.
   Widget showNeuralNetworkGuesses(GENNEntity entity) {
     final guesses = gennExampleFitnessService.getNeuralNetworkGuesses(
       neuralNetwork: GENNNeuralNetwork.fromGenes(
@@ -77,6 +83,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Shows the incoming [entity] as a [PerceptronMap], optionally along with
+  /// labels around the Inputs, Brain, and Outputs of the Neural Network.
   Widget showPerceptronMapWithScore({
     required GENNEntity entity,
     bool showLabels = false,
@@ -156,8 +164,9 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Returns an [Axis] that represents which direction to lay out the parents
+  /// of the top performing entity.
   Axis determineUpdatedTopPerformingDisplayAxis({
-    required Axis topPerformingDisplayAxis,
     required GlobalKey topPerformerKey,
     required List<GlobalKey> parentKeys,
   }) {
@@ -193,6 +202,8 @@ class UIHelper<I, O> {
     }
   }
 
+  /// Returns a Column containing the [PerceptronMap] of the Top Performing
+  /// Entity.
   Column showTopPerformerSection({
     required GENNEntity topScoringEntity,
     required GlobalKey topPerformerKey,
@@ -212,6 +223,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Returns a Column or Row of the Parents of the Top Performing Entity based
+  /// on the incoming [topPerformingDisplayAxis].
   Widget showTopScoringParentsSection({
     required List<GENNEntity>? topScoringParents,
     required Axis topPerformingDisplayAxis,
@@ -254,6 +267,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Shows the Neural Network inputs, the guesses, and the correct answers all
+  /// side-by-side.
   Widget showInputsAnswersAndGuesses(GENNEntity entity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -269,6 +284,8 @@ class UIHelper<I, O> {
     );
   }
 
+  /// Shows the incoming [generation]'s entity population as [PerceptronMap]
+  /// objects.
   List<Widget> showPopulationPerceptronMaps({
     required Size mediaQuerySize,
     required GENNGeneration? generation,
@@ -299,6 +316,8 @@ class UIHelper<I, O> {
     ];
   }
 
+  /// Shows the Top Performing Entity and its Parents in either a Column or Row,
+  /// depending on the incoming [topPerformingDisplayAxis].
   Widget showTopPerformerAndParentsSection({
     required GENNGeneration generation,
     required Axis topPerformingDisplayAxis,

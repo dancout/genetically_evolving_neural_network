@@ -120,7 +120,6 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final updatedAxis = uiHelper.determineUpdatedTopPerformingDisplayAxis(
         topPerformerKey: topPerformerKey,
-        topPerformingDisplayAxis: topPerformingDisplayAxis,
         parentKeys: parentKeys,
       );
 
