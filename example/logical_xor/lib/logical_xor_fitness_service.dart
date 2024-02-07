@@ -11,7 +11,8 @@ import 'package:logical_xor/genn_visualization_example/genn_visualization_exampl
 /// will be.
 class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService<
     List<double>, LogicalXorOutput> {
-// ================== GENNFitnessService Overrides ========================
+// ================== START OF GENN EXAMPLE RELATED CONTENT =============================
+// ================== GENNFitnessService Overrides ======================================
 
   /// This function will calculate a fitness score after guessing with every
   /// input within [LogicalXORFitnessService.inputList] on the input
@@ -46,6 +47,7 @@ class LogicalXORFitnessService extends GENNVisualizationExampleFitnessService<
     // 4 to the power of diff
     return pow(4, diff).toDouble();
   }
+// ================== END OF GENN EXAMPLE RELATED CONTENT ===============================
 
   // ================== GENNVisualizationExample Overrides ===================
   @override

@@ -9,10 +9,8 @@ import 'package:logical_xor/number_classifier/natural_number.dart';
 /// Neural Network.
 class NumberClassifierFitnessService
     extends GENNVisualizationExampleFitnessService<PixelImage, NaturalNumber> {
-  @override
-  String convertToReadableString(NaturalNumber value) {
-    return NaturalNumber.values.indexOf(value).toString();
-  }
+// ================== START OF GENN EXAMPLE RELATED CONTENT =============================
+// ================== GENNFitnessService Overrides ======================================
 
   /// Returns a score that proportional to how many correct guesses this Neural
   /// Network has made across all integers from 0 to 9.
@@ -32,7 +30,6 @@ class NumberClassifierFitnessService
     // Cycle through each guess to check its validity
     for (int i = 0; i < guesses.length; i++) {
       final NaturalNumber targetOutput = targetOutputsList[i];
-
       final NaturalNumber guessOutput = guesses[i];
 
       if (targetOutput == guessOutput) {
@@ -46,6 +43,12 @@ class NumberClassifierFitnessService
     //
     // 4 to the power of points
     return pow(4, points).toDouble();
+  }
+// ================== END OF GENN EXAMPLE RELATED CONTENT ===============================
+
+  @override
+  String convertToReadableString(NaturalNumber value) {
+    return NaturalNumber.values.indexOf(value).toString();
   }
 
   @override

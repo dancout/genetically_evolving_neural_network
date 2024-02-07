@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 import 'package:logical_xor/diagram_key.dart';
 import 'package:logical_xor/genn_visualization_example/genn_visualization_example_fitness_service.dart';
-import 'package:logical_xor/logical_xor_fitness_service.dart';
 import 'package:logical_xor/number_classifier/number_classifier_fitness_service.dart';
 import 'package:logical_xor/ui_helper.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp(
+    gennVisualizationExampleFitnessService: NumberClassifierFitnessService(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({
+    required this.gennVisualizationExampleFitnessService,
     super.key,
   });
+
+  /// Represents the FitnessService used to drive this GENN example.
+  final GENNVisualizationExampleFitnessService
+      gennVisualizationExampleFitnessService;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -21,43 +27,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // ================== START OF GENN EXAMPLE RELATED CONTENT =============================
+  /// Represents the FitnessService used to drive this GENN example.
+  /// NOTE: This is an extension of [GENNFitnessService]. It contains additional
+  ///       funcitons to help with visualizing this example.
+  late final GENNVisualizationExampleFitnessService gennExampleFitnessService;
+
   /// The current generation of Neural Networks.
   GENNGeneration? generation;
 
-  static final LogicalXORFitnessService logicalXORFitnessService =
-      LogicalXORFitnessService();
-  static final NumberClassifierFitnessService numberClassifierFitnessService =
-      NumberClassifierFitnessService();
-
-  /// Represents the FitnessService used to drive this GENN example.
-  static final GENNVisualizationExampleFitnessService
-      gennExampleFitnessService = logicalXORFitnessService;
-  // numberClassifierFitnessService;
+  /// The Genetically Evolving Neural Network object.
+  late final GENN genn;
 
   /// Sets the generation value to the next generation on the [GENN] object.
   Future<void> _setNextGeneration() async {
     generation = await genn.nextGeneration();
-    setState(() {});
+    setState(() {}); // Update state with the new generation
   }
-
-  // Declare a config with specific mutation rates.
-  static final config = GENNGeneticEvolutionConfig(
-    numOutputs: gennExampleFitnessService.numOutputs,
-    mutationRate: 0.15,
-    numInitialInputs: gennExampleFitnessService.numInitialInputs,
-    layerMutationRate: 0.2,
-    perceptronMutationRate: 0.4,
-    trackParents: true,
-    // We only care about tracking the parents of the current generation to
-    // show on-screen
-    generationsToTrack: 1,
-  );
-
-  /// The Genetically Evolving Neural Network object.
-  final GENN genn = GENN.create(
-    config: config,
-    fitnessService: gennExampleFitnessService,
-  );
   // ==================== END OF GENN EXAMPLE RELATED CONTENT =============================
 
   /// Whether the example is currently playing forward.
@@ -93,6 +78,28 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     // ================== START OF GENN EXAMPLE RELATED CONTENT ===========================
+    // Set the fitness service coming into this example
+    gennExampleFitnessService = widget.gennVisualizationExampleFitnessService;
+
+    // Declare a config with specific mutation rates.
+    final config = GENNGeneticEvolutionConfig(
+      numOutputs: gennExampleFitnessService.numOutputs,
+      mutationRate: 0.15,
+      numInitialInputs: gennExampleFitnessService.numInitialInputs,
+      layerMutationRate: 0.2,
+      perceptronMutationRate: 0.4,
+      trackParents: true,
+      // We only care about tracking the parents of the current generation to
+      // show on-screen
+      generationsToTrack: 1,
+    );
+
+    // Create the GENN object from the incoming config and fitness service.
+    genn = GENN.create(
+      config: config,
+      fitnessService: gennExampleFitnessService,
+    );
+
     // Initialize the first generation
     _setNextGeneration();
     // ==================== END OF GENN EXAMPLE RELATED CONTENT ===========================
@@ -118,7 +125,7 @@ class _MyAppState extends State<MyApp> {
       );
 
       // Determine whether the axis needs to updated
-      bool requiresUpdate = updatedAxis == topPerformingDisplayAxis;
+      bool requiresUpdate = updatedAxis != topPerformingDisplayAxis;
 
       if (isPlaying) {
         // Sleep for [waitTimeBetweenWaves] during continuous play so that the
