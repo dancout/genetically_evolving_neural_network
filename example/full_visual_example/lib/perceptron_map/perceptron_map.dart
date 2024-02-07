@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:full_visual_example/perceptron_map/consts.dart';
+import 'package:full_visual_example/perceptron_map/visualized_perceptron.dart';
+import 'package:full_visual_example/perceptron_map/weight_line_painter.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
-import 'package:logical_xor/perceptron_map/consts.dart';
-import 'package:logical_xor/perceptron_map/visualized_perceptron.dart';
-import 'package:logical_xor/perceptron_map/weight_line_painter.dart';
 
 class PerceptronMap extends StatelessWidget {
   const PerceptronMap({

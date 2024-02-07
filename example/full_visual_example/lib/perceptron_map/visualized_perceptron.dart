@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:logical_xor/perceptron_map/consts.dart';
+import 'package:full_visual_example/perceptron_map/consts.dart';
 
 class VisualizedPerceptron extends StatelessWidget {
   const VisualizedPerceptron({

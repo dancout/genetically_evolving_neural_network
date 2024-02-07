@@ -8,13 +8,13 @@
             "name": "run Logical XOR",
             "request": "launch",
             "type": "dart",
-            "program": "example/logical_xor/lib/logical_xor/main.dart"
+            "program": "example/full_visual_example/lib/logical_xor/main.dart"
         },
         {
             "name": "run Number Classifier",
             "request": "launch",
             "type": "dart",
-            "program": "example/logical_xor/lib/number_classifier/main.dart"
+            "program": "example/full_visual_example/lib/number_classifier/main.dart"
         },
        
     ]
