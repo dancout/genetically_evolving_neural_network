@@ -271,7 +271,10 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
                 isPlaying = !isPlaying;
               });
             } else {
+              // ================== START OF GENN EXAMPLE RELATED CONTENT =======================
+              // Set the next Generation to be displayed
               await _setNextGeneration();
+              // ================== END OF GENN EXAMPLE RELATED CONTENT =========================
             }
           },
           child: (!continuousPlay || !isPlaying)
