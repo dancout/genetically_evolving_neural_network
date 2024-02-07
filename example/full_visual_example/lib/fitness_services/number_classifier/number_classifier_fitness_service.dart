@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/genn_visualization_example/genn_visualization_example_fitness_service.dart';
-import 'package:full_visual_example/number_classifier/natural_number.dart';
+import 'package:full_visual_example/fitness_services/number_classifier/natural_number.dart';
+import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// This class will be used to score a Number Classifier in tandem with a

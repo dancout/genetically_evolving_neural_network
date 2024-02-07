@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/genn_visualization_example/genn_visualization_example.dart';
+import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// Represents a wrapper class that extends [GENNFitnessService] and implements

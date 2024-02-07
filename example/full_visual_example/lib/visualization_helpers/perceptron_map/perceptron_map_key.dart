@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/perceptron_map/consts.dart';
-import 'package:full_visual_example/perceptron_map/visualized_perceptron.dart';
-import 'package:full_visual_example/perceptron_map/weight_line_painter.dart';
+import 'package:full_visual_example/visualization_helpers/perceptron_map/consts.dart';
+import 'package:full_visual_example/visualization_helpers/perceptron_map/visualized_perceptron.dart';
+import 'package:full_visual_example/visualization_helpers/perceptron_map/weight_line_painter.dart';
 
 class PerceptronMapKey extends StatelessWidget {
   const PerceptronMapKey({

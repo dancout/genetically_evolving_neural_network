@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/diagram_key.dart';
-import 'package:full_visual_example/genn_visualization_example/genn_visualization_example_fitness_service.dart';
-import 'package:full_visual_example/logical_xor/logical_xor_fitness_service.dart';
+import 'package:full_visual_example/fitness_services/logical_xor/logical_xor_fitness_service.dart';
 import 'package:full_visual_example/ui_helper.dart';
+import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example_fitness_service.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 void main() {
@@ -190,9 +189,7 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (showDiagramKey)
-                    DiagramKey(
-                      gennExampleFitnessService: gennExampleFitnessService,
-                    ),
+                    uiHelper.showDiagramKey(mediaQuerySize: mediaQuerySize),
                   SizedBox(
                     width: mediaQuerySize.width / (showDiagramKey ? 2.0 : 1.0),
                     child: Column(
