@@ -1,21 +1,47 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-/// Represents a wrapper class that extends [GENNFitnessService] and implements
-/// [GENNVisualizationExample].
+/// This class implements functions to help visualize the [GENN] class in
+/// action.
 ///
 /// The input and output types of the Neural Network can be represented by the
-/// types <I, O> respectively.
-abstract class GENNVisualizationExampleFitnessService<I, O>
-    extends GENNFitnessService implements GENNVisualizationExample<I, O> {
-  @override
-  Future<double> gennScoringFunction(
-      {required GENNNeuralNetwork neuralNetwork});
+/// types <I, O>, respectively.
+abstract class VisualizationExampleGENNFitnessService<I, O>
+    extends GENNFitnessService {
+  /// The list of inputs for your Neural Network.
+  List<I> get inputList;
 
-  @override
+  /// The [VisualizationExampleGENNFitnessService.inputList] converted into a List of more
+  /// human readable Widgets.
+  List<Widget> get readableInputList;
+
+  /// The list of outputs, or guesses, for your Neural Network. These are the
+  /// expected outputs respective to the inputs from
+  /// [VisualizationExampleGENNFitnessService.inputList].
+  List<O> get targetOutputsList;
+
+  /// The [VisualizationExampleGENNFitnessService.targetOutputsList] converted into a List of
+  /// more human readable Widgets.
+  List<Widget> get readableTargetList;
+
+  /// The function used to convert a Neural Network output of Type <O> to be
+  /// more human readable.
+  String convertToReadableString(O value) {
+    throw UnimplementedError();
+  }
+
+  /// The highest possible fitness score, or null if it is not known.
+  double? get highestPossibleScore;
+
+  /// The target fitness score to achieve, or null if it is not known.
+  double? get targetFitnessScore => (highestPossibleScore != null)
+      ? (highestPossibleScore! + nonZeroBias)
+      : null;
+
+  /// Returns the list of guesses (or outputs) from the input [neuralNetwork]
+  /// based on [VisualizationExampleGENNFitnessService.inputList].
   List<O> getNeuralNetworkGuesses({
     required GENNNeuralNetwork neuralNetwork,
   }) {
@@ -50,41 +76,6 @@ abstract class GENNVisualizationExampleFitnessService<I, O>
     return guesses;
   }
 
-  /// Converts the input [guess] (which is expected to the be output from a
-  /// Nueral Network) into the expected Output Type <O> from this class.
-  O convertGuessToOutputType({
-    required List<double> guess,
-  });
-
-  /// Converts this class's Input type <I> into a List<double> that can be fed
-  /// into the Neural Network.
-  List<double> convertInputToNeuralNetworkInput({
-    required I input,
-  });
-
-  @override
-  double? get highestPossibleScore;
-
-  @override
-  List<I> get inputList;
-
-  @override
-  List<Widget> get readableInputList;
-
-  @override
-  List<Widget> get readableTargetList;
-
-  @override
-  double? get targetFitnessScore => (highestPossibleScore != null)
-      ? (highestPossibleScore! + nonZeroBias)
-      : null;
-
-  @override
-  List<O> get targetOutputsList;
-
-  @override
-  String convertToReadableString(O value);
-
   /// This function will account for ties in guesses by randomly choosing an
   /// index of one of the guesses that tied for highest confidence. For example,
   /// if the guesses at index 4, 6, and 7 were all tied for the highest
@@ -118,4 +109,22 @@ abstract class GENNVisualizationExampleFitnessService<I, O>
     final highestConfidenceInt = listOfHighestConfidenceIndices[0];
     return highestConfidenceInt;
   }
+
+  /// Converts the input [guess] (which is expected to the be output from a
+  /// Nueral Network) into the expected Output Type <O> from this class.
+  O convertGuessToOutputType({
+    required List<double> guess,
+  });
+
+  /// Converts this class's Input type <I> into a List<double> that can be fed
+  /// into the Neural Network.
+  List<double> convertInputToNeuralNetworkInput({
+    required I input,
+  });
+
+  /// The number of inputs being fed into the Neural Network.
+  int get numInitialInputs;
+
+  /// The number of outputs expected from the Neural Network.
+  int get numOutputs;
 }

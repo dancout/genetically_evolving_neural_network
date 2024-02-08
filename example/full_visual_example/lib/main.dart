@@ -1,40 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:full_visual_example/fitness_services/logical_xor/logical_xor_fitness_service.dart';
-import 'package:full_visual_example/ui_helper.dart';
-import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example_fitness_service.dart';
+import 'package:full_visual_example/visualization_helpers/genn_visualization_example/visualization_example_genn_fitness_service.dart';
+import 'package:full_visual_example/visualization_helpers/ui_helper.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 void main() {
   // ================== START OF GENN EXAMPLE RELATED CONTENT =============================
   // Decalre the fitness service that will be visualized.
-  GENNVisualizationExampleFitnessService gennVisualizationExampleFitnessService;
+  VisualizationExampleGENNFitnessService gennFitnessServiceExample;
 
   // Uncomment whichever fitness service you would like to visualize.
-  gennVisualizationExampleFitnessService = LogicalXORFitnessService();
-  // gennVisualizationExampleFitnessService = NumberClassifierFitnessService();
+  gennFitnessServiceExample = LogicalXORGENNVisualizationFitnessService();
+  // gennFitnessServiceExample = NumberClassifierFitnessService();
   // ==================== END OF GENN EXAMPLE RELATED CONTENT =============================
 
   runApp(
     GENNExampleApp(
-      gennVisualizationExampleFitnessService:
-          gennVisualizationExampleFitnessService,
+      gennFitnessServiceExample: gennFitnessServiceExample,
     ),
   );
 }
 
 /// This class houses an example app to visually display how the incoming
-/// [GENNVisualizationExampleFitnessService] works.
+/// [VisualizationExampleGENNFitnessService] works.
 class GENNExampleApp extends StatefulWidget {
   /// This class houses an example app to visually display how the incoming
-  /// [GENNVisualizationExampleFitnessService] works.
+  /// [VisualizationExampleGENNFitnessService] works.
   const GENNExampleApp({
-    required this.gennVisualizationExampleFitnessService,
+    required this.gennFitnessServiceExample,
     super.key,
   });
 
   /// Represents the FitnessService used to drive this GENN example.
-  final GENNVisualizationExampleFitnessService
-      gennVisualizationExampleFitnessService;
+  final VisualizationExampleGENNFitnessService gennFitnessServiceExample;
 
   @override
   State<GENNExampleApp> createState() => _GENNExampleAppState();
@@ -45,7 +43,7 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
   /// Represents the FitnessService used to drive this GENN example.
   /// NOTE: This is an extension of [GENNFitnessService]. It contains additional
   ///       funcitons to help with visualizing this example.
-  late final GENNVisualizationExampleFitnessService gennExampleFitnessService;
+  late final VisualizationExampleGENNFitnessService gennExampleFitnessService;
 
   /// The current generation of Neural Networks.
   GENNGeneration? generation;
@@ -94,7 +92,7 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
   void initState() {
     // ================== START OF GENN EXAMPLE RELATED CONTENT ===========================
     // Set the fitness service coming into this example
-    gennExampleFitnessService = widget.gennVisualizationExampleFitnessService;
+    gennExampleFitnessService = widget.gennFitnessServiceExample;
 
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(

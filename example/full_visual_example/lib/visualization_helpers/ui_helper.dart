@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:full_visual_example/visualization_helpers/genn_visualization_example/genn_visualization_example_fitness_service.dart';
+import 'package:full_visual_example/visualization_helpers/genn_visualization_example/visualization_example_genn_fitness_service.dart';
 import 'package:full_visual_example/visualization_helpers/perceptron_map/consts.dart';
 import 'package:full_visual_example/visualization_helpers/perceptron_map/perceptron_map.dart';
 import 'package:full_visual_example/visualization_helpers/perceptron_map/perceptron_map_key.dart';
@@ -14,7 +14,7 @@ class UIHelper<I, O> {
 
   final perceptronMapDivider = Container(height: 4, color: Colors.grey);
 
-  final GENNVisualizationExampleFitnessService<I, O> gennExampleFitnessService;
+  final VisualizationExampleGENNFitnessService<I, O> gennExampleFitnessService;
 
   /// Shows a Column of the correct answers built from
   /// [GENNExampleFitnessService.readableTargetList].
