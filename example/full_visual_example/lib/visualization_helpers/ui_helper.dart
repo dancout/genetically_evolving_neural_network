@@ -559,17 +559,13 @@ class UIHelper<I, O> {
                 const SizedBox(height: 12.0),
                 perceptronMapDivider,
                 const SizedBox(height: 12.0),
-                // TODO: This needs to come from gennExampleFitnessService
-                const Text(
-                  'Logical XOR Description',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  gennExampleFitnessService.diagramKeyTitle,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12.0),
-                const Text(
-                  'This Neural Network is meant to "guess" the output of the classic Logical Exclusive OR (XOR) problem.\n'
-                  'Given three inputs, it should output a 1 if ONLY a single input is 1. In any other case, output a 0 (see table to the right for all Correct Answers).\n\n'
-                  'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
-                  'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.',
+                Text(
+                  gennExampleFitnessService.diagramKeyDescription,
                 ),
               ],
             ),

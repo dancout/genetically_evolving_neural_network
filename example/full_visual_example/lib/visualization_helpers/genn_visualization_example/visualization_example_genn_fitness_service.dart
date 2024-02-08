@@ -127,4 +127,10 @@ abstract class VisualizationExampleGENNFitnessService<I, O>
 
   /// The number of outputs expected from the Neural Network.
   int get numOutputs;
+
+  /// The title to show in the Diagram Key.
+  String get diagramKeyTitle;
+
+  /// The description to show in the Diagram Key.
+  String get diagramKeyDescription;
 }

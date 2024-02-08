@@ -122,4 +122,14 @@ mixin NumberClassifierFitnessServiceHelpers
   }) {
     return input.pixels;
   }
+
+  @override
+  String get diagramKeyTitle => 'Number Classifier Description';
+
+  @override
+  String get diagramKeyDescription =>
+      'This Neural Network is meant to "guess" the value of a number shown in the form of a pixelated image.\n'
+      'Using each pixel as an input to the Neural Network, it should be able to guess which positive, natural number between 0 and 9 is being shown.\n\n'
+      'Each new generation will choose high scoring parents from the previous generation to "breed" together and create new "children", so that the children\'s DNA is a mixture of both parents\' DNA.\n'
+      'Additionally, the genes have a potential to "mutate", similar to mutations of animals in the real world.';
 }
