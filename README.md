@@ -22,11 +22,10 @@ This cycle repeats itself, keeping the high performing Neural Networks within th
 * Define your own `FitnessService` that assigns a fitness score to an entity based on how well it performs. This could mean guessing if a number is positive or negative, choosing a next move in a chess game, or any other decision a neural network can make.
 * Define your `GeneticEvolutionConfig`, responsible for how many entities should exist within a population, how often an Entity's DNA should mutate, and other adjustable values.
 
-## Positive Number Example
+## Positive or Negative Number Classifier Example
 #### In this example, we will guess whether an input is positive or negative.
+(You can view the entire file [here](https://pub.dev/packages/genetically_evolving_neural_network/example#full-working-example))
 
-
-TODO: SKIP TO THE FULL FILE
 
 First, define the `GENNFitnessService` that rewards correctly identifying if a number is positive or negative.
 ```dart
