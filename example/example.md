@@ -130,9 +130,7 @@ This example will attempt to correctly guess if a set of inputs satisfies Logica
 
 You can see all logical xor files [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main/example/full_visual_example/lib/fitness_services/logical_xor).
 
-// TODO: UPDATE GIF
-
-![genn_xor 1](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/49dd19d0-a951-4521-9038-cc734bad483c)
+![logical_xor](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/0737a473-5c0f-428c-afba-016fc381a9a9)
 
 ### logical_xor_fitness_service.dart
 This file contains your custom `FitnessService` that will reward correctly guessing if a set of inputs satisfies Logical XOR.
@@ -184,7 +182,7 @@ This example will attempt to correctly guess the integer (between 0 and 9) that 
 
 You can see all Image Number Classifier files [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main/example/full_visual_example/lib/fitness_services/number_classifier).
 
-// TODO: ADD GIF HERE
+![number_classifier](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/d8ad8d24-3ff0-43dd-b74b-4e5ad79ae2f0)
 
 ### number_classifier_fitness_service.dart
 This file contains your custom `FitnessService` that will reward correctly guessing what integer a pixelated image represents.
