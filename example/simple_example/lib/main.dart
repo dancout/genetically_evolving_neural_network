@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// The inputs for this Neural Network, from -1 to 1 in increments of 0.1.
-List<double> get inputs => List.generate(10, (index) => index * 0.1) // [0 to 1]
-  ..addAll(List.generate(9, (index) => (index + 1) * -0.1)); // [-0.1 to -1]
+List<double> get inputs => List.generate(10, (index) => index * 0.1)
+  ..addAll(List.generate(9, (index) => (index + 1) * -0.1));
 
 /// The scoring function that will be used to evolve entities of a population
 class PositiveNumberFitnessService extends GENNFitnessService {
@@ -27,8 +27,6 @@ void main() {
   runApp(const MyApp());
 }
 
-/// This class houses an example app to visually display how the incoming
-/// [VisualizationExampleGENNFitnessService] works.
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 

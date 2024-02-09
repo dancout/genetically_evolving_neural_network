@@ -16,9 +16,6 @@ class NumberClassifierFitnessService
     //       [GENNFitnessServiceVisualizationExample] class.
     with
         NumberClassifierFitnessServiceHelpers {
-// ================== START OF GENN EXAMPLE RELATED CONTENT =============================
-// ================== GENNFitnessService Overrides ======================================
-
   /// Returns a score that proportional to how many correct guesses this Neural
   /// Network has made across all integers from 0 to 9.
   ///
@@ -51,5 +48,4 @@ class NumberClassifierFitnessService
     // 4 to the power of points
     return pow(4, points).toDouble();
   }
-// ================== END OF GENN EXAMPLE RELATED CONTENT ===============================
 }

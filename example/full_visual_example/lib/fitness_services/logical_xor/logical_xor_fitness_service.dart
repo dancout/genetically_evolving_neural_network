@@ -6,8 +6,8 @@ import 'package:full_visual_example/visualization_helpers/genn_visualization_exa
 import 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// This fitness service will be used to score a logical XOR calculator. The
-/// output should only return true if a single value is 1.0 and both other
-/// values are 0.0.
+/// Neural Network should only be rewarded for guessing "yes" when there is a
+/// single input of 1.0 and both other inputs are 0.
 class LogicalXORGENNVisualizationFitnessService extends
     // NOTE: We are extending [GENNFitnessServiceVisualizationExample] instead
     //       of [GENNFitnessService] to include additional functions to assist
