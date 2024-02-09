@@ -1,3 +1,13 @@
+## 0.2.0
+
+* Refactored mutations logic to be more efficient
+* Opened `entityService` and `populationService` up to be visible for `GENN` constructor
+* Added additional tests and documentation
+* Updated example directory
+    * Added Image Number Classifier complex example
+    * Made example files much more reusable for future examples
+    * Added Positive or Negative Number Classifier simple example
+
 ## 0.1.1+hotfix
 
 * Fixed bug around too many perceptrons existing in output layer
