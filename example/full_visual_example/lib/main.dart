@@ -174,7 +174,7 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
 
     final mediaQuerySize = MediaQuery.of(context).size;
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'GENN Visual Example',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
