@@ -1,35 +1,31 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
+/// Responsible for ensuring that there is the proper number of
+/// [GENNPerceptronLayer] objects present within a [GENNEntity] as well as
+/// [GENNPerceptron] objects within a [GENNPerceptronLayer].
 class GENNCrossoverServiceAlignmentHelper {
+  /// Responsible for ensuring that there is the proper number of
+  /// [GENNPerceptronLayer] objects present within a [GENNEntity] as well as
+  /// [GENNPerceptron] objects within a [GENNPerceptronLayer].
   GENNCrossoverServiceAlignmentHelper({
     required this.numOutputs,
-    required this.perceptronLayerMutationService,
-    GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
-    GENNCrossoverServiceAlignmentPerceptronHelper?
-        gennCrossoverServiceAlignmentPerceptronHelper,
-    NumberGenerator? numberGenerator,
-  }) {
-    final myGennCrossoverServiceHelper = gennCrossoverServiceHelper ??
-        GENNCrossoverServiceHelper(
-          numberGenerator: numberGenerator,
-        );
-    this.gennCrossoverServiceAlignmentPerceptronHelper =
-        gennCrossoverServiceAlignmentPerceptronHelper ??
-            GENNCrossoverServiceAlignmentPerceptronHelper(
-              perceptronLayerMutationService: perceptronLayerMutationService,
-              gennCrossoverServiceHelper: myGennCrossoverServiceHelper,
-            );
-  }
+    required this.perceptronLayerAlignmentHelper,
+    required this.gennCrossoverServiceAlignmentPerceptronHelper,
+  });
 
+  /// Updates the [GENNPerceptron] and [GENNPerceptronLayer] objects within a
+  /// [GENNEntity].
   late final GENNCrossoverServiceAlignmentPerceptronHelper
       gennCrossoverServiceAlignmentPerceptronHelper;
+
+  /// Updates the [GENNPerceptron] objects within a [GENNPerceptronLayer].
+  final PerceptronLayerAlignmentHelper perceptronLayerAlignmentHelper;
 
   /// The number of expected outputs for this NeuralNetwork
   final int numOutputs;
 
-  /// Used to mutate the [GENNPerceptronLayer]s.
-  final PerceptronLayerMutationService perceptronLayerMutationService;
-
+  /// Updates the incoming [parents] so that they have the same number of
+  /// internal Perceptron Layers.
   Future<List<GENNEntity>> alignNumLayersForParents({
     required List<GENNEntity> parents,
   }) async {
@@ -71,6 +67,8 @@ class GENNCrossoverServiceAlignmentHelper {
     return copiedParents;
   }
 
+  /// Ensures the incoming [parents] all have the same number of Perceptrons
+  /// (Genes) within each internal Perceptron Layer.
   Future<List<GENNEntity>> alignGenesWithinLayersForParents({
     required List<GENNEntity> parents,
   }) async {
@@ -120,8 +118,8 @@ class GENNCrossoverServiceAlignmentHelper {
       for (int x = 0; x < copiedParents.length; x++) {
         // Make the number of Genes within the current layer match the
         // targetNumPerceptrons.
-        copiedParents[x] = await gennCrossoverServiceAlignmentPerceptronHelper
-            .alignGenesWithinLayer(
+        copiedParents[x] =
+            await perceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: copiedParents[x],
           targetLayer: currLayer,
           targetGeneNum: targetNumPerceptrons,

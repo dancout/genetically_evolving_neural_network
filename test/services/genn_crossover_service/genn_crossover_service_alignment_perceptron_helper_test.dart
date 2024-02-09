@@ -30,15 +30,15 @@ void main() {
     fitnessScore: updatedFitnessScore,
   );
 
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
+  late EntityManipulationService mockEntityManipulationService;
   late GENNCrossoverServiceHelper mockGennCrossoverServiceHelper;
   late GENNCrossoverServiceAlignmentPerceptronHelper testObject;
 
   setUp(() async {
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
+    mockEntityManipulationService = MockEntityManipulationService();
     mockGennCrossoverServiceHelper = MockGennCrossoverServiceHelper();
     testObject = GENNCrossoverServiceAlignmentPerceptronHelper(
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
+      entityManipulationService: mockEntityManipulationService,
       gennCrossoverServiceHelper: mockGennCrossoverServiceHelper,
     );
   });
@@ -49,16 +49,10 @@ void main() {
         () async {
       const targetNumLayers = 1;
 
-      final gennPerceptronLayer =
-          GENNPerceptronLayer(perceptrons: [gennPerceptron]);
-
-      when(() => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-              gennPerceptronLayer: gennPerceptronLayer))
-          .thenReturn(gennPerceptronLayer);
-
-      when(() => mockPerceptronLayerMutationService.addPerceptronLayer(
-          entity: gennEntity,
-          perceptronLayer: gennPerceptronLayer)).thenReturn(updatedGennEntity);
+      when(() => mockEntityManipulationService
+              .duplicatePerceptronLayerWithinEntity(
+                  entity: gennEntity, targetLayer: gennEntity.maxLayerNum))
+          .thenAnswer((invocation) async => updatedGennEntity);
 
       final actual = await testObject.alignPerceptronLayersWithinEntity(
         gennEntity: gennEntity,
@@ -68,18 +62,14 @@ void main() {
       expect(actual, updatedGennEntity);
 
       verify(
-        () => mockPerceptronLayerMutationService.duplicatePerceptronLayer(
-          gennPerceptronLayer: gennPerceptronLayer,
-        ),
-      );
-      verify(
-        () => mockPerceptronLayerMutationService.addPerceptronLayer(
+        () =>
+            mockEntityManipulationService.duplicatePerceptronLayerWithinEntity(
           entity: gennEntity,
-          perceptronLayer: gennPerceptronLayer,
+          targetLayer: gennEntity.maxLayerNum,
         ),
       );
 
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -94,7 +84,7 @@ void main() {
 
       expect(actual, gennEntity);
 
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
+      verifyZeroInteractions(mockEntityManipulationService);
     });
 
     test(
@@ -131,8 +121,7 @@ void main() {
       );
 
       when(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: thirdLayerGennEntity,
           targetLayer: thirdLayer,
         ),
@@ -140,8 +129,7 @@ void main() {
         (_) async => secondLayerGennEntity,
       );
       when(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: secondLayerGennEntity,
           targetLayer: secondLayer,
         ),
@@ -157,161 +145,20 @@ void main() {
       expect(actual, gennEntity);
 
       verify(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: secondLayerGennEntity,
           targetLayer: secondLayer,
         ),
       );
 
       verify(
-        () =>
-            mockPerceptronLayerMutationService.removePerceptronLayerFromEntity(
+        () => mockEntityManipulationService.removePerceptronLayerFromEntity(
           entity: thirdLayerGennEntity,
           targetLayer: thirdLayer,
         ),
       );
 
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
-    });
-  });
-
-  group('alignGenesWithinLayer', () {
-    const targetLayer = 0;
-
-    test(
-        'returns proper GENNEntity when genesWithinTargetLayer is greater than targetGeneNum',
-        () async {
-      const targetGeneNum = 0;
-
-      final gennEntityTwoGenes = gennEntity.copyWith(
-          dna: GENNDNA(genes: [
-        GENNGene(
-          value: gennPerceptron,
-        ),
-        GENNGene(
-          value: gennPerceptron,
-        ),
-      ]));
-      const updatedUpdatedFitnessScore = updatedFitnessScore + 1;
-
-      final updatedUpdatedGennEntity = updatedGennEntity.copyWith(
-        fitnessScore: updatedUpdatedFitnessScore,
-      );
-
-      when(
-        () => mockPerceptronLayerMutationService.removePerceptronFromLayer(
-          entity: gennEntityTwoGenes,
-          targetLayer: targetLayer,
-        ),
-      ).thenAnswer(
-        (_) async => updatedGennEntity,
-      );
-
-      when(
-        () => mockPerceptronLayerMutationService.removePerceptronFromLayer(
-          entity: updatedGennEntity,
-          targetLayer: targetLayer,
-        ),
-      ).thenAnswer(
-        (_) async => updatedUpdatedGennEntity,
-      );
-
-      final actual = await testObject.alignGenesWithinLayer(
-        entity: gennEntityTwoGenes,
-        targetLayer: targetLayer,
-        targetGeneNum: targetGeneNum,
-      );
-
-      expect(actual, updatedUpdatedGennEntity);
-
-      verify(
-        () => mockPerceptronLayerMutationService.removePerceptronFromLayer(
-          entity: gennEntityTwoGenes,
-          targetLayer: targetLayer,
-        ),
-      );
-      verify(
-        () => mockPerceptronLayerMutationService.removePerceptronFromLayer(
-          entity: updatedGennEntity,
-          targetLayer: targetLayer,
-        ),
-      );
-
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
-    });
-
-    test(
-        'returns proper GENNEntity when genesWithinTargetLayer is equal to targetGeneNum',
-        () async {
-      const targetGeneNum = 1;
-
-      final actual = await testObject.alignGenesWithinLayer(
-        entity: gennEntity,
-        targetLayer: targetLayer,
-        targetGeneNum: targetGeneNum,
-      );
-
-      expect(actual, gennEntity);
-
-      verifyZeroInteractions(mockPerceptronLayerMutationService);
-    });
-
-    test(
-        'returns proper GENNEntity when genesWithinTargetLayer is less than targetGeneNum',
-        () async {
-      const targetGeneNum = 3;
-
-      final gennEntityTwoGenes = gennEntity.copyWith(
-          dna: GENNDNA(genes: [
-        GENNGene(
-          value: gennPerceptron,
-        ),
-        GENNGene(
-          value: gennPerceptron,
-        ),
-      ]));
-
-      when(
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
-          entity: gennEntity,
-          targetLayer: targetLayer,
-        ),
-      ).thenAnswer(
-        (_) async => gennEntityTwoGenes,
-      );
-
-      when(
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
-          entity: gennEntityTwoGenes,
-          targetLayer: targetLayer,
-        ),
-      ).thenAnswer(
-        (_) async => updatedGennEntity,
-      );
-
-      final actual = await testObject.alignGenesWithinLayer(
-        entity: gennEntity,
-        targetLayer: targetLayer,
-        targetGeneNum: targetGeneNum,
-      );
-
-      expect(actual, updatedGennEntity);
-
-      verify(
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
-          entity: gennEntity,
-          targetLayer: targetLayer,
-        ),
-      );
-      verify(
-        () => mockPerceptronLayerMutationService.addPerceptronToLayer(
-          entity: gennEntityTwoGenes,
-          targetLayer: targetLayer,
-        ),
-      );
-
-      verifyNoMoreInteractions(mockPerceptronLayerMutationService);
+      verifyNoMoreInteractions(mockEntityManipulationService);
     });
   });
 

@@ -2,40 +2,15 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// Crosses over parents to create a child.
 class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
+  /// Crosses over parents to create a child.
   GENNCrossoverService({
-    /// Used to mutate the [GENNPerceptronLayer]s.
-    required PerceptronLayerMutationService? perceptronLayerMutationService,
     required super.geneMutationService,
-    required this.numOutputs,
-    GENNCrossoverServiceHelper? gennCrossoverServiceHelper,
+    required this.gennCrossoverServiceAlignmentHelper,
     super.random,
-    NumberGenerator? numberGenerator,
-    GENNCrossoverServiceAlignmentHelper? gennCrossoverServiceAlignmentHelper,
-  }) {
-    if (gennCrossoverServiceAlignmentHelper != null) {
-      this.gennCrossoverServiceAlignmentHelper =
-          gennCrossoverServiceAlignmentHelper;
-    } else {
-      if (perceptronLayerMutationService != null) {
-        this.gennCrossoverServiceAlignmentHelper =
-            GENNCrossoverServiceAlignmentHelper(
-          numOutputs: numOutputs,
-          perceptronLayerMutationService: perceptronLayerMutationService,
-          numberGenerator: numberGenerator,
-          gennCrossoverServiceHelper: gennCrossoverServiceHelper,
-        );
-      } else {
-        throw Exception(
-          'Cannot have both null PerceptronLayerMutationService AND null '
-          'GENNCrossoverServiceAlignmentHelper',
-        );
-      }
-    }
-  }
+  });
 
-  /// The number of expected outputs for this NeuralNetwork
-  final int numOutputs;
-
+  /// Responsbile for ensuring the correct number of Perceptrons and Perceptron
+  /// Layers exist within a [GENNEntity].
   late final GENNCrossoverServiceAlignmentHelper
       gennCrossoverServiceAlignmentHelper;
 
@@ -54,7 +29,7 @@ class GENNCrossoverService extends CrossoverService<GENNPerceptron> {
       parents: gennParents,
     );
 
-    // Make the Genes match up in each layer across all pernts
+    // Make the Genes match up in each layer across all parents
     gennParents = await gennCrossoverServiceAlignmentHelper
         .alignGenesWithinLayersForParents(
       parents: gennParents,

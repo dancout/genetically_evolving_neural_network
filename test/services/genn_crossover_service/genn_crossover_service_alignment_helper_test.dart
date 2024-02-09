@@ -84,22 +84,22 @@ void main() {
     thirdLayerGennEntity,
   ];
   const numOutputs = 3;
-  late PerceptronLayerMutationService mockPerceptronLayerMutationService;
   late GENNCrossoverServiceHelper mockGennCrossoverServiceHelper;
   late GENNCrossoverServiceAlignmentPerceptronHelper
       mockGennCrossoverServiceAlignmentPerceptronHelper;
+  late PerceptronLayerAlignmentHelper mockPerceptronLayerAlignmentHelper;
 
   late GENNCrossoverServiceAlignmentHelper testObject;
 
   setUp(() async {
-    mockPerceptronLayerMutationService = MockPerceptronLayerMutationService();
     mockGennCrossoverServiceHelper = MockGennCrossoverServiceHelper();
     mockGennCrossoverServiceAlignmentPerceptronHelper =
         MockGennCrossoverServiceAlignmentPerceptronHelper();
+    mockPerceptronLayerAlignmentHelper = MockPerceptronLayerAlignmentHelper();
 
     testObject = GENNCrossoverServiceAlignmentHelper(
+      perceptronLayerAlignmentHelper: mockPerceptronLayerAlignmentHelper,
       numOutputs: numOutputs,
-      perceptronLayerMutationService: mockPerceptronLayerMutationService,
       gennCrossoverServiceAlignmentPerceptronHelper:
           mockGennCrossoverServiceAlignmentPerceptronHelper,
     );
@@ -249,8 +249,7 @@ void main() {
 
     test('returns proper value when is last layer', () async {
       when(
-        () => mockGennCrossoverServiceAlignmentPerceptronHelper
-            .alignGenesWithinLayer(
+        () => mockPerceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: firstLayerGennEntity,
           targetLayer: firstLayer,
           targetGeneNum: numOutputs,
@@ -274,8 +273,7 @@ void main() {
 
     test('returns proper value when is not last layer', () async {
       when(
-        () => mockGennCrossoverServiceAlignmentPerceptronHelper
-            .alignGenesWithinLayer(
+        () => mockPerceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: secondLayerGennEntity,
           targetLayer: firstLayer,
           targetGeneNum: 0,
@@ -283,8 +281,7 @@ void main() {
       ).thenAnswer((_) async => secondLayerCrossodOverGennEntity);
 
       when(
-        () => mockGennCrossoverServiceAlignmentPerceptronHelper
-            .alignGenesWithinLayer(
+        () => mockPerceptronLayerAlignmentHelper.alignGenesWithinLayer(
           entity: secondLayerCrossodOverGennEntity,
           targetLayer: secondLayer,
           targetGeneNum: numOutputs,
