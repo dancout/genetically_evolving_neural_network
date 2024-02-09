@@ -25,23 +25,30 @@ This cycle repeats itself, keeping the high performing Neural Networks within th
 ## Positive Number Example
 #### In this example, we will guess whether an input is positive or negative.
 
+
+TODO: SKIP TO THE FULL FILE
+
 First, define the `GENNFitnessService` that rewards correctly identifying if a number is positive or negative.
 ```dart
+/// The inputs for this Neural Network, from -1 to 1 in increments of 0.1.
+List<double> get inputs => List.generate(10, (index) => index * 0.1)
+  ..addAll(List.generate(9, (index) => (index + 1) * -0.1));
+
+/// The scoring function that will be used to evolve entities of a population
 class PositiveNumberFitnessService extends GENNFitnessService {
   @override
   Future<double> gennScoringFunction({
     required GENNNeuralNetwork neuralNetwork,
   }) async {
-    // Calculate guesses based on both positive and negative inputs.
-    final positiveGuess = neuralNetwork.guess(inputs: [0.5]);
-    final negativeGuess = neuralNetwork.guess(inputs: [-0.5]);
-
-    // A guess of 0 means negative, and anything else means positive.
-    final positiveGuessScore = positiveGuess[0] > 0 ? 1.0 : 0.0;
-    final negativeGuessScore = negativeGuess[0] == 0 ? 1.0 : 0.0;
-
-    // Add the guess scores together, rewarding only correct answers.
-    return positiveGuessScore + negativeGuessScore;
+    // Calculate how many correct guesses were made
+    return inputs.fold(0, (previousValue, input) {
+      final guess = neuralNetwork.guess(inputs: [input])[0];
+      // Only add a point if the neural network guesses correctly
+      if ((input > 0 && guess > 0) || (input <= 0 && guess == 0)) {
+        return previousValue + 1;
+      }
+      return previousValue;
+    }).toDouble();
   }
 }
 ```
