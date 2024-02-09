@@ -1,6 +1,12 @@
-TODO: TABLE OF CONTENTS
-# Simple Example
+# Table of Contents
 
+- [Simple Example](#simple-example)
+    - [Positive or Negative Number Classifier](#positive-or-negative-number-classifier)
+- [Complex Examples](#complex-examples)
+    - [Logical XOR](#logical-xor)
+    - [Image Number Classifier](#image-number-classifier)
+
+# Simple Example
 ## Positive or Negative Number Classifier
 This example will guess whether an input is positive or negative.
 
@@ -121,11 +127,10 @@ class _MyAppState extends State<MyApp> {
   }
 }
 ```
-# More Complex Examples
-
+# Complex Examples
 You can access the full example code by cloning this package locally, [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main).
 
-## Logical XOR Example
+## Logical XOR
 This example will attempt to correctly guess if a set of inputs satisfies Logical XOR - meaning one and only one input should be True (represented by 1.0), and all other inputs should be False (represented by 0.0).
 
 You can see all logical xor files [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main/example/full_visual_example/lib/fitness_services/logical_xor).
@@ -177,7 +182,7 @@ class LogicalXORGENNVisualizationFitnessService extends GENNFitnessService {
 }
 ```
 
-## Image Number Classifier Example
+## Image Number Classifier
 This example will attempt to correctly guess the integer (between 0 and 9) that a pixelated imaged is meant to represent. The inputs are a list of 15 doubles (between 0.0 and 1.0) that effectively represent a 3x5 pixel image.
 
 You can see all Image Number Classifier files [here](https://github.com/dancout/genetically_evolving_neural_network/tree/main/example/full_visual_example/lib/fitness_services/number_classifier).
