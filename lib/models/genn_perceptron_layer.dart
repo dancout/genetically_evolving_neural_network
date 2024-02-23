@@ -1,6 +1,7 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [NeuralNetwork.PerceptronLayer].
+@JsonSerializable()
 class GENNPerceptronLayer extends PerceptronLayer {
   /// An extension of [NeuralNetwork.PerceptronLayer].
   GENNPerceptronLayer({
@@ -28,4 +29,12 @@ class GENNPerceptronLayer extends PerceptronLayer {
         ...super.props,
         _gennPerceptrons,
       ];
+
+  /// Converts the input [json] into a [GENNPerceptronLayer] object.
+  factory GENNPerceptronLayer.fromJson(Map<String, dynamic> json) =>
+      _$GENNPerceptronLayerFromJson(json);
+
+  /// Converts the [GENNPerceptronLayer] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNPerceptronLayerToJson(this);
 }
