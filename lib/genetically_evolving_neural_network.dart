@@ -176,14 +176,19 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     );
   }
 
+  /// Loads in a [GENNGeneration] from a file corresponding to the input [wave]
+  /// and sets it internally on this [GENN] object.
+  ///
+  /// This newly loaded in Generation will be visible on the following
+  /// [GENN.nextGeneration] call.
   @override
-  Future<Generation<GENNPerceptron>> loadGenerationFromFile({
+  Future<void> loadGenerationFromFile({
     required int wave,
     JsonConverter? geneJsonConverter,
     required JsonConverter generationJsonConverter,
     FileParser<Generation<GENNPerceptron>>? fileParser,
-  }) {
-    return super.loadGenerationFromFile(
+  }) async {
+    await super.loadGenerationFromFile(
       wave: wave,
       geneJsonConverter: geneJsonConverter,
       generationJsonConverter: generationJsonConverter,
@@ -191,6 +196,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     );
   }
 
+  /// Writes the current [GENNGeneration] to a file.
   @override
   Future<void> writeGenerationToFile({
     FileParser<Generation<GENNPerceptron>>? fileParser,
