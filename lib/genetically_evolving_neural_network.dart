@@ -177,7 +177,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
   }
 
   @override
-  Future<void> loadGenerationFromFile({
+  Future<Generation<GENNPerceptron>> loadGenerationFromFile({
     required int wave,
     JsonConverter? geneJsonConverter,
     required JsonConverter generationJsonConverter,

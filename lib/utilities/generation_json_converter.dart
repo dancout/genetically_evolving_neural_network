@@ -8,7 +8,9 @@ class GenerationJsonConverter
   }
 
   @override
-  Map<String, dynamic> toJson(GENNGeneration object) {
+  // Map<String, dynamic> toJson(dynamic object) {
+  // Map<String, dynamic> toJson(GENNGeneration object) {
+  Map<String, dynamic> toJson(Generation<GENNPerceptron> object) {
     return object.toJson();
   }
 }
