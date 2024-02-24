@@ -1,7 +1,5 @@
 library genetically_evolving_neural_network;
 
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -35,7 +33,9 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_service/gen
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_alignment_helper.dart';
-part 'package:genetically_evolving_neural_network/utilities/file_parser.dart';
+part 'package:genetically_evolving_neural_network/utilities/gene_json_converter.dart';
+part 'package:genetically_evolving_neural_network/utilities/generation_json_converter.dart';
+part 'package:genetically_evolving_neural_network/utilities/genn_file_parser.dart';
 part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
 /// Represents a Genetically Evolving Neural Network.
@@ -50,7 +50,11 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required super.geneService,
     super.entityService,
     super.populationService,
+    super.geneJsonConverter,
+    required this.gennFileParser,
   });
+
+  final GENNFileParser gennFileParser;
 
   /// Creates a [GENN] object.
   ///
@@ -61,6 +65,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     GENNGeneService? geneService,
     GENNEntityService? entityService,
     PopulationService<GENNPerceptron>? populationService,
+    JsonConverter? geneJsonConverter,
   }) {
     // Use the geneService passed in if any customizations are necessary.
     final gennGeneService = geneService ??
@@ -148,12 +153,19 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           ),
         );
 
+    GENNFileParser gennFileParser = GENNFileParser(
+      geneJsonConverter: GeneJsonConverter(),
+      generationJsonConverter: GenerationJsonConverter(),
+    );
+
     return GENN(
       fitnessService: fitnessService,
       geneticEvolutionConfig: config,
       geneService: gennGeneService,
       entityService: gennEntityService,
       populationService: populationService,
+      geneJsonConverter: geneJsonConverter ?? GeneJsonConverter(),
+      gennFileParser: gennFileParser,
     );
   }
 
@@ -161,6 +173,34 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
   Future<GENNGeneration> nextGeneration() async {
     return GENNGeneration.fromGeneration(
       generation: await super.nextGeneration(),
+    );
+  }
+
+  @override
+  Future<void> loadGenerationFromFile({
+    required int wave,
+    JsonConverter? geneJsonConverter,
+    required JsonConverter generationJsonConverter,
+    FileParser<Generation<GENNPerceptron>>? fileParser,
+  }) {
+    return super.loadGenerationFromFile(
+      wave: wave,
+      geneJsonConverter: geneJsonConverter,
+      generationJsonConverter: generationJsonConverter,
+      fileParser: fileParser ?? gennFileParser,
+    );
+  }
+
+  @override
+  Future<void> writeGenerationToFile({
+    FileParser<Generation<GENNPerceptron>>? fileParser,
+    JsonConverter? geneJsonConverter,
+    required JsonConverter generationJsonConverter,
+  }) {
+    return super.writeGenerationToFile(
+      fileParser: fileParser ?? gennFileParser,
+      geneJsonConverter: geneJsonConverter,
+      generationJsonConverter: generationJsonConverter,
     );
   }
 }
