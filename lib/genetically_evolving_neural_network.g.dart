@@ -61,12 +61,12 @@ GENNNeuralNetwork _$GENNNeuralNetworkFromJson(Map<String, dynamic> json) =>
       layers: (json['layers'] as List<dynamic>)
           .map((e) => GENNPerceptronLayer.fromJson(e as Map<String, dynamic>))
           .toList(),
-      guessService: NeuralNetwork._guessServiceFromJson(json['guessService']),
+      guessService: NeuralNetwork.guessServiceFromJson(json['guessService']),
     );
 
 Map<String, dynamic> _$GENNNeuralNetworkToJson(GENNNeuralNetwork instance) =>
     <String, dynamic>{
-      'guessService': NeuralNetwork._guessServiceToJson(instance.guessService),
+      'guessService': NeuralNetwork.guessServiceToJson(instance.guessService),
       'layers': instance.layers,
     };
 
@@ -106,13 +106,11 @@ GENNPopulation _$GENNPopulationFromJson(Map<String, dynamic> json) =>
       entities: (json['entities'] as List<dynamic>)
           .map((e) => GENNEntity.fromJson(e as Map<String, dynamic>))
           .toList(),
-      sortingMethod: json['sortingMethod'] == null
-          ? _fallbackSortMethod
-          : Population._sortingMethodFromJson(json['sortingMethod']),
+      sortingMethod: Population.sortingMethodFromJson(json['sortingMethod']),
     );
 
 Map<String, dynamic> _$GENNPopulationToJson(GENNPopulation instance) =>
     <String, dynamic>{
-      'sortingMethod': Population._sortingMethodToJson(instance.sortingMethod),
       'entities': instance.entities,
+      'sortingMethod': Population.sortingMethodToJson(instance.sortingMethod),
     };

@@ -6,9 +6,12 @@ class GENNPopulation extends Population<GENNPerceptron> {
   /// An extension of [GeneticEvolution.Population].
   const GENNPopulation({
     required List<GENNEntity> entities,
-    super.sortingMethod,
+    int Function(Entity a, Entity b)? sortingMethod,
   })  : _gennEntitys = entities,
-        super(entities: entities);
+        super(
+          entities: entities,
+          sortingMethod: sortingMethod ?? fallbackSortMethod,
+        );
 
   /// The [GENNEntity] objects populating this Population.
   final List<GENNEntity> _gennEntitys;
@@ -42,6 +45,19 @@ class GENNPopulation extends Population<GENNPerceptron> {
         ...super.props,
         _gennEntitys,
       ];
+
+  // TODO: revisit this sorting method after the genetic_evolution changes have
+  /// been made.
+  @override
+  @JsonKey(
+    fromJson: Population.sortingMethodFromJson,
+    toJson: Population.sortingMethodToJson,
+  )
+  int Function(Entity a, Entity b)? get sortingMethod => super.sortingMethod;
+
+  /// Sorts [Entity] objects in order from highest fitness score to lowest.
+  static int fallbackSortMethod(Entity a, Entity b) =>
+      b.fitnessScore.compareTo(a.fitnessScore);
 
   /// Converts the input [json] into a [GENNPopulation] object.
   factory GENNPopulation.fromJson(Map<String, dynamic> json) =>
