@@ -64,6 +64,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     GENNEntityService? entityService,
     PopulationService<GENNPerceptron>? populationService,
     JsonConverter? geneJsonConverter,
+    GENNFileParser? gennFileParser,
   }) {
     // Use the geneService passed in if any customizations are necessary.
     final gennGeneService = geneService ??
@@ -152,10 +153,11 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
         );
 
     // Used to convert GENNGenerations to be written onto and read from files.
-    GENNFileParser gennFileParser = GENNFileParser(
-      geneJsonConverter: GeneJsonConverter(),
-      generationJsonConverter: GenerationJsonConverter(),
-    );
+    GENNFileParser fileParser = gennFileParser ??
+        GENNFileParser(
+          geneJsonConverter: geneJsonConverter ?? GeneJsonConverter(),
+          generationJsonConverter: GenerationJsonConverter(),
+        );
 
     return GENN(
       fitnessService: fitnessService,
@@ -164,7 +166,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       entityService: gennEntityService,
       populationService: populationService,
       geneJsonConverter: geneJsonConverter ?? GeneJsonConverter(),
-      fileParser: gennFileParser,
+      fileParser: fileParser,
     );
   }
 
