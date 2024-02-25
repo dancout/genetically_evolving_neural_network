@@ -51,10 +51,8 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     super.entityService,
     super.populationService,
     super.geneJsonConverter,
-    required this.gennFileParser,
+    required super.fileParser,
   });
-
-  final GENNFileParser gennFileParser;
 
   /// Creates a [GENN] object.
   ///
@@ -153,6 +151,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           ),
         );
 
+    // Used to convert GENNGenerations to be written onto and read from files.
     GENNFileParser gennFileParser = GENNFileParser(
       geneJsonConverter: GeneJsonConverter(),
       generationJsonConverter: GenerationJsonConverter(),
@@ -165,7 +164,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       entityService: gennEntityService,
       populationService: populationService,
       geneJsonConverter: geneJsonConverter ?? GeneJsonConverter(),
-      gennFileParser: gennFileParser,
+      fileParser: gennFileParser,
     );
   }
 
@@ -173,40 +172,6 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
   Future<GENNGeneration> nextGeneration() async {
     return GENNGeneration.fromGeneration(
       generation: await super.nextGeneration(),
-    );
-  }
-
-  /// Loads in a [GENNGeneration] from a file corresponding to the input [wave]
-  /// and sets it internally on this [GENN] object.
-  ///
-  /// This newly loaded in Generation will be visible on the following
-  /// [GENN.nextGeneration] call.
-  @override
-  Future<void> loadGenerationFromFile({
-    required int wave,
-    JsonConverter? geneJsonConverter,
-    required JsonConverter generationJsonConverter,
-    FileParser<Generation<GENNPerceptron>>? fileParser,
-  }) async {
-    await super.loadGenerationFromFile(
-      wave: wave,
-      geneJsonConverter: geneJsonConverter,
-      generationJsonConverter: generationJsonConverter,
-      fileParser: fileParser ?? gennFileParser,
-    );
-  }
-
-  /// Writes the current [GENNGeneration] to a file.
-  @override
-  Future<void> writeGenerationToFile({
-    FileParser<Generation<GENNPerceptron>>? fileParser,
-    JsonConverter? geneJsonConverter,
-    required JsonConverter generationJsonConverter,
-  }) {
-    return super.writeGenerationToFile(
-      fileParser: fileParser ?? gennFileParser,
-      geneJsonConverter: geneJsonConverter,
-      generationJsonConverter: generationJsonConverter,
     );
   }
 }
