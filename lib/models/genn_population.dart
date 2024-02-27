@@ -10,7 +10,7 @@ class GENNPopulation extends Population<GENNPerceptron> {
   })  : _gennEntitys = entities,
         super(
           entities: entities,
-          sortingMethod: sortingMethod ?? fallbackSortMethod,
+          sortingMethod: sortingMethod ?? _fallbackSortMethod,
         );
 
   /// The [GENNEntity] objects populating this Population.
@@ -56,7 +56,7 @@ class GENNPopulation extends Population<GENNPerceptron> {
   int Function(Entity a, Entity b)? get sortingMethod => super.sortingMethod;
 
   /// Sorts [Entity] objects in order from highest fitness score to lowest.
-  static int fallbackSortMethod(Entity a, Entity b) =>
+  static int _fallbackSortMethod(Entity a, Entity b) =>
       b.fitnessScore.compareTo(a.fitnessScore);
 
   /// Converts the input [json] into a [GENNPopulation] object.
