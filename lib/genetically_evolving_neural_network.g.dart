@@ -106,11 +106,13 @@ GENNPopulation _$GENNPopulationFromJson(Map<String, dynamic> json) =>
       entities: (json['entities'] as List<dynamic>)
           .map((e) => GENNEntity.fromJson(e as Map<String, dynamic>))
           .toList(),
-      sortingMethod: Population.sortingMethodFromJson(json['sortingMethod']),
+      sortingMethod:
+          GENNPopulation._sortingMethodFromJson(json['sortingMethod']),
     );
 
 Map<String, dynamic> _$GENNPopulationToJson(GENNPopulation instance) =>
     <String, dynamic>{
       'entities': instance.entities,
-      'sortingMethod': Population.sortingMethodToJson(instance.sortingMethod),
+      'sortingMethod':
+          GENNPopulation._sortingMethodToJson(instance.sortingMethod),
     };

@@ -46,12 +46,10 @@ class GENNPopulation extends Population<GENNPerceptron> {
         _gennEntitys,
       ];
 
-  // TODO: revisit this sorting method after the genetic_evolution changes have
-  /// been made.
   @override
   @JsonKey(
-    fromJson: Population.sortingMethodFromJson,
-    toJson: Population.sortingMethodToJson,
+    toJson: _sortingMethodToJson,
+    fromJson: _sortingMethodFromJson,
   )
   int Function(Entity a, Entity b)? get sortingMethod => super.sortingMethod;
 
@@ -66,4 +64,10 @@ class GENNPopulation extends Population<GENNPerceptron> {
   /// Converts the [GENNPopulation] object to JSON.
   @override
   Map<String, dynamic> toJson() => _$GENNPopulationToJson(this);
+
+  static _sortingMethodToJson(
+          int Function(Entity a, Entity b)? sortingMethod) =>
+      null;
+
+  static _sortingMethodFromJson(dynamic sortingMethod) => null;
 }
