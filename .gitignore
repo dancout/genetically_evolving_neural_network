@@ -33,3 +33,5 @@ macos/Flutter/ephemeral/flutter_export_environment.sh
 macos/Flutter/ephemeral/Flutter-Generated.xcconfig
 linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
 .idea/libraries/Dart_SDK.xml
+.idea/modules.xml
+.idea/workspace.xml
