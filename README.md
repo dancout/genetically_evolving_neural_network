@@ -1,8 +1,17 @@
 # genetically_evolving_neural_network
- This package implements a Genetically Evolving Neural Network. A Population of Entities, each containing a mutable Neural Network to drive decisions, will reproduce to create a new Generation (through cross-breeding the DNA of high-performing Entities and introducing new mutations).
+ This package mimicks the process of Genetic Evolution on Entities, each comprised of a Neural Network, through cross-breeding parents and genetic mutations.
+
 
 ![zoomed_in_GENN](https://github.com/dancout/genetically_evolving_neural_network/assets/5490028/178ff29c-029d-4bfb-bf9a-12a816ed023b)
 
+
+
+## Table of Contents
+- [Usage](#usage)
+  - [How it works](#how-it-works)
+  - [To Begin](#to-begin)
+  - [File Parsing](#file-parsing)
+- [More Complex Examples](#more-complex-examples)
 
 ## Usage
 You simply need to define your own `FitnessService` to determine how well an Entity's decisions perform, along with a config that states how often the DNA of your population should mutate.
@@ -18,7 +27,7 @@ Genes from each parent are taken to create the child's new DNA, and there is a c
 
 This cycle repeats itself, keeping the high performing Neural Networks within the gene pool and allowing for the process of evolution through mutations.
 
-### To begin, you'll need to:
+### To Begin:
 * Define your own `FitnessService` that assigns a fitness score to an entity based on how well it performs. This could mean guessing if a number is positive or negative, choosing a next move in a chess game, or any other decision a neural network can make.
 * Define your `GeneticEvolutionConfig`, responsible for how many entities should exist within a population, how often an Entity's DNA should mutate, and other adjustable values.
 
@@ -76,5 +85,20 @@ And finally, you can access the next generation of Entities using `nextGeneratio
 final nextGen = await genn.nextGeneration();
 ```
 
+### File Parsing
+You can write specific generations to a file, and similarly read in specific generations stored on a file.
+
+In order to write the current `GENNGeneration` object to a file
+```dart
+genn.writeGenerationToFile();
+```
+
+In order to load in a specific `GENNGeneration` read from a file
+```dart
+genn.loadGenerationFromFile(wave: 10);
+```
+
 ## More Complex Examples
 Guessing if a number is positive or negative is not a particularly impressive use case for a Neural Network, but it is very simple to understand and helps grasp the concept. If you'd like to see a more complex problem, check out these [examples](https://pub.dev/packages/genetically_evolving_neural_network/example).
+
+
