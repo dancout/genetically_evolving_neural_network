@@ -1,6 +1,6 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
-// TODO: Documentation on all the utilities folder files
+/// Parses [GENNGeneration] objects to and from text files.
 class GENNFileParser extends FileParser<GENNPerceptron> {
   GENNFileParser({
     GeneJsonConverter? geneJsonConverter,
