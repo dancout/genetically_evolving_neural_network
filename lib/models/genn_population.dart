@@ -1,13 +1,17 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [GeneticEvolution.Population].
+@JsonSerializable()
 class GENNPopulation extends Population<GENNPerceptron> {
   /// An extension of [GeneticEvolution.Population].
   const GENNPopulation({
     required List<GENNEntity> entities,
-    super.sortingMethod,
+    int Function(Entity a, Entity b)? sortingMethod,
   })  : _gennEntitys = entities,
-        super(entities: entities);
+        super(
+          entities: entities,
+          sortingMethod: sortingMethod ?? _fallbackSortMethod,
+        );
 
   /// The [GENNEntity] objects populating this Population.
   final List<GENNEntity> _gennEntitys;
@@ -41,4 +45,30 @@ class GENNPopulation extends Population<GENNPerceptron> {
         ...super.props,
         _gennEntitys,
       ];
+
+  @override
+  @JsonKey(
+    toJson: _sortingMethodToJson,
+    fromJson: _sortingMethodFromJson,
+  )
+  int Function(Entity a, Entity b)? get sortingMethod => super.sortingMethod;
+
+  /// Sorts [Entity] objects in order from highest fitness score to lowest.
+  static int _fallbackSortMethod(Entity a, Entity b) =>
+      b.fitnessScore.compareTo(a.fitnessScore);
+
+  /// Converts the input [json] into a [GENNPopulation] object.
+  factory GENNPopulation.fromJson(Map<String, dynamic> json) =>
+      _$GENNPopulationFromJson(json);
+
+  /// Converts the [GENNPopulation] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNPopulationToJson(this);
+
+  // TODO: Consider building out a way to parse sortingMethod, if possible.
+  static _sortingMethodToJson(
+          int Function(Entity a, Entity b)? sortingMethod) =>
+      null;
+
+  static _sortingMethodFromJson(dynamic sortingMethod) => null;
 }

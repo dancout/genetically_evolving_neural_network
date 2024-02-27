@@ -1,6 +1,7 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [NeuralNetwork].
+@JsonSerializable()
 class GENNNeuralNetwork extends NeuralNetwork {
   /// An extension of [NeuralNetwork].
   GENNNeuralNetwork({
@@ -52,4 +53,12 @@ class GENNNeuralNetwork extends NeuralNetwork {
 
   /// The number of [GennperceptronsLayer]s within this [GENNNeuralNetwork].
   int get numLayers => _gennLayers.length;
+
+  /// Converts the input [json] into a [GENNNeuralNetwork] object.
+  factory GENNNeuralNetwork.fromJson(Map<String, dynamic> json) =>
+      _$GENNNeuralNetworkFromJson(json);
+
+  /// Converts the [GENNNeuralNetwork] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNNeuralNetworkToJson(this);
 }

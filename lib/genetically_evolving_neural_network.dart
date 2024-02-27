@@ -4,8 +4,10 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:genetic_evolution/genetic_evolution.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:neural_network_skeleton/neural_network_skeleton.dart';
 
+part 'genetically_evolving_neural_network.g.dart';
 part 'package:genetically_evolving_neural_network/models/genn_dna.dart';
 part 'package:genetically_evolving_neural_network/models/genn_entity.dart';
 part 'package:genetically_evolving_neural_network/models/genn_gene.dart';
@@ -31,6 +33,9 @@ part 'package:genetically_evolving_neural_network/services/genn_gene_service/gen
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_helper.dart';
 part 'package:genetically_evolving_neural_network/services/genn_gene_service/genn_gene_service_mutation_helper.dart';
 part 'package:genetically_evolving_neural_network/services/perceptron_layer_alignment_helper.dart';
+part 'package:genetically_evolving_neural_network/utilities/gene_json_converter.dart';
+part 'package:genetically_evolving_neural_network/utilities/generation_json_converter.dart';
+part 'package:genetically_evolving_neural_network/utilities/genn_file_parser.dart';
 part 'package:genetically_evolving_neural_network/utilities/number_generator.dart';
 
 /// Represents a Genetically Evolving Neural Network.
@@ -45,7 +50,8 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required super.geneService,
     super.entityService,
     super.populationService,
-  });
+    GENNFileParser? fileParser,
+  }) : super(fileParser: fileParser ?? GENNFileParser());
 
   /// Creates a [GENN] object.
   ///
@@ -56,6 +62,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     GENNGeneService? geneService,
     GENNEntityService? entityService,
     PopulationService<GENNPerceptron>? populationService,
+    GENNFileParser? gennFileParser,
   }) {
     // Use the geneService passed in if any customizations are necessary.
     final gennGeneService = geneService ??
@@ -149,6 +156,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
       geneService: gennGeneService,
       entityService: gennEntityService,
       populationService: populationService,
+      fileParser: gennFileParser,
     );
   }
 

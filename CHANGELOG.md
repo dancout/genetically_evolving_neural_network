@@ -1,3 +1,8 @@
+## 0.3.0
+
+* Implemented to and from JSON on models
+* Implemented file parsing for [GENNGeneration] objects
+
 ## 0.2.0
 
 * Refactored mutations logic to be more efficient

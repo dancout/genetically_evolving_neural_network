@@ -1,6 +1,7 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [GeneticEvolution.Generation].
+@JsonSerializable()
 class GENNGeneration extends Generation<GENNPerceptron> {
   /// An extension of [GeneticEvolution.Generation].
   const GENNGeneration({
@@ -32,4 +33,12 @@ class GENNGeneration extends Generation<GENNPerceptron> {
         ...super.props,
         _gennPopulation,
       ];
+
+  /// Converts the input [json] into a [GENNGeneration] object.
+  factory GENNGeneration.fromJson(Map<String, dynamic> json) =>
+      _$GENNGenerationFromJson(json);
+
+  /// Converts the [GENNGeneration] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNGenerationToJson(this);
 }

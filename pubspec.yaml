@@ -1,6 +1,6 @@
 name: genetically_evolving_neural_network
 description: This package mimicks the process of Genetic Evolution on Entities, each comprised of a Neural Network, through cross-breeding parents and genetic mutations.
-version: 0.2.0
+version: 0.3.0
 homepage: https://github.com/dancout/genetically_evolving_neural_network
 
 environment:
@@ -10,11 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  genetic_evolution: ^0.2.1
-  neural_network_skeleton: ^0.1.2
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
+  genetic_evolution: ^0.3.0
+  neural_network_skeleton: ^0.2.0
+  
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.8
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0

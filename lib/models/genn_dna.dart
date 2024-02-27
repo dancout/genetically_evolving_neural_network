@@ -1,6 +1,7 @@
 part of 'package:genetically_evolving_neural_network/genetically_evolving_neural_network.dart';
 
 /// An extension of [GeneticEvolution.DNA].
+@JsonSerializable()
 class GENNDNA extends DNA<GENNPerceptron> {
   /// An extension of [GeneticEvolution.DNA].
   GENNDNA({
@@ -36,4 +37,12 @@ class GENNDNA extends DNA<GENNPerceptron> {
         ...super.props,
         _gennGenes,
       ];
+
+  /// Converts the input [json] into a [GENNDNA] object.
+  factory GENNDNA.fromJson(Map<String, dynamic> json) =>
+      _$GENNDNAFromJson(json);
+
+  /// Converts the [GENNDNA] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNDNAToJson(this);
 }

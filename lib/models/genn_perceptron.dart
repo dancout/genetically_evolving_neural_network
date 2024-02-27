@@ -2,6 +2,7 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// An extension of [NeuralNetwork.Perceptron] that additionally tracks which
 /// layer it is a part of.
+@JsonSerializable()
 class GENNPerceptron extends Perceptron {
   const GENNPerceptron({
     required this.layer,
@@ -32,4 +33,12 @@ class GENNPerceptron extends Perceptron {
         ...super.props,
         layer,
       ];
+
+  /// Converts the input [json] into a [GENNPerceptron] object.
+  factory GENNPerceptron.fromJson(Map<String, dynamic> json) =>
+      _$GENNPerceptronFromJson(json);
+
+  /// Converts the [GENNPerceptron] object to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$GENNPerceptronToJson(this);
 }
