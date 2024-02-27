@@ -65,6 +65,7 @@ class GENNPopulation extends Population<GENNPerceptron> {
   @override
   Map<String, dynamic> toJson() => _$GENNPopulationToJson(this);
 
+  // TODO: Consider building out a way to parse sortingMethod, if possible.
   static _sortingMethodToJson(
           int Function(Entity a, Entity b)? sortingMethod) =>
       null;
