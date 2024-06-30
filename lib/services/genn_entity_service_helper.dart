@@ -104,4 +104,64 @@ class GENNEntityServiceHelper {
 
     return child;
   }
+
+  Future<GENNEntity> seedPerceptronLayersWithinEntity({
+    required GENNEntity entity,
+    required List<int> desiredPerceptronLayerSizes,
+  }) async {
+    GENNEntity updatedEntity = entity;
+    final targetNumLayers = desiredPerceptronLayerSizes.length;
+    int currentNumLayers = updatedEntity.maxLayerNum + 1;
+
+    // Align the number of layers within the entity to match the desired number
+    while (currentNumLayers != targetNumLayers) {
+      // Randomly pick a target layer
+      final targetLayer = numberGenerator.nextInt(currentNumLayers);
+      if (currentNumLayers < targetNumLayers) {
+        // Duplicate the PerceptronLayer within the entity
+        updatedEntity = await entityManipulationService
+            .duplicatePerceptronLayerWithinEntity(
+          entity: updatedEntity,
+          targetLayer: targetLayer,
+        );
+      } else {
+        updatedEntity =
+            await entityManipulationService.removePerceptronLayerFromEntity(
+          entity: updatedEntity,
+          targetLayer: targetLayer,
+        );
+      }
+      // TODO: Probably don't do the while loop, and do a forloop from diff as below
+      currentNumLayers = updatedEntity.maxLayerNum + 1;
+    }
+
+    // Align the number of perceptrons within each layer to match the desired number
+    for (int i = 0; i < desiredPerceptronLayerSizes.length; i++) {
+      final targetPerceptronCount = desiredPerceptronLayerSizes[i];
+      final currentPerceptronCount =
+          updatedEntity.dna.genes.where((gene) => gene.value.layer == i).length;
+
+      final diff = currentPerceptronCount - targetPerceptronCount;
+      if (diff > 0) {
+        // for (int x = 0; x < diff; x++) {
+        updatedEntity =
+            await entityManipulationService.removePerceptronFromLayer(
+          entity: updatedEntity,
+          targetLayer: i,
+          count: diff,
+        );
+        // }
+      } else if (diff < 0) {
+        // for (int x = 0; x < diff.abs(); x++) {
+        updatedEntity = await entityManipulationService.addPerceptronToLayer(
+          entity: updatedEntity,
+          targetLayer: i,
+          count: diff.abs(),
+        );
+        // }
+      }
+    }
+
+    return updatedEntity;
+  }
 }

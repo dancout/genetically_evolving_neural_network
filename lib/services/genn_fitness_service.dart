@@ -2,6 +2,12 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 
 /// An extension of [GeneticEvolution.FitnessService].
 abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
+  GENNFitnessService({
+    bool? sigmoid,
+  }) : sigmoid = sigmoid ?? false;
+
+  final bool sigmoid;
+
   /// The internal scoring function used to calculate the fitness score of the
   /// input [neuralNetwork].
   ///
@@ -23,8 +29,23 @@ abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
     // Declare the NeuralNetwork
     final neuralNetwork = GENNNeuralNetwork.fromGenes(
       genes: GENNDNA.fromDNA(dna: dna).genes,
+      guessService: sigmoid
+          ? GuessService(
+              activationService: ActivationService(
+              normalizationService: SigmoidNormalizationService(),
+            ))
+          : null,
     );
 
     return gennScoringFunction(neuralNetwork: neuralNetwork);
+  }
+}
+
+class SigmoidNormalizationService extends OutputNormalizationService {
+  @override
+  normalizeValue({
+    required double value,
+  }) {
+    return 1 / (1 + exp(-value));
   }
 }

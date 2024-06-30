@@ -10,6 +10,8 @@ import 'package:genetically_evolving_neural_network/genetically_evolving_neural_
 /// types <I, O>, respectively.
 abstract class VisualizationExampleGENNFitnessService<I, O>
     extends GENNFitnessService {
+  VisualizationExampleGENNFitnessService({required super.sigmoid});
+
   /// The list of inputs for your Neural Network.
   List<I> get inputList;
 

@@ -10,7 +10,9 @@ void main() {
   VisualizationExampleGENNFitnessService gennFitnessServiceExample;
 
   // Uncomment whichever fitness service you would like to visualize.
-  gennFitnessServiceExample = LogicalXORGENNVisualizationFitnessService();
+  gennFitnessServiceExample = LogicalXORGENNVisualizationFitnessService(
+    sigmoid: false,
+  );
   // gennFitnessServiceExample = NumberClassifierFitnessService();
   // ==================== END OF GENN EXAMPLE RELATED CONTENT =============================
 
@@ -96,11 +98,12 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
 
     // Declare a config with specific mutation rates.
     final config = GENNGeneticEvolutionConfig(
+      populationSize: 10,
       numOutputs: gennExampleFitnessService.numOutputs,
       mutationRate: 0.15,
       numInitialInputs: gennExampleFitnessService.numInitialInputs,
-      layerMutationRate: 0.2,
-      perceptronMutationRate: 0.4,
+      layerMutationRate: 0.0,
+      perceptronMutationRate: 0.0,
       trackParents: true,
       // We only care about tracking the parents of the current generation to
       // show on-screen
@@ -113,8 +116,7 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
       fitnessService: gennExampleFitnessService,
     );
 
-    // Initialize the first generation
-    _setNextGeneration();
+    _seedGenerationWithPop();
     // ==================== END OF GENN EXAMPLE RELATED CONTENT ===========================
 
     // Define your UIHelper based on your gennExampleFitnessService
@@ -125,6 +127,26 @@ class _GENNExampleAppState extends State<GENNExampleApp> {
     // Set the keys for the parents of the top performing entity.
     parentKeys = List.generate(config.numParents, (index) => GlobalKey());
     super.initState();
+  }
+
+  Future<void> _seedGenerationWithPop() async {
+    genn.seedGenerationWithPerceptronLayers(
+        desiredPerceptronLayerSizes: [1]).then((value) {
+      // Initialize the first generation
+
+      genn.nextGeneration().then((value) {
+        setState(() {
+          generation = value;
+        });
+      });
+    });
+
+    // // Initialize the first generation
+    // await _setNextGeneration();
+
+    // await genn.seedGenerationWithPerceptronLayers(
+    //   desiredPerceptronLayerSizes: [3, 2, 1],
+    // );
   }
 
   @override

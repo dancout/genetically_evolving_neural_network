@@ -48,10 +48,28 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required super.fitnessService,
     required super.geneticEvolutionConfig,
     required super.geneService,
-    super.entityService,
+    // super.entityService,
+    required GENNEntityService entityService,
     super.populationService,
     GENNFileParser? fileParser,
-  }) : super(fileParser: fileParser ?? GENNFileParser());
+  }) : super(
+          fileParser: fileParser ?? GENNFileParser(),
+          entityService: entityService,
+        ) {
+    _gennEntityServiceHelper = entityService.gennEntityServiceHelper;
+  }
+
+  @override
+  GENNGeneration? get generation {
+    final superGeneration = super.generation;
+    return superGeneration != null
+        ? GENNGeneration.fromGeneration(
+            generation: superGeneration,
+          )
+        : null;
+  }
+
+  late GENNEntityServiceHelper _gennEntityServiceHelper;
 
   /// Creates a [GENN] object.
   ///
@@ -61,6 +79,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     required GENNFitnessService fitnessService,
     GENNGeneService? geneService,
     GENNEntityService? entityService,
+    // TODO: Should this be a GENNPopulationService?
     PopulationService<GENNPerceptron>? populationService,
     GENNFileParser? gennFileParser,
   }) {
@@ -134,6 +153,12 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
     );
 
     // Use the gennEntityService passed in if any customizations are necessary.
+    final gennEntityServiceHelper = GENNEntityServiceHelper(
+      entityManipulationService: entityManipulationService,
+      numberGenerator: numberGenerator,
+      layerMutationRate: config.layerMutationRate,
+      perceptronMutationRate: config.perceptronMutationRate,
+    );
     final gennEntityService = entityService ??
         // Otherwise, generate one internally.
         GENNEntityService(
@@ -142,12 +167,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
           geneMutationService: geneMutationService,
           crossoverService: crossoverService,
           entityParentManinpulator: entityParentManinpulator,
-          gennEntityServiceHelper: GENNEntityServiceHelper(
-            entityManipulationService: entityManipulationService,
-            numberGenerator: numberGenerator,
-            layerMutationRate: config.layerMutationRate,
-            perceptronMutationRate: config.perceptronMutationRate,
-          ),
+          gennEntityServiceHelper: gennEntityServiceHelper,
         );
 
     return GENN(
@@ -164,6 +184,28 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
   Future<GENNGeneration> nextGeneration() async {
     return GENNGeneration.fromGeneration(
       generation: await super.nextGeneration(),
+    );
+  }
+
+  Future<void> seedGenerationWithPerceptronLayers({
+    required List<int> desiredPerceptronLayerSizes,
+  }) async {
+    GENNGeneration gennGeneration = await nextGeneration();
+
+    List<GENNEntity> updatedEntities = [];
+
+    for (var entity in gennGeneration.population.entities) {
+      entity = await _gennEntityServiceHelper.seedPerceptronLayersWithinEntity(
+        entity: entity,
+        desiredPerceptronLayerSizes: desiredPerceptronLayerSizes,
+      );
+      updatedEntities.add(entity);
+    }
+
+    await seedGenerationWithPopulation(
+      population: GENNPopulation(entities: updatedEntities),
+      // TODO: VERY HACKY!
+      wave: 0,
     );
   }
 }

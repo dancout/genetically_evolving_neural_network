@@ -16,6 +16,8 @@ class NumberClassifierFitnessService
     //       [GENNFitnessServiceVisualizationExample] class.
     with
         NumberClassifierFitnessServiceHelpers {
+  NumberClassifierFitnessService({required super.sigmoid});
+
   /// Returns a score that proportional to how many correct guesses this Neural
   /// Network has made across all integers from 0 to 9.
   ///

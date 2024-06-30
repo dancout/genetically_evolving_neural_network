@@ -162,12 +162,17 @@ class EntityManipulationService {
   Future<GENNEntity> removePerceptronFromLayer({
     required GENNEntity entity,
     required int targetLayer,
+    int count = 1,
   }) async {
-    // Declare the updated DNA object
-    final updatedDNA = dnaManipulationService.removePerceptronFromDNA(
-      dna: entity.dna,
-      targetLayer: targetLayer,
-    );
+    GENNDNA updatedDNA = entity.dna;
+
+    for (int i = 0; i < count; i++) {
+      // Declare the updated DNA object
+      updatedDNA = dnaManipulationService.removePerceptronFromDNA(
+        dna: updatedDNA,
+        targetLayer: targetLayer,
+      );
+    }
     // Calculate the updated fitness score based on the updated DNA
     final updatedFitnessScore =
         await fitnessService.calculateScore(dna: updatedDNA);
@@ -184,12 +189,17 @@ class EntityManipulationService {
   Future<GENNEntity> addPerceptronToLayer({
     required GENNEntity entity,
     required int targetLayer,
+    int count = 1,
   }) async {
-    // Add a perceptron to the entity
-    final updatedDNA = dnaManipulationService.addPerceptronToDNA(
-      dna: entity.dna,
-      targetLayer: targetLayer,
-    );
+    GENNDNA updatedDNA = entity.dna;
+
+    for (int i = 0; i < count; i++) {
+      // Add a perceptron to the entity
+      updatedDNA = dnaManipulationService.addPerceptronToDNA(
+        dna: updatedDNA,
+        targetLayer: targetLayer,
+      );
+    }
 
     // Recalculate the fitness score
     final updatedFitnessScore =

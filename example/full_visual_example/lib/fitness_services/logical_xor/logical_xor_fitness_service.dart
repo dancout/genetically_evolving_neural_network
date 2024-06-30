@@ -17,6 +17,8 @@ class LogicalXORGENNVisualizationFitnessService extends
     //       [GENNFitnessServiceVisualizationExample] class.
     with
         LogicalXORFitnessServiceHelpers {
+  LogicalXORGENNVisualizationFitnessService({required super.sigmoid});
+
   /// This function will calculate a fitness score after guessing with every
   /// input within [LogicalXORGENNVisualizationFitnessService.inputList] on the input
   /// [neuralNetwork].

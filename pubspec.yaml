@@ -12,7 +12,8 @@ dependencies:
     sdk: flutter
   json_annotation: ^4.8.1
   json_serializable: ^6.7.1
-  genetic_evolution: ^0.3.0
+  genetic_evolution:
+    path: ../genetic_evolution
   neural_network_skeleton: ^0.2.0
   
 

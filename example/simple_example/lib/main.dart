@@ -7,6 +7,11 @@ List<double> get inputs => List.generate(10, (index) => index * 0.1)
 
 /// The scoring function that will be used to evolve entities of a population
 class PositiveNumberFitnessService extends GENNFitnessService {
+  PositiveNumberFitnessService(
+      {
+      //TODO: This shouldn't be required!
+      required super.sigmoid});
+
   @override
   Future<double> gennScoringFunction({
     required GENNNeuralNetwork neuralNetwork,
@@ -36,7 +41,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   /// Represents the FitnessService used to drive this GENN example.
-  final GENNFitnessService fitnessService = PositiveNumberFitnessService();
+  final GENNFitnessService fitnessService = PositiveNumberFitnessService(
+    sigmoid: true,
+  );
 
   /// The current generation of Neural Networks.
   GENNGeneration? generation;
@@ -62,10 +69,13 @@ class _MyAppState extends State<MyApp> {
       fitnessService: fitnessService,
     );
 
-    // Initialize the first generation
-    genn.nextGeneration().then((value) {
-      setState(() {
-        generation = value;
+    genn.seedGenerationWithPerceptronLayers(
+        desiredPerceptronLayerSizes: [3, 2, 1]).then((value) {
+      // Initialize the first generation
+      genn.nextGeneration().then((value) {
+        setState(() {
+          generation = value;
+        });
       });
     });
 
