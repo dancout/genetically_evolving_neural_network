@@ -24,6 +24,21 @@ class GennGeneServiceHelper {
     int selectedOption =
         gennGeneServiceMutationHelper.selectMutationOption(perceptron);
 
+
+    // TODO: What I want to do differently, is that we shouldn't have an X% chance that this *gene* will mutate, but maybe we should instead focus on there being a X% chance that *any feature* will mutate.
+    /// What this means is that we should run through all possible mutation options, and do an X% chance check against each option.
+    /// Steps:
+    /// - Store the original "mutatationRate" in a secondary variable somewhere, called "originalMutationRate"
+    /// - Update the mutationRate value in the config to be 1 (or 100%)
+    ///     - This will force the mutateValue function to be run *every time* so that we can check against each *feature*, not just the genes
+    /// - Forloop over every possible mutation option (bias + threshold + weights)
+    ///     - Generate a random value
+    ///     - If the random value is less than the "originalMutationRate", then call "mutateBasedOnSelectedOption" for that index
+    /// NOTE: We might have to update how this is done, because "mutateBasedOnSelectedOption" returns an entire gene, not just that rand value
+    /// 
+    /// OORRRRRRR - We could override the mutateGene call? To not have to deal with *every* gene now having *every* wave show "mutatedWave" or whatever 
+
+
     // Return a new GENNPerceptron with its selected mutation
     return gennGeneServiceMutationHelper.mutateBasedOnSelectedOption(
         selectedOption, perceptron);
@@ -41,7 +56,8 @@ class GennGeneServiceHelper {
 
     return GENNPerceptron(
       bias: numberGenerator.randomNegOneToPosOne,
-      threshold: numberGenerator.nextDouble,
+      // TODO: This halved threshold is really only relevant if sigmoid is true. Otherwise, it should be open-ended without the division.
+      threshold: (numberGenerator.nextDouble / 2.0) + 0.5,
       weights: List.generate(
           numWeights, (_) => numberGenerator.randomNegOneToPosOne),
       layer: layer,

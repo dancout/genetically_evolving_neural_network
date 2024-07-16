@@ -4,7 +4,10 @@ part of 'package:genetically_evolving_neural_network/genetically_evolving_neural
 abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
   GENNFitnessService({
     bool? sigmoid,
-  }) : sigmoid = sigmoid ?? false;
+  }) : sigmoid = sigmoid ?? false, _guessService = ((sigmoid ?? false) ? GuessService(
+              activationService: ActivationService(
+              normalizationService: SigmoidNormalizationService(),
+            )): null);
 
   final bool sigmoid;
 
@@ -15,6 +18,10 @@ abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
   Future<double> gennScoringFunction({
     required GENNNeuralNetwork neuralNetwork,
   });
+
+  final GuessService? _guessService;
+
+  GuessService? get guessService => _guessService;
 
   @override
   double get nonZeroBias => 0.01;
@@ -30,10 +37,7 @@ abstract class GENNFitnessService extends FitnessService<GENNPerceptron> {
     final neuralNetwork = GENNNeuralNetwork.fromGenes(
       genes: GENNDNA.fromDNA(dna: dna).genes,
       guessService: sigmoid
-          ? GuessService(
-              activationService: ActivationService(
-              normalizationService: SigmoidNormalizationService(),
-            ))
+          ? _guessService
           : null,
     );
 
@@ -46,6 +50,6 @@ class SigmoidNormalizationService extends OutputNormalizationService {
   normalizeValue({
     required double value,
   }) {
-    return 1 / (1 + exp(-value));
+    return  1 / (1 + exp(-value));
   }
 }
