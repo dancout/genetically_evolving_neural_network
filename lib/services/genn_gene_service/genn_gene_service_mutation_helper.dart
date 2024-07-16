@@ -27,7 +27,10 @@ class GennGeneServiceMutationHelper {
         return perceptron.copyWith(bias: numberGenerator.randomNegOneToPosOne);
       case 1:
         // update threshold
-        return perceptron.copyWith(threshold: numberGenerator.nextDouble);
+        // TODO: This halved threshold is really only relevant if sigmoid is true. Otherwise, it should be open-ended without the division.
+
+        return perceptron.copyWith(
+            threshold: (numberGenerator.nextDouble / 2.0) + 0.5);
 
       default:
         // update weights
