@@ -5,11 +5,20 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
   GENNGeneService({
     required this.numInitialInputs,
     @visibleForTesting GennGeneServiceHelper? gennGeneServiceHelper,
+    required this.originalMutationRate,
     Random? random,
-  }) : gennGeneServiceHelper = gennGeneServiceHelper ??
+  }) : 
+  random = random ?? Random(),
+  gennGeneServiceHelper = gennGeneServiceHelper ??
             GennGeneServiceHelper(
               random: random,
             );
+
+
+    final Random random;
+  final double originalMutationRate;
+  // TODO: This should be included in the constructor for testing
+    final GennGeneServiceMutationHelper gennGeneServiceMutationHelper = GennGeneServiceMutationHelper();
 
   /// Used to assist this class with overridden methods.
   @visibleForTesting
@@ -37,6 +46,21 @@ class GENNGeneService extends GeneService<GENNPerceptron> {
       throw Exception('Cannot mutate null GENNPerceptron.');
     }
 
-    return gennGeneServiceHelper.mutatePerceptron(perceptron: gennPerceptron);
+
+  var currentGENNPerceptron = gennPerceptron.copyWith();
+
+    // plus 2 for bias and threshold
+    for(int i = 0; i < gennPerceptron.weights.length + 2; i++) {
+      final randomValue = random.nextDouble();
+      // print('i: $i');
+      if (originalMutationRate > randomValue) {
+        // print('found a new index to change: $i');
+        currentGENNPerceptron = gennGeneServiceMutationHelper.mutateBasedOnSelectedOption(
+        i, currentGENNPerceptron);
+      }
+    }
+
+    // return gennGeneServiceHelper.mutatePerceptron(perceptron: gennPerceptron);
+    return currentGENNPerceptron;
   }
 }

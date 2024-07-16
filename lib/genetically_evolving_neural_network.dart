@@ -89,6 +89,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
         GENNGeneService(
           numInitialInputs: config.numInitialInputs,
           random: config.random,
+      originalMutationRate: config.mutationRate,
         );
 
     final numberGenerator = NumberGenerator(
@@ -97,7 +98,7 @@ class GENN extends GeneticEvolution<GENNPerceptron> {
 
     final geneMutationService = GENNGeneMutationService(
       trackMutatedWaves: config.trackMutatedWaves,
-      mutationRate: config.mutationRate,
+      mutationRate: 1.0,
       gennGeneService: gennGeneService,
       random: config.random,
     );
