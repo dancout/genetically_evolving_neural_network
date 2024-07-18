@@ -14,8 +14,8 @@ dependencies:
   json_serializable: ^6.7.1
   genetic_evolution:
     path: ../genetic_evolution
-  neural_network_skeleton: ^0.2.0
-  
+  neural_network_skeleton: # ^0.2.0
+    path: ../neural_network_skeleton
 
 dev_dependencies:
   flutter_lints: ^3.0.1
