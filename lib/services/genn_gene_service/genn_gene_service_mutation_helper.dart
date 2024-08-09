@@ -21,22 +21,29 @@ class GennGeneServiceMutationHelper {
     int selectedOption,
     GENNPerceptron perceptron,
   ) {
+    // According to Tariq Rashid's book, "Make Your Own Neural Network", the
+    // weights should range from -1/sqrt(numWeights) to 1/sqrt(numWeights).
+    final weightShrinkingFactor = sqrt(perceptron.weights.length);
+
+    final randomNegOneToPosOne = numberGenerator.randomNegOneToPosOne;
+    final valueChange = randomNegOneToPosOne / weightShrinkingFactor;
+
     switch (selectedOption) {
       case 0:
         // update bias
-        return perceptron.copyWith(bias: numberGenerator.randomNegOneToPosOne);
+        return perceptron.copyWith(bias: perceptron.bias + valueChange);
       case 1:
         // update threshold
         // TODO: This halved threshold is really only relevant if sigmoid is true. Otherwise, it should be open-ended without the division.
 
         return perceptron.copyWith(
-            threshold: (numberGenerator.nextDouble / 2.0) + 0.5);
+            threshold: perceptron.threshold + valueChange);
 
       default:
         // update weights
         final weights = List<double>.from(perceptron.weights);
         // Subtracting 2 to account for the bias and threshold options
-        weights[selectedOption - 2] = numberGenerator.randomNegOneToPosOne;
+        weights[selectedOption - 2] = weights[selectedOption - 2] + valueChange;
         return perceptron.copyWith(weights: weights);
     }
   }
