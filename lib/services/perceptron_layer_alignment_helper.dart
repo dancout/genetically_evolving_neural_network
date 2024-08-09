@@ -33,6 +33,7 @@ class PerceptronLayerAlignmentHelper {
     GENNDNA Function({
       required GENNDNA dna,
       required int targetLayer,
+      required bool randomizeWeights,
     }) addOrRemovePerceptronFromDNA = (genesWithinTargetLayer > targetGeneNum)
         // There are too many perceptrons
         ? dnaManipulationService.removePerceptronFromDNA
@@ -52,6 +53,8 @@ class PerceptronLayerAlignmentHelper {
       updatedDNA = addOrRemovePerceptronFromDNA(
         dna: updatedDNA,
         targetLayer: targetLayer,
+        // This should only be true during the seeding stage
+        randomizeWeights: false,
       );
     }
 

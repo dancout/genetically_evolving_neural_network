@@ -93,6 +93,9 @@ class GENNEntityServiceHelper {
         child = await entityManipulationService.addPerceptronToLayer(
           entity: child,
           targetLayer: targetLayer,
+          // When mutating (and not seeding), we want newly introduced perceptrons
+          // to not disrupt the existing decisions being made.
+          randomizeWeights: false,
         );
       } else {
         child = await entityManipulationService.removePerceptronFromLayer(
@@ -157,6 +160,9 @@ class GENNEntityServiceHelper {
           entity: updatedEntity,
           targetLayer: i,
           count: diff.abs(),
+          // When seeding, we *do* want the weights between perceptrons to all
+          // have randomized values
+          randomizeWeights: true,
         );
         // }
       }

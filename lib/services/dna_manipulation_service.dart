@@ -23,6 +23,10 @@ class DNAManipulationService {
   GENNDNA addPerceptronToDNA({
     required GENNDNA dna,
     required int targetLayer,
+
+    /// If true, the weights of the new perceptron feeding into the next layer will be randomized.
+    /// If false, they will be set to 0.
+    required bool randomizeWeights,
   }) {
     final genes = List<GENNGene>.from(dna.genes);
 
@@ -49,7 +53,8 @@ class DNAManipulationService {
         final perceptron = gene.value;
 
         final weights = List<double>.from(perceptron.weights);
-        weights.add(numberGenerator.randomNegOneToPosOne);
+        weights
+            .add(randomizeWeights ? numberGenerator.randomNegOneToPosOne : 0.0);
 
         genes[i] = gene.copyWith(
           value: perceptron.copyWith(weights: weights),
@@ -65,6 +70,10 @@ class DNAManipulationService {
   GENNDNA removePerceptronFromDNA({
     required GENNDNA dna,
     required int targetLayer,
+    // Note: this should never be needed for removing a perceptron, but we need
+    // the parameter here so that the funciton signature matches that of adding
+    // a perceptron.
+    @visibleForTesting bool randomizeWeights = false,
   }) {
     assert(
       dna.genes

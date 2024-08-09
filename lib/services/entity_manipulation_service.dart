@@ -190,6 +190,10 @@ class EntityManipulationService {
     required GENNEntity entity,
     required int targetLayer,
     int count = 1,
+
+    /// If true, the weights of the new perceptron feeding into the next layer will be randomized.
+    /// If false, they will be set to 0.
+    required bool randomizeWeights,
   }) async {
     GENNDNA updatedDNA = entity.dna;
 
@@ -198,6 +202,7 @@ class EntityManipulationService {
       updatedDNA = dnaManipulationService.addPerceptronToDNA(
         dna: updatedDNA,
         targetLayer: targetLayer,
+        randomizeWeights: randomizeWeights,
       );
     }
 
