@@ -46,6 +46,7 @@ class GennGeneServiceHelper {
   GENNPerceptron randomPerceptron({
     required int numWeights,
     required int layer,
+    bool randomizeWeights = true,
   }) {
     assert(
       numWeights > 0,
@@ -62,7 +63,10 @@ class GennGeneServiceHelper {
       threshold: (numberGenerator.nextDouble / 2.0) + 0.5,
       weights: List.generate(
         numWeights,
-        (_) => (numberGenerator.randomNegOneToPosOne / weightShrinkingFactor),
+        (_) => randomizeWeights
+            ? (numberGenerator.randomNegOneToPosOne / weightShrinkingFactor)
+            // If we are not randomizing weights, assign them all as zero
+            : 0.0,
       ),
       layer: layer,
     );

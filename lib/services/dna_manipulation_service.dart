@@ -43,16 +43,21 @@ class DNAManipulationService {
         value: gennGeneServiceHelper.randomPerceptron(
           numWeights: numWeights,
           layer: targetLayer,
+          randomizeWeights: randomizeWeights,
         ),
       ),
     );
 
+    // Cycle through all genes
     for (int i = 0; i < genes.length; i++) {
+      // Check for the genes in the layer after this target layer
       if (genes[i].value.layer == targetLayer + 1) {
         final gene = genes[i];
         final perceptron = gene.value;
 
         final weights = List<double>.from(perceptron.weights);
+        // Add an additional weight to the gene in the next layer that will
+        // connect to the newly added perceptron.
         weights
             .add(randomizeWeights ? numberGenerator.randomNegOneToPosOne : 0.0);
 
